@@ -17,7 +17,9 @@ Item {
     id: glass
 
     // Shape
-    property real radius: 22
+    property real radius: 32
+    // Superellipse exponent: 2 = plain rounded rect, 5 ≈ iOS squircle
+    property real roundness: 5
 
     // Glass effect — Snell-on-a-dome refraction through an edge band.
     // refractThickness is the width of that band in pixels. refractIOR is
@@ -115,6 +117,7 @@ Item {
         property variant backdrop: wallpaperTex
         property size size: Qt.size(Math.max(1, glass.width), Math.max(1, glass.height))
         property real radius: glass.radius
+        property real roundness: glass.roundness
         property real refractThickness: glass.refractThickness
         property real refractIOR: glass.refractIOR
         property real refractScale: glass.refractScale

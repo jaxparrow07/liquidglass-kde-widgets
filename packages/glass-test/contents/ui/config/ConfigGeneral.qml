@@ -6,6 +6,7 @@ import org.kde.kirigami as Kirigami
 Kirigami.FormLayout {
     property alias cfg_themeMode: themeCombo.currentIndex
     property alias cfg_cornerRadius: radiusSpin.value
+    property alias cfg_roundness: roundnessSpin.value
     property alias cfg_refractThickness: thicknessSpin.value
     property alias cfg_refractIORx100: iorSpin.value
     property alias cfg_refractScale: scaleSpin.value
@@ -22,6 +23,12 @@ Kirigami.FormLayout {
         id: radiusSpin
         Kirigami.FormData.label: i18n("Corner radius (px):")
         from: 0; to: 80; stepSize: 1
+    }
+
+    SpinBox {
+        id: roundnessSpin
+        Kirigami.FormData.label: i18n("Squircle roundness (2..7):")
+        from: 2; to: 7; stepSize: 1
     }
 
     SpinBox {

@@ -27,7 +27,9 @@ QtObject {
 
     readonly property color separator: isLight ? "#3c3c4336" : "#54545899"
 
-    readonly property color glassTint:      isLight ? "#ffffff" : "#ffffff"
-    readonly property real  glassTintAlpha: isLight ? 0.55 : 0.18
+    // macOS Tahoe glass has a subtle warm/cool tint. Dark mode leans cool-gray,
+    // light mode leans near-white. Alpha is high-ish so the glass reads clearly.
+    readonly property color glassTint: isLight ? "#ffffff" : "#eaf0ff"
+    readonly property real  glassTintAlpha: isLight ? 0.60 : 0.32
     readonly property real  glassFallbackOpacity: isLight ? 0.72 : 0.55
 }

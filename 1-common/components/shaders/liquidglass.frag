@@ -27,6 +27,7 @@ layout(std140, binding = 0) uniform buf {
     float qt_Opacity;
     vec2  size;              // widget size in px
     float radius;            // corner radius in px
+    float roundness;         // superellipse exponent; 2 = circle, 5 ≈ iOS squircle
     float refractThickness;  // edge band width in px
     float refractIOR;        // index of refraction, e.g. 1.4
     float refractScale;      // global multiplier on Snell displacement
@@ -38,17 +39,32 @@ layout(std140, binding = 0) uniform buf {
 
 layout(binding = 1) uniform sampler2D backdrop;
 
-// --- Shape SDF: rounded rect (plain, not squircle — keeps it simple) ---
+// --- Shape SDF: superellipse-cornered rounded rect (squircle) ---
+//
+// Interior / edge box: standard rectangle SDF.
+// Corner quadrants: L^n norm so the corner follows a superellipse.
+// n = 2 gives a true circle (plain rounded rect); n ≈ 5 matches iOS squircle.
 
-float sdRoundRect(vec2 p, vec2 b, float r) {
-    vec2 q = abs(p) - b + vec2(r);
-    return length(max(q, vec2(0.0))) + min(max(q.x, q.y), 0.0) - r;
+float superellipseCorner(vec2 p, float r, float n) {
+    p = abs(p);
+    float v = pow(pow(p.x, n) + pow(p.y, n), 1.0 / n);
+    return v - r;
 }
 
-// Evaluate SDF at widget-pixel coordinate p.
 float sceneSDF(vec2 p) {
     vec2 b = size * 0.5;
-    return sdRoundRect(p, b, radius);
+    float r = radius;
+    vec2 d = abs(p) - b;
+
+    // Corner region: both components are within r of the edge.
+    if (d.x > -r && d.y > -r) {
+        vec2 cornerCenter = sign(p) * (b - vec2(r));
+        vec2 cp = p - cornerCenter;
+        return superellipseCorner(cp, r, roundness);
+    }
+
+    // Edge region: plain box SDF.
+    return min(max(d.x, d.y), 0.0) + length(max(d, vec2(0.0)));
 }
 
 // Numerical gradient of the SDF. Intentionally NOT normalized — its

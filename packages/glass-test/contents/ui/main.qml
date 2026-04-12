@@ -25,6 +25,7 @@ PlasmoidItem {
             id: glass
             anchors.fill: parent
             radius: plasmoid.configuration.cornerRadius
+            roundness: plasmoid.configuration.roundness
             refractThickness: plasmoid.configuration.refractThickness
             refractIOR: plasmoid.configuration.refractIORx100 / 100
             refractScale: plasmoid.configuration.refractScale
