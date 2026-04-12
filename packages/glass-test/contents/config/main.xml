@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+    <kcfgfile name=""/>
+
+    <group name="General">
+        <entry name="themeMode" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="cornerRadius" type="Int">
+            <default>22</default>
+        </entry>
+        <entry name="refractThickness" type="Int">
+            <default>22</default>
+        </entry>
+        <entry name="refractIORx100" type="Int">
+            <default>140</default>
+        </entry>
+        <entry name="refractScale" type="Int">
+            <default>60</default>
+        </entry>
+        <entry name="tintAlphaPct" type="Int">
+            <default>18</default>
+        </entry>
+        <entry name="chromaStrengthPct" type="Int">
+            <default>60</default>
+        </entry>
+    </group>
+</kcfg>
