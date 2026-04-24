@@ -33,5 +33,8 @@
         <entry name="specStrengthPct" type="Int">
             <default>70</default>
         </entry>
+        <entry name="realtimeRefraction" type="Bool">
+            <default>false</default>
+        </entry>
     </group>
 </kcfg>

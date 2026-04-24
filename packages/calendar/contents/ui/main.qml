@@ -20,10 +20,6 @@ PlasmoidItem {
         id: sfRegular
         source: Qt.resolvedUrl("../fonts/sf_pro_display_regular.otf")
     }
-    FontLoader {
-        id: sfThin
-        source: Qt.resolvedUrl("../fonts/sf_pro_display_thin.otf")
-    }
 
     // --- Date state ---
     property date today: new Date()
@@ -48,35 +44,48 @@ PlasmoidItem {
             : (col === 0 || col === 6) // Sun-first: cols 0,6 = Sun,Sat
     }
 
-    // Rollover at midnight
-    Timer {
-        interval: 60 * 1000
-        running: true
-        repeat: true
-        onTriggered: {
-            const n = new Date()
-            if (n.getDate() !== root.today.getDate()
-                || n.getMonth() !== root.today.getMonth()
-                || n.getFullYear() !== root.today.getFullYear()) {
-                root.today = n
-                root.viewYear = n.getFullYear()
-                root.viewMonth = n.getMonth()
-            }
-        }
-    }
-
-    // --- Grid math ---
-    // Returns the day-of-month at grid slot [0..41], or 0 for empty slots.
-    function gridDay(slot) {
+    // Precomputed day-of-month per grid slot [0..41]; 0 means empty.
+    // Recomputed only when (viewYear, viewMonth, firstDow) changes —
+    // delegates read from this instead of calling Date() 42× per redraw.
+    property var monthDays: []
+    function rebuildMonthDays() {
         const firstOfMonth = new Date(viewYear, viewMonth, 1)
-        // getDay(): 0 = Sun ... 6 = Sat
         let offset = firstOfMonth.getDay() - firstDow
         if (offset < 0) offset += 7
-
-        const day = slot - offset + 1
         const lastDay = new Date(viewYear, viewMonth + 1, 0).getDate()
-        if (day < 1 || day > lastDay) return 0
-        return day
+        const out = new Array(42)
+        for (let i = 0; i < 42; i++) {
+            const day = i - offset + 1
+            out[i] = (day < 1 || day > lastDay) ? 0 : day
+        }
+        monthDays = out
+    }
+    onViewYearChanged: rebuildMonthDays()
+    onViewMonthChanged: rebuildMonthDays()
+    onFirstDowChanged: rebuildMonthDays()
+    Component.onCompleted: {
+        rebuildMonthDays()
+        scheduleNextMidnight()
+    }
+
+    // Midnight rollover: fire once exactly at next local midnight, then
+    // update state and reschedule. Much cheaper than polling.
+    Timer {
+        id: midnightTimer
+        repeat: false
+        onTriggered: {
+            const n = new Date()
+            root.today = n
+            if (n.getFullYear() !== root.viewYear) root.viewYear = n.getFullYear()
+            if (n.getMonth() !== root.viewMonth) root.viewMonth = n.getMonth()
+            root.scheduleNextMidnight()
+        }
+    }
+    function scheduleNextMidnight() {
+        const now = new Date()
+        const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5)
+        midnightTimer.interval = Math.max(1000, next.getTime() - now.getTime())
+        midnightTimer.start()
     }
 
     fullRepresentation: Item {
@@ -101,6 +110,7 @@ PlasmoidItem {
             tintAlpha: plasmoid.configuration.tintAlphaPct / 100
             chromaStrength: plasmoid.configuration.chromaStrengthPct / 100
             specStrength: plasmoid.configuration.specStrengthPct / 100
+            realtimeRefraction: plasmoid.configuration.realtimeRefraction
             fallbackOpacity: colors.glassFallbackOpacity
         }
 
@@ -186,10 +196,7 @@ PlasmoidItem {
                             width: gridWrap.cellW
                             height: gridWrap.cellH
 
-                            readonly property int day: {
-                                root.viewYear; root.viewMonth; root.firstDow
-                                return root.gridDay(index)
-                            }
+                            readonly property int day: root.monthDays[index] || 0
                             readonly property bool empty: day === 0
                             readonly property bool isCurrent: !empty
                                 && day === root.today.getDate()

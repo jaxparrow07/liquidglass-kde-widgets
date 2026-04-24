@@ -13,6 +13,7 @@ Kirigami.FormLayout {
     property alias cfg_tintAlphaPct: tintSpin.value
     property alias cfg_chromaStrengthPct: chromaSpin.value
     property alias cfg_specStrengthPct: specStrengthSpin.value
+    property alias cfg_realtimeRefraction: realtimeCheck.checked
 
     ComboBox {
         id: themeCombo
@@ -66,5 +67,11 @@ Kirigami.FormLayout {
         id: specStrengthSpin
         Kirigami.FormData.label: i18n("Specular strength (%):")
         from: 0; to: 100; stepSize: 5
+    }
+
+    CheckBox {
+        id: realtimeCheck
+        Kirigami.FormData.label: i18n("Realtime refraction:")
+        text: i18n("Recapture every frame (enable for video wallpapers)")
     }
 }

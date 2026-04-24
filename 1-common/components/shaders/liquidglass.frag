@@ -44,24 +44,26 @@ layout(binding = 1) uniform sampler2D backdrop;
 
 // --- Shape SDF: superellipse-cornered rounded rect (squircle) ---
 
-// Squircle / rounded-box SDF.
+// Squircle / rounded-box SDF with analytic gradient.
 //
-// Uses the standard rounded-box form with the Euclidean length replaced
-// by a superellipse p-norm so the corner arc is a squircle.
+// Returns vec3(d, nx, ny) where (nx, ny) is the unit outward normal.
 //
 //   q     = |p| - b + r
-//   arc   = (max(qx,0)^n + max(qy,0)^n)^(1/n)     — only nonzero inside corner wedge
-//   d_rel = min(max(qx, qy), 0) + arc             — level-set, zero on the shape
-//   d     = (d_rel - r) / |∇|                     — normalize to unit gradient
+//   arc   = (qx^n + qy^n)^(1/n)   — qx = max(q.x, 0), qy = max(q.y, 0)
+//   d_rel = min(max(q.x, q.y), 0) + arc - r
+//   d     = d_rel / |∇|           — normalize to unit-gradient distance
 //
-// The p-norm degenerates to the nonzero component along straight edges
-// (where one of max(qx,0)/max(qy,0) is zero), making this branch-free
-// AND seamless between edges and corners. The final division by the
-// analytic gradient magnitude converts the level-set value into a
-// near-Euclidean distance so AA feather and edge-band width stay
-// uniform around the silhouette (for n > 2 the raw gradient dips to
-// ~0.79 at the 45° apex, which is what widens the corner rim).
-float sceneSDF(vec2 p) {
+// Fast paths:
+//   * Interior (qx == 0 && qy == 0): level-set slope is 1 from the
+//     min/max term; no pow() needed.
+//   * Straight edge (exactly one of qx/qy is zero): p-norm collapses to
+//     |q.x| or |q.y|; gradient is axis-aligned; no pow() needed.
+//   * Corner wedge (both qx > 0 && qy > 0): p-norm and analytic
+//     gradient.
+//
+// Sign convention: normal flipped by sign(p) at return time so it
+// points outward in original p-space (q uses abs(p)).
+vec3 sceneSDFAndNormal(vec2 p) {
     vec2 b = size * 0.5;
     float r = radius;
     float n = roundness;
@@ -70,33 +72,43 @@ float sceneSDF(vec2 p) {
     float qx = max(q.x, 0.0);
     float qy = max(q.y, 0.0);
 
-    // Superellipse p-norm. Use a small epsilon to keep pow() well-defined
-    // on the straight edges where one component is exactly 0.
-    float qxn = pow(qx + 1e-6, n);
-    float qyn = pow(qy + 1e-6, n);
-    float s   = qxn + qyn;
-    float arc = pow(s, 1.0 / n);
+    float d;
+    vec2 nrm;
 
-    float levelSet = min(max(q.x, q.y), 0.0) + arc - r;
+    if (qx <= 0.0 && qy <= 0.0) {
+        // Interior: nearest silhouette is the straight edge. Level-set
+        // slope is 1 already; normal is the axis with the larger q.
+        d = max(q.x, q.y) - r;
+        nrm = q.x >= q.y ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+    } else if (qx == 0.0) {
+        // Top/bottom straight edge past the corner box.
+        d = qy - r;
+        nrm = vec2(0.0, 1.0);
+    } else if (qy == 0.0) {
+        // Left/right straight edge past the corner box.
+        d = qx - r;
+        nrm = vec2(1.0, 0.0);
+    } else {
+        // Corner wedge: both qx, qy > 0.
+        float qxn = pow(qx, n);
+        float qyn = pow(qy, n);
+        float arc = pow(qxn + qyn, 1.0 / n);
+        // ∂arc/∂x = (qx/arc)^(n-1); same for y.
+        float gx = pow(qx / arc, n - 1.0);
+        float gy = pow(qy / arc, n - 1.0);
+        float gradLen = sqrt(gx*gx + gy*gy);
+        d   = (arc - r) / max(gradLen, 1e-3);
+        nrm = vec2(gx, gy) / max(gradLen, 1e-3);
+    }
 
-    // Analytic gradient of (arc - r) where arc > 0, i.e. inside the
-    // corner wedge. ∂arc/∂x = (qx/arc)^(n-1), similarly for y. Along
-    // straight edges this still evaluates to 1 since one component is 0
-    // and the other equals arc.
-    float gx = arc > 1e-4 ? pow(qx / arc, n - 1.0) : 0.0;
-    float gy = arc > 1e-4 ? pow(qy / arc, n - 1.0) : 0.0;
-    float gradLen = sqrt(gx*gx + gy*gy);
-    // Outside the shape the gradient logic still applies; inside (arc==0
-    // because both q components are <= 0) the level-set slope is 1 from
-    // the min(max(...),0) term. Guard for that with max(gradLen, 1.0)
-    // so interior fragments keep unit-gradient behavior.
-    return levelSet / max(gradLen, 1.0);
+    // q uses abs(p); flip the normal back to original-space signs.
+    nrm *= sign(p + vec2(1e-20));
+    return vec3(d, nrm);
 }
 
-vec2 sceneGradient(vec2 p) {
-    float dx = sceneSDF(p + vec2(1.0, 0.0)) - sceneSDF(p - vec2(1.0, 0.0));
-    float dy = sceneSDF(p + vec2(0.0, 1.0)) - sceneSDF(p - vec2(0.0, 1.0));
-    return vec2(dx, dy);
+// Distance-only helper for the silhouette mask / outside test.
+float sceneSDF(vec2 p) {
+    return sceneSDFAndNormal(p).x;
 }
 
 vec3 sampleBackdrop(vec2 localUV) {
@@ -196,7 +208,9 @@ vec3 cornerSpec(vec2 p, float depthPx) {
 void main() {
     vec2 uv = qt_TexCoord0;
     vec2 p  = (uv - vec2(0.5)) * size;
-    float d = sceneSDF(p);
+    vec3 dn = sceneSDFAndNormal(p);
+    float d = dn.x;
+    vec2 ndir = dn.yz;
 
     // Outside the shape (past the feather band): fully transparent.
     if (d > 1.5) {
@@ -221,10 +235,6 @@ void main() {
         float sinThetaT = sinThetaI / refractIOR;
         float thetaT = asin(clamp(sinThetaT, 0.0, 1.0));
         float edgeMag = tan(thetaI - thetaT);
-
-        vec2 grad = sceneGradient(p);
-        float gradLen = length(grad);
-        vec2 ndir = gradLen > 1e-4 ? grad / gradLen : vec2(0.0);
 
         vec2 displacePx = -ndir * edgeMag * refractScale;
         vec2 displaceUV = displacePx / size;

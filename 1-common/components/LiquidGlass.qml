@@ -38,12 +38,12 @@ Item {
     property bool specEnabled: true
     property real specStrength: 0.70
 
-    // Placeholder for blur (currently disabled in the pipeline)
-    property real blurRadiusPx: 32
+    // When false, the wallpaper is only re-captured on geometry changes
+    // (recommended for static wallpapers — saves GPU per frame). Turn on
+    // for animated / video wallpapers that need continuous updates.
+    property bool realtimeRefraction: false
 
     property real fallbackOpacity: 0.55
-
-    property bool debug: false
 
     readonly property var wallpaperItem: {
         const c = Plasmoid.containment
@@ -78,8 +78,12 @@ Item {
     function updateGeometry() {
         if (!wallpaperItem) return
         const p = glass.mapToItem(wallpaperItem, 0, 0)
-        if (p.x !== _offX) _offX = p.x
-        if (p.y !== _offY) _offY = p.y
+        let moved = false
+        if (p.x !== _offX) { _offX = p.x; moved = true }
+        if (p.y !== _offY) { _offY = p.y; moved = true }
+        // If realtime is off, force a one-shot backdrop recapture so the
+        // sampled wallpaper stays aligned after the widget moves.
+        if (moved && !realtimeRefraction) wallpaperTex.scheduleUpdate()
     }
 
     // --- Mouse tracking for specular highlight ---
@@ -132,12 +136,23 @@ Item {
         anchors.fill: parent
         opacity: 0
         sourceItem: glass.wallpaperItem
-        live: true
+        live: glass.realtimeRefraction
         hideSource: false
         recursive: false
         smooth: true
         mipmap: false
         textureMirroring: ShaderEffectSource.MirrorVertically
+
+        // When live is false we still need to re-capture on layout
+        // changes — size, wallpaper swap, or widget move (triggered from
+        // updateGeometry). Resize/wallpaper handled here; move is
+        // handled inside updateGeometry() above.
+        onSourceItemChanged: scheduleUpdate()
+        Connections {
+            target: glass
+            function onWidthChanged()  { if (!glass.realtimeRefraction) wallpaperTex.scheduleUpdate() }
+            function onHeightChanged() { if (!glass.realtimeRefraction) wallpaperTex.scheduleUpdate() }
+        }
     }
 
     // --- Pass 4: glass (refraction + chroma + tint + rim + mask) ---
