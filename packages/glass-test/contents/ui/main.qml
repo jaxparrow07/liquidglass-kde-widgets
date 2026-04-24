@@ -16,23 +16,22 @@ PlasmoidItem {
     }
 
     fullRepresentation: Item {
-        Layout.preferredWidth: 320
+        Layout.preferredWidth: 200
         Layout.preferredHeight: 200
-        Layout.minimumWidth: 160
-        Layout.minimumHeight: 100
+        Layout.minimumWidth: 120
+        Layout.minimumHeight: 120
 
         LiquidGlass {
             id: glass
             anchors.fill: parent
             radius: plasmoid.configuration.cornerRadius
-            roundness: plasmoid.configuration.roundness
+            roundness: plasmoid.configuration.roundnessX10 / 10
             refractThickness: plasmoid.configuration.refractThickness
             refractIOR: plasmoid.configuration.refractIORx100 / 100
             refractScale: plasmoid.configuration.refractScale
             tint: colors.glassTint
             tintAlpha: plasmoid.configuration.tintAlphaPct / 100
             chromaStrength: plasmoid.configuration.chromaStrengthPct / 100
-            specRadiusPx: plasmoid.configuration.specRadiusPx
             specStrength: plasmoid.configuration.specStrengthPct / 100
             fallbackOpacity: colors.glassFallbackOpacity
         }

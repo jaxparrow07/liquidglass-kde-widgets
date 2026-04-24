@@ -6,13 +6,12 @@ import org.kde.kirigami as Kirigami
 Kirigami.FormLayout {
     property alias cfg_themeMode: themeCombo.currentIndex
     property alias cfg_cornerRadius: radiusSpin.value
-    property alias cfg_roundness: roundnessSpin.value
+    property alias cfg_roundnessX10: roundnessSpin.value
     property alias cfg_refractThickness: thicknessSpin.value
     property alias cfg_refractIORx100: iorSpin.value
     property alias cfg_refractScale: scaleSpin.value
     property alias cfg_tintAlphaPct: tintSpin.value
     property alias cfg_chromaStrengthPct: chromaSpin.value
-    property alias cfg_specRadiusPx: specRadiusSpin.value
     property alias cfg_specStrengthPct: specStrengthSpin.value
     property alias cfg_firstDayOfWeek: firstDayCombo.currentIndex
 
@@ -31,13 +30,13 @@ Kirigami.FormLayout {
     SpinBox {
         id: radiusSpin
         Kirigami.FormData.label: i18n("Corner radius (px):")
-        from: 0; to: 80; stepSize: 1
+        from: 0; to: 200; stepSize: 1
     }
 
     SpinBox {
         id: roundnessSpin
-        Kirigami.FormData.label: i18n("Squircle roundness (2..7):")
-        from: 2; to: 7; stepSize: 1
+        Kirigami.FormData.label: i18n("Roundness (×10, 2.0..10.0):")
+        from: 20; to: 100; stepSize: 1
     }
 
     SpinBox {
@@ -68,12 +67,6 @@ Kirigami.FormLayout {
         id: chromaSpin
         Kirigami.FormData.label: i18n("Chromatic aberration (%):")
         from: 0; to: 100; stepSize: 1
-    }
-
-    SpinBox {
-        id: specRadiusSpin
-        Kirigami.FormData.label: i18n("Specular radius (px):")
-        from: 20; to: 400; stepSize: 10
     }
 
     SpinBox {

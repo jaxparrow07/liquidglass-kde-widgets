@@ -10,31 +10,28 @@
             <default>0</default>
         </entry>
         <entry name="cornerRadius" type="Int">
-            <default>32</default>
-        </entry>
-        <entry name="roundness" type="Int">
-            <default>5</default>
-        </entry>
-        <entry name="refractThickness" type="Int">
-            <default>22</default>
-        </entry>
-        <entry name="refractIORx100" type="Int">
-            <default>140</default>
-        </entry>
-        <entry name="refractScale" type="Int">
-            <default>60</default>
-        </entry>
-        <entry name="tintAlphaPct" type="Int">
-            <default>32</default>
-        </entry>
-        <entry name="chromaStrengthPct" type="Int">
-            <default>60</default>
-        </entry>
-        <entry name="specRadiusPx" type="Int">
             <default>100</default>
         </entry>
+        <entry name="roundnessX10" type="Int">
+            <default>75</default>
+        </entry>
+        <entry name="refractThickness" type="Int">
+            <default>30</default>
+        </entry>
+        <entry name="refractIORx100" type="Int">
+            <default>160</default>
+        </entry>
+        <entry name="refractScale" type="Int">
+            <default>65</default>
+        </entry>
+        <entry name="tintAlphaPct" type="Int">
+            <default>15</default>
+        </entry>
+        <entry name="chromaStrengthPct" type="Int">
+            <default>20</default>
+        </entry>
         <entry name="specStrengthPct" type="Int">
-            <default>60</default>
+            <default>70</default>
         </entry>
     </group>
 </kcfg>

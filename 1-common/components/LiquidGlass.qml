@@ -17,9 +17,9 @@ Item {
     id: glass
 
     // Shape
-    property real radius: 32
-    // Superellipse exponent: 2 = plain rounded rect, 5 ≈ iOS squircle
-    property real roundness: 5
+    property real radius: 100
+    // Superellipse exponent: 2 = plain rounded rect, 5.5 ≈ iOS squircle
+    property real roundness: 7.5
 
     // Glass effect — Snell-on-a-dome refraction through an edge band.
     // refractThickness is the width of that band in pixels. refractIOR is
@@ -27,18 +27,16 @@ Item {
     // exaggerates). refractScale is a user-facing strength multiplier on
     // top of Snell — cranked up vs. the reference because our coordinates
     // are widget pixels, not normalized units.
-    property real refractThickness: 22
-    property real refractIOR: 1.4
-    property real refractScale: 60
+    property real refractThickness: 30
+    property real refractIOR: 1.6
+    property real refractScale: 65
     property color tint: "#ffffff"
-    property real tintAlpha: 0.18
-    property real chromaStrength: 0.5
+    property real tintAlpha: 0.15
+    property real chromaStrength: 0.20
 
-    // Corner border specular (nearest + diagonal-opposite corners on hover).
-    // specRadiusPx is the arc-length taper in px from each corner apex.
+    // Corner border specular (dominant + diagonal-opposite corners).
     property bool specEnabled: true
-    property real specRadiusPx: 100
-    property real specStrength: 0.6
+    property real specStrength: 0.70
 
     // Placeholder for blur (currently disabled in the pipeline)
     property real blurRadiusPx: 32
@@ -162,7 +160,6 @@ Item {
 
         property vector2d mousePos: Qt.vector2d(glass._mouseU, glass._mouseV)
         property real mouseFade: glass._mouseFade
-        property real specRadiusPx: glass.specRadiusPx
         property real specStrength: glass.specEnabled ? glass.specStrength : 0.0
 
         property vector2d uvOffset: glass.active

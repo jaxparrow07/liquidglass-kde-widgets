@@ -81,8 +81,8 @@ PlasmoidItem {
 
     fullRepresentation: Item {
         id: full
-        Layout.preferredWidth: 220
-        Layout.preferredHeight: 220
+        Layout.preferredWidth: 200
+        Layout.preferredHeight: 200
         Layout.minimumWidth: 200
         Layout.minimumHeight: 200
 
@@ -93,14 +93,13 @@ PlasmoidItem {
             id: glass
             anchors.fill: parent
             radius: plasmoid.configuration.cornerRadius
-            roundness: plasmoid.configuration.roundness
+            roundness: plasmoid.configuration.roundnessX10 / 10
             refractThickness: plasmoid.configuration.refractThickness
             refractIOR: plasmoid.configuration.refractIORx100 / 100
             refractScale: plasmoid.configuration.refractScale
             tint: colors.glassTint
             tintAlpha: plasmoid.configuration.tintAlphaPct / 100
             chromaStrength: plasmoid.configuration.chromaStrengthPct / 100
-            specRadiusPx: plasmoid.configuration.specRadiusPx
             specStrength: plasmoid.configuration.specStrengthPct / 100
             fallbackOpacity: colors.glassFallbackOpacity
         }

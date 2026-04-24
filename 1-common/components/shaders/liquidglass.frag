@@ -37,7 +37,6 @@ layout(std140, binding = 0) uniform buf {
     vec2  uvScale;
     vec2  mousePos;          // widget-local UV (0..1); (-1,-1) = no mouse
     float mouseFade;         // 0..1 hover fade
-    float specRadiusPx;      // corner specular arc-length taper in px
     float specStrength;      // 0..1 intensity
 };
 
@@ -45,22 +44,53 @@ layout(binding = 1) uniform sampler2D backdrop;
 
 // --- Shape SDF: superellipse-cornered rounded rect (squircle) ---
 
-float superellipseCorner(vec2 p, float r, float n) {
-    p = abs(p);
-    float v = pow(pow(p.x, n) + pow(p.y, n), 1.0 / n);
-    return v - r;
-}
-
+// Squircle / rounded-box SDF.
+//
+// Uses the standard rounded-box form with the Euclidean length replaced
+// by a superellipse p-norm so the corner arc is a squircle.
+//
+//   q     = |p| - b + r
+//   arc   = (max(qx,0)^n + max(qy,0)^n)^(1/n)     — only nonzero inside corner wedge
+//   d_rel = min(max(qx, qy), 0) + arc             — level-set, zero on the shape
+//   d     = (d_rel - r) / |∇|                     — normalize to unit gradient
+//
+// The p-norm degenerates to the nonzero component along straight edges
+// (where one of max(qx,0)/max(qy,0) is zero), making this branch-free
+// AND seamless between edges and corners. The final division by the
+// analytic gradient magnitude converts the level-set value into a
+// near-Euclidean distance so AA feather and edge-band width stay
+// uniform around the silhouette (for n > 2 the raw gradient dips to
+// ~0.79 at the 45° apex, which is what widens the corner rim).
 float sceneSDF(vec2 p) {
     vec2 b = size * 0.5;
     float r = radius;
-    vec2 d = abs(p) - b;
-    if (d.x > -r && d.y > -r) {
-        vec2 cornerCenter = sign(p) * (b - vec2(r));
-        vec2 cp = p - cornerCenter;
-        return superellipseCorner(cp, r, roundness);
-    }
-    return min(max(d.x, d.y), 0.0) + length(max(d, vec2(0.0)));
+    float n = roundness;
+
+    vec2 q = abs(p) - b + vec2(r);
+    float qx = max(q.x, 0.0);
+    float qy = max(q.y, 0.0);
+
+    // Superellipse p-norm. Use a small epsilon to keep pow() well-defined
+    // on the straight edges where one component is exactly 0.
+    float qxn = pow(qx + 1e-6, n);
+    float qyn = pow(qy + 1e-6, n);
+    float s   = qxn + qyn;
+    float arc = pow(s, 1.0 / n);
+
+    float levelSet = min(max(q.x, q.y), 0.0) + arc - r;
+
+    // Analytic gradient of (arc - r) where arc > 0, i.e. inside the
+    // corner wedge. ∂arc/∂x = (qx/arc)^(n-1), similarly for y. Along
+    // straight edges this still evaluates to 1 since one component is 0
+    // and the other equals arc.
+    float gx = arc > 1e-4 ? pow(qx / arc, n - 1.0) : 0.0;
+    float gy = arc > 1e-4 ? pow(qy / arc, n - 1.0) : 0.0;
+    float gradLen = sqrt(gx*gx + gy*gy);
+    // Outside the shape the gradient logic still applies; inside (arc==0
+    // because both q components are <= 0) the level-set slope is 1 from
+    // the min(max(...),0) term. Guard for that with max(gradLen, 1.0)
+    // so interior fragments keep unit-gradient behavior.
+    return levelSet / max(gradLen, 1.0);
 }
 
 vec2 sceneGradient(vec2 p) {
@@ -74,21 +104,20 @@ vec3 sampleBackdrop(vec2 localUV) {
     return texture(backdrop, wpUV).rgb;
 }
 
-// Corner border specular. Thin stroke on the silhouette with per-corner
-// prominence: dominant corner (nearest cursor) full, diagonal opposite
-// half, the other two minimal. Slight feather.
+// Corner border specular. Always visible (even without hover) as a
+// thin stroke on two diagonal corners. Hover rotates the diagonal to
+// follow the cursor. Prominence: dominant corner full, diagonal
+// opposite half, the other two minimal. Slight feather.
 vec3 cornerSpec(vec2 p, float depthPx) {
-    if (mouseFade <= 0.0 || specStrength <= 0.0) return vec3(0.0);
-    if (mousePos.x < 0.0 || mousePos.y < 0.0) return vec3(0.0);
+    if (specStrength <= 0.0) return vec3(0.0);
 
     // Hard cap on stroke thickness at the dominant apex, in px.
     const float MAX_STROKE_PX = 3.0;
-    const float DOMINANT     = 1.0;  // the single nearest corner
+    const float DOMINANT     = 1.0;  // the single dominant corner
     const float DIAGONAL     = 0.5;  // its diagonal opposite
-    const float OTHER        = 0.12; // the other two corners (thin)
+    const float OTHER        = 0.0;  // the other two corners (off)
 
     vec2 b = size * 0.5;
-    vec2 mousePx = (mousePos - vec2(0.5)) * size;
 
     // Corner apexes (outer-rectangle corners).
     vec2 aTL = vec2(-b.x,  b.y);
@@ -96,32 +125,50 @@ vec3 cornerSpec(vec2 p, float depthPx) {
     vec2 aBL = vec2(-b.x, -b.y);
     vec2 aBR = vec2( b.x, -b.y);
 
-    // Softmax over the four corners to pick the dominant one without a
-    // hard pop when the cursor crosses an axis. The sharpness constant
-    // determines how decisively the nearest corner wins; larger = harder.
-    float sharp = 1.0 / (max(size.x, size.y) * 0.30);
-    float dTL = distance(mousePx, aTL);
-    float dTR = distance(mousePx, aTR);
-    float dBL = distance(mousePx, aBL);
-    float dBR = distance(mousePx, aBR);
-    float wTL = exp(-dTL * sharp);
-    float wTR = exp(-dTR * sharp);
-    float wBL = exp(-dBL * sharp);
-    float wBR = exp(-dBR * sharp);
-    float wSum = wTL + wTR + wBL + wBR + 1e-6;
-    wTL /= wSum; wTR /= wSum; wBL /= wSum; wBR /= wSum;
+    // Virtual "light" position that drives the softmax dominance.
+    // At rest (mouseFade=0): park it just outside TL so the TL+BR
+    // diagonal is the default lit pair. On hover: smoothly blend toward
+    // the real cursor so the diagonal rotates to follow it.
+    vec2 restLight = aTL * 1.2;
+    bool hovering  = mouseFade > 0.0 && mousePos.x >= 0.0 && mousePos.y >= 0.0;
+    vec2 cursorPx  = (mousePos - vec2(0.5)) * size;
+    vec2 lightPx   = hovering ? mix(restLight, cursorPx, mouseFade) : restLight;
 
-    // Per-corner prominence is a softmax-weighted blend of the three
-    // roles (dominant / diagonal / other). Each corner sees itself as
-    // dominant with weight w_self, the opposite diagonal as diagonal
-    // with weight w_opp, and the other two as "other".
-    float promTL = wTL*DOMINANT + wBR*DIAGONAL + (wTR + wBL)*OTHER;
-    float promTR = wTR*DOMINANT + wBL*DIAGONAL + (wTL + wBR)*OTHER;
-    float promBL = wBL*DOMINANT + wTR*DIAGONAL + (wTL + wBR)*OTHER;
-    float promBR = wBR*DOMINANT + wTL*DIAGONAL + (wTR + wBL)*OTHER;
+    // Distances from each corner to the virtual light.
+    float dTL = distance(lightPx, aTL);
+    float dTR = distance(lightPx, aTR);
+    float dBL = distance(lightPx, aBL);
+    float dBR = distance(lightPx, aBR);
+
+    // Diagonal selection: TL+BR vs TR+BL. Use min-distance within each
+    // pair so the diagonal containing the closest corner wins. Smooth
+    // crossover with a softmax so there's no hard pop on the axis.
+    float diag1Near = min(dTL, dBR);  // TL+BR
+    float diag2Near = min(dTR, dBL);  // TR+BL
+    float diagSharp = 1.0 / (max(size.x, size.y) * 0.12);
+    float wD1 = exp(-diag1Near * diagSharp);
+    float wD2 = exp(-diag2Near * diagSharp);
+    float wDsum = wD1 + wD2 + 1e-6;
+    wD1 /= wDsum; wD2 /= wDsum;
+
+    // Within each diagonal, whichever corner is closer to the light
+    // gets DOMINANT, the other gets DIAGONAL.
+    float d1_TL_role = (dTL <= dBR) ? DOMINANT : DIAGONAL;
+    float d1_BR_role = (dTL <= dBR) ? DIAGONAL : DOMINANT;
+    float d2_TR_role = (dTR <= dBL) ? DOMINANT : DIAGONAL;
+    float d2_BL_role = (dTR <= dBL) ? DIAGONAL : DOMINANT;
+
+    // Per-corner prominence: role from its diagonal, weighted by that
+    // diagonal's softmax weight. Corners on the losing diagonal get 0.
+    float promTL = wD1 * d1_TL_role;
+    float promBR = wD1 * d1_BR_role;
+    float promTR = wD2 * d2_TR_role;
+    float promBL = wD2 * d2_BL_role;
 
     // Arc-length attenuation along the border from each apex.
-    float taper = max(1.0, specRadiusPx);
+    // Taper scales with widget size so the stroke reads the same
+    // at 150px and 500px widgets.
+    float taper = max(size.x, size.y) * 0.7;
     float aTLa = exp(-distance(p, aTL) / taper);
     float aTRa = exp(-distance(p, aTR) / taper);
     float aBLa = exp(-distance(p, aBL) / taper);
@@ -142,7 +189,7 @@ vec3 cornerSpec(vec2 p, float depthPx) {
 
     // Global tone-down multiplier so the effect stays subtle even at
     // specStrength = 1.0.
-    float I = stroke * specStrength * mouseFade * 0.55;
+    float I = stroke * specStrength * 0.55;
     return vec3(1.0, 0.98, 0.94) * I;
 }
 
@@ -151,8 +198,8 @@ void main() {
     vec2 p  = (uv - vec2(0.5)) * size;
     float d = sceneSDF(p);
 
-    // Outside the shape: fully transparent.
-    if (d > 0.5) {
+    // Outside the shape (past the feather band): fully transparent.
+    if (d > 1.5) {
         fragColor = vec4(0.0);
         return;
     }
@@ -166,7 +213,9 @@ void main() {
         col = mix(col, tint.rgb, tint.a);
     } else {
         // --- Edge band: Snell on a dome ---
-        float t = depthPx / refractThickness;
+        // Clamp t so fragments in the outer feather band (d > 0) produce
+        // valid colors; the silhouette mask alpha-blends them out.
+        float t = clamp(depthPx / refractThickness, 0.0, 1.0);
         float sinThetaI = (1.0 - t) * (1.0 - t);
         float thetaI = asin(clamp(sinThetaI, 0.0, 1.0));
         float sinThetaT = sinThetaI / refractIOR;
@@ -195,7 +244,9 @@ void main() {
         col += cornerSpec(p, depthPx);
     }
 
-    // Final AA mask at the silhouette.
-    float mask = 1.0 - smoothstep(-1.0, 0.0, d);
+    // Final AA mask at the silhouette. Feather ~2.5px centered slightly
+    // inside the geometric edge so the outer rim softens into the
+    // backdrop instead of showing stepped squircle pixels.
+    float mask = 1.0 - smoothstep(-1.5, 1.0, d);
     fragColor = vec4(col, mask) * qt_Opacity;
 }
