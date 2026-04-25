@@ -10,17 +10,18 @@ Item {
     property real fontPixelSize: 96
     property real digitOpacity: 0.7
     property real maxBlur: 1.0
-    property int duration: 500
+    property int duration: 400
 
     readonly property real _glyphHeight: fm.ascent + fm.descent
     readonly property real _p: clamp(_progress, 0, 1)
     readonly property real _speed: Math.sin(Math.PI * _p)
+    readonly property real _springOffset: Math.sin(Math.PI * _springT) * _glyphHeight * 0.05
     property string _restValue: value
     property string _fromValue: value
     property string _toValue: value
     property bool _transitioning: false
     property real _progress: 1
-    property real _springOffset: 0
+    property real _springT: 0
     property real _incomingScale: 1
     property real _outgoingScale: 1
 
@@ -46,7 +47,7 @@ Item {
         _fromValue = _transitioning ? _toValue : _restValue
         _toValue = nextValue
         _progress = 0
-        _springOffset = 0
+        _springT = 0
         _transitioning = true
         rollAnimation.restart()
     }
@@ -95,7 +96,7 @@ Item {
         layer.effect: MultiEffect {
             blurEnabled: true
             blurMax: 96
-            blur: root.maxBlur * root.clamp(Math.pow(root._p, 0.45) * 0.70 + root._speed * 0.40, 0, 1)
+            blur: root.maxBlur * root.clamp(Math.pow(root._p, 0.45) * 0.52 + root._speed * 0.30, 0, 1)
         }
     }
 
@@ -126,7 +127,7 @@ Item {
         layer.effect: MultiEffect {
             blurEnabled: true
             blurMax: 96
-            blur: root.maxBlur * root.clamp(Math.pow(1 - root._p, 0.45) * 0.85 + root._speed * 0.35, 0, 1)
+            blur: root.maxBlur * root.clamp(Math.pow(1 - root._p, 0.45) * 0.64 + root._speed * 0.26, 0, 1)
         }
     }
 
@@ -143,22 +144,14 @@ Item {
             }
             SequentialAnimation {
                 PauseAnimation {
-                    duration: Math.round(root.duration * 0.37)
+                    duration: Math.round(root.duration * 0.22)
                 }
                 NumberAnimation {
                     target: root
-                    property: "_springOffset"
+                    property: "_springT"
                     from: 0
-                    to: root._glyphHeight * 0.05
-                    duration: Math.round(root.duration * 0.26)
-                    easing.type: Easing.InOutCubic
-                }
-                NumberAnimation {
-                    target: root
-                    property: "_springOffset"
-                    from: root._glyphHeight * 0.05
-                    to: 0
-                    duration: Math.round(root.duration * 0.32)
+                    to: 1
+                    duration: Math.round(root.duration * 0.78)
                     easing.type: Easing.InOutCubic
                 }
             }
@@ -182,7 +175,7 @@ Item {
         onFinished: {
             root._restValue = root._toValue
             root._progress = 1
-            root._springOffset = 0
+            root._springT = 0
             root._incomingScale = 1
             root._outgoingScale = 1
             root._transitioning = false
