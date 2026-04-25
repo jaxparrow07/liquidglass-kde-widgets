@@ -6,7 +6,10 @@
     <kcfgfile name=""/>
 
     <group name="General">
-        <entry name="themeMode" type="Int">
+        <entry name="styleMode" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="appearance" type="Int">
             <default>0</default>
         </entry>
         <entry name="cornerRadius" type="Int">

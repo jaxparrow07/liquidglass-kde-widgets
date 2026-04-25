@@ -65,8 +65,8 @@ layout(binding = 1) uniform sampler2D backdrop;
 // points outward in original p-space (q uses abs(p)).
 vec3 sceneSDFAndNormal(vec2 p) {
     vec2 b = size * 0.5;
-    float r = radius;
-    float n = roundness;
+    float n = max(roundness, 2.0);
+    float r = clamp(radius, 0.0, min(b.x, b.y));
 
     vec2 q = abs(p) - b + vec2(r);
     float qx = max(q.x, 0.0);
@@ -116,17 +116,16 @@ vec3 sampleBackdrop(vec2 localUV) {
     return texture(backdrop, wpUV).rgb;
 }
 
-// Corner border specular. Always visible (even without hover) as a
-// thin stroke on two diagonal corners. Hover rotates the diagonal to
-// follow the cursor. Prominence: dominant corner full, diagonal
-// opposite half, the other two minimal. Slight feather.
+// Corner border specular. Visible at rest as a thin stroke on the
+// TL+BR diagonal; hover steers the dominant corner/diagonal toward the
+// cursor. Prominence: dominant corner full, diagonal opposite 80%.
 vec3 cornerSpec(vec2 p, float depthPx) {
     if (specStrength <= 0.0) return vec3(0.0);
 
     // Hard cap on stroke thickness at the dominant apex, in px.
     const float MAX_STROKE_PX = 3.0;
     const float DOMINANT     = 1.0;  // the single dominant corner
-    const float DIAGONAL     = 0.5;  // its diagonal opposite
+    const float DIAGONAL     = 0.8;  // its diagonal opposite
     const float OTHER        = 0.0;  // the other two corners (off)
 
     vec2 b = size * 0.5;
@@ -137,10 +136,9 @@ vec3 cornerSpec(vec2 p, float depthPx) {
     vec2 aBL = vec2(-b.x, -b.y);
     vec2 aBR = vec2( b.x, -b.y);
 
-    // Virtual "light" position that drives the softmax dominance.
-    // At rest (mouseFade=0): park it just outside TL so the TL+BR
-    // diagonal is the default lit pair. On hover: smoothly blend toward
-    // the real cursor so the diagonal rotates to follow it.
+    // Virtual "light" position that drives the softmax dominance. At
+    // rest it is parked just outside TL; hover blends it toward the
+    // cursor so the diagonal rotates without popping.
     vec2 restLight = aTL * 1.2;
     bool hovering  = mouseFade > 0.0 && mousePos.x >= 0.0 && mousePos.y >= 0.0;
     vec2 cursorPx  = (mousePos - vec2(0.5)) * size;
@@ -205,6 +203,18 @@ vec3 cornerSpec(vec2 p, float depthPx) {
     return vec3(1.0, 0.98, 0.94) * I;
 }
 
+vec3 edgeSpec(vec2 ndir, float depthPx) {
+    if (specStrength <= 0.0) return vec3(0.0);
+
+    // A very shallow lip highlight around the silhouette. Directional
+    // weighting keeps it from becoming a flat white outline.
+    float lip = 1.0 - smoothstep(0.0, 3.0, max(depthPx, 0.0));
+    vec2 lightDir = normalize(vec2(-0.45, 0.90));
+    float facing = 0.35 + 0.65 * clamp(dot(ndir, lightDir) * 0.5 + 0.5, 0.0, 1.0);
+    float I = lip * facing * specStrength * 0.10;
+    return vec3(1.0, 0.98, 0.94) * I;
+}
+
 void main() {
     vec2 uv = qt_TexCoord0;
     vec2 p  = (uv - vec2(0.5)) * size;
@@ -221,7 +231,9 @@ void main() {
     vec3 col;
     float depthPx = -d;
 
-    if (depthPx >= refractThickness) {
+    bool canRefract = refractThickness > 0.0;
+
+    if (!canRefract || depthPx >= refractThickness) {
         // Interior: flat glass (pass-through + tint), no refraction.
         col = sampleBackdrop(uv);
         col = mix(col, tint.rgb, tint.a);
@@ -249,14 +261,20 @@ void main() {
 
         col = mix(col, tint.rgb, tint.a);
 
-        // Corner specular — hairline stroke on the silhouette (self-gated
-        // by its own stroke-thickness test in depthPx).
-        col += cornerSpec(p, depthPx);
     }
 
-    // Final AA mask at the silhouette. Feather ~2.5px centered slightly
-    // inside the geometric edge so the outer rim softens into the
-    // backdrop instead of showing stepped squircle pixels.
-    float mask = 1.0 - smoothstep(-1.5, 1.0, d);
-    fragColor = vec4(col, mask) * qt_Opacity;
+    col += edgeSpec(ndir, depthPx);
+    col += cornerSpec(p, depthPx);
+
+    // Final AA mask at the silhouette. ~1px feather centered exactly
+    // on the geometric edge — narrower than the previous 2.5px so
+    // corners (where the AA feather covers more screen pixels per SDF
+    // unit) don't read as a bright halo against the wallpaper.
+    float mask = 1.0 - smoothstep(-0.5, 0.5, d);
+
+    // Qt Quick blends ShaderEffect output as premultiplied alpha. The
+    // silhouette feather must premultiply RGB by the mask; otherwise
+    // fractional-alpha edge pixels still carry full tint/solid color and
+    // blend as a bright fringe, most visible around squircle corners.
+    fragColor = vec4(col * mask, mask) * qt_Opacity;
 }

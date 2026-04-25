@@ -45,6 +45,13 @@ Item {
 
     property real fallbackOpacity: 0.55
 
+    // Solid mode: skip wallpaper capture and refraction; render an opaque
+    // squircle filled with `solidColor`. The squircle silhouette + corner
+    // specular still render via the same shader (tint forced opaque), so
+    // the macOS material feel is preserved.
+    property bool solidMode: false
+    property color solidColor: "#1A1B1E"
+
     readonly property var wallpaperItem: {
         const c = Plasmoid.containment
         if (!c) return null
@@ -118,7 +125,10 @@ Item {
     Timer {
         interval: 16
         repeat: true
-        running: glass.active && glass.visible && glass.width > 0 && glass.height > 0
+        // Solid mode doesn't need geometry updates (no wallpaper sample),
+        // but we still want the timer disabled until the widget has size.
+        running: !glass.solidMode && glass.active
+                 && glass.visible && glass.width > 0 && glass.height > 0
         onTriggered: glass.updateGeometry()
     }
     Component.onCompleted: updateGeometry()
@@ -135,8 +145,10 @@ Item {
         id: wallpaperTex
         anchors.fill: parent
         opacity: 0
-        sourceItem: glass.wallpaperItem
-        live: glass.realtimeRefraction
+        // In solid mode we don't need the wallpaper at all — drop the
+        // sourceItem so Plasma stops paying for the capture entirely.
+        sourceItem: glass.solidMode ? null : glass.wallpaperItem
+        live: !glass.solidMode && glass.realtimeRefraction
         hideSource: false
         recursive: false
         smooth: true
@@ -150,28 +162,35 @@ Item {
         onSourceItemChanged: scheduleUpdate()
         Connections {
             target: glass
-            function onWidthChanged()  { if (!glass.realtimeRefraction) wallpaperTex.scheduleUpdate() }
-            function onHeightChanged() { if (!glass.realtimeRefraction) wallpaperTex.scheduleUpdate() }
+            function onWidthChanged()  { if (!glass.solidMode && !glass.realtimeRefraction) wallpaperTex.scheduleUpdate() }
+            function onHeightChanged() { if (!glass.solidMode && !glass.realtimeRefraction) wallpaperTex.scheduleUpdate() }
         }
     }
 
     // --- Pass 4: glass (refraction + chroma + tint + rim + mask) ---
+    //
+    // In solid mode we still run the shader so the squircle silhouette
+    // (AA mask) and corner specular highlight render the same way, but
+    // we force tintAlpha = 1.0 with `solidColor`. The wallpaper sample
+    // is hidden behind the opaque tint and doesn't matter.
 
     ShaderEffect {
         id: glassShader
         anchors.fill: parent
-        visible: glass.active
+        visible: glass.solidMode || glass.active
         fragmentShader: Qt.resolvedUrl("shaders/liquidglass.frag.qsb")
 
         property variant backdrop: wallpaperTex
         property size size: Qt.size(Math.max(1, glass.width), Math.max(1, glass.height))
         property real radius: glass.radius
         property real roundness: glass.roundness
-        property real refractThickness: glass.refractThickness
+        property real refractThickness: glass.solidMode ? 0.0 : glass.refractThickness
         property real refractIOR: glass.refractIOR
-        property real refractScale: glass.refractScale
-        property real chromaStrength: glass.chromaStrength
-        property vector4d tint: Qt.vector4d(glass.tint.r, glass.tint.g, glass.tint.b, glass.tintAlpha)
+        property real refractScale: glass.solidMode ? 0.0 : glass.refractScale
+        property real chromaStrength: glass.solidMode ? 0.0 : glass.chromaStrength
+        property vector4d tint: glass.solidMode
+            ? Qt.vector4d(glass.solidColor.r, glass.solidColor.g, glass.solidColor.b, 1.0)
+            : Qt.vector4d(glass.tint.r, glass.tint.g, glass.tint.b, glass.tintAlpha)
 
         property vector2d mousePos: Qt.vector2d(glass._mouseU, glass._mouseV)
         property real mouseFade: glass._mouseFade
@@ -188,11 +207,15 @@ Item {
     }
 
     // --- Fallback ---
+    // Used when the wallpaper containment is unavailable (panels,
+    // plasmoidviewer) AND we're in glass mode. In solid mode the shader
+    // above already renders an opaque tinted squircle, so no fallback
+    // needed.
 
     Rectangle {
         id: fallback
         anchors.fill: parent
-        visible: !glass.active
+        visible: !glass.solidMode && !glass.active
         color: glass.tint
         opacity: glass.fallbackOpacity
         radius: glass.radius

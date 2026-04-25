@@ -13,7 +13,8 @@ PlasmoidItem {
 
     MacOSColors {
         id: colors
-        themeMode: plasmoid.configuration.themeMode
+        styleMode: plasmoid.configuration.styleMode
+        appearance: plasmoid.configuration.appearance
     }
 
     FontLoader {
@@ -70,6 +71,8 @@ PlasmoidItem {
             specStrength: plasmoid.configuration.specStrengthPct / 100
             realtimeRefraction: plasmoid.configuration.realtimeRefraction
             fallbackOpacity: colors.glassFallbackOpacity
+            solidMode: colors.isSolid
+            solidColor: colors.solidBackground
         }
 
         TickRing {
@@ -80,8 +83,8 @@ PlasmoidItem {
             outerInset: 0.05
             tickLength: 0.05
             tickWidthPx: 2.2
-            baseOpacity: 0.18
-            tickColor: "#ffffff"
+            baseOpacity: colors.isGlass ? 0.18 : 0.5
+            tickColor: colors.foreground
         }
 
         // Smoothly advance the second hand at ~60fps while visible.
@@ -110,8 +113,8 @@ PlasmoidItem {
                 full.width - 2 * Math.min(full.width, full.height) * 0.15)
             hour12: root.hour12
             minute: root.minute
-            digitOpacity: 0.55
-            textColor: "#ffffff"
+            digitOpacity: colors.isGlass ? 0.55 : 1.0
+            textColor: colors.foreground
         }
     }
 }

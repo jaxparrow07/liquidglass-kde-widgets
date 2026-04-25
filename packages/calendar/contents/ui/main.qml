@@ -13,7 +13,8 @@ PlasmoidItem {
 
     MacOSColors {
         id: colors
-        themeMode: plasmoid.configuration.themeMode
+        styleMode: plasmoid.configuration.styleMode
+        appearance: plasmoid.configuration.appearance
     }
 
     FontLoader {
@@ -112,6 +113,8 @@ PlasmoidItem {
             specStrength: plasmoid.configuration.specStrengthPct / 100
             realtimeRefraction: plasmoid.configuration.realtimeRefraction
             fallbackOpacity: colors.glassFallbackOpacity
+            solidMode: colors.isSolid
+            solidColor: colors.solidBackground
         }
 
         ColumnLayout {
@@ -138,7 +141,7 @@ PlasmoidItem {
                     x: parent.width / 7 / 2 - sMetrics.width / 2
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.monthNames[root.viewMonth].toUpperCase()
-                    color: "#ffffff"
+                    color: colors.foreground
                     font.family: sfRegular.name
                     font.pixelSize: full.labelSize
                     font.weight: Font.Regular
@@ -161,7 +164,7 @@ PlasmoidItem {
                             Text {
                                 anchors.centerIn: parent
                                 text: root.weekdayShort[index]
-                                color: "#ffffff"
+                                color: colors.foreground
                                 opacity: root.isWeekendCol(index) ? 0.45 : 0.75
                                 font.family: sfRegular.name
                                 font.pixelSize: full.labelSize
@@ -208,7 +211,7 @@ PlasmoidItem {
                                 anchors.centerIn: parent
                                 visible: !empty && !isCurrent
                                 text: day
-                                color: "#ffffff"
+                                color: colors.foreground
                                 opacity: isWeekend ? 0.45 : 1.0
                                 font.family: sfRegular.name
                                 font.pixelSize: full.labelSize
@@ -221,7 +224,7 @@ PlasmoidItem {
                                 dayNumber: day
                                 diameter: gridWrap.badgeDiameter
                                 fontFamily: sfRegular.name
-                                badgeColor: "#ffffff"
+                                badgeColor: colors.todayAccent
                             }
                         }
                     }

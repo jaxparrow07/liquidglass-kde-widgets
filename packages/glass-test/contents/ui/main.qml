@@ -12,7 +12,8 @@ PlasmoidItem {
 
     MacOSColors {
         id: colors
-        themeMode: plasmoid.configuration.themeMode
+        styleMode: plasmoid.configuration.styleMode
+        appearance: plasmoid.configuration.appearance
     }
 
     fullRepresentation: Item {
@@ -35,6 +36,8 @@ PlasmoidItem {
             specStrength: plasmoid.configuration.specStrengthPct / 100
             realtimeRefraction: plasmoid.configuration.realtimeRefraction
             fallbackOpacity: colors.glassFallbackOpacity
+            solidMode: colors.isSolid
+            solidColor: colors.solidBackground
         }
 
         ColumnLayout {
@@ -44,7 +47,7 @@ PlasmoidItem {
             Text {
                 Layout.alignment: Qt.AlignHCenter
                 text: "Liquid glASS"
-                color: colors.labelPrimary
+                color: colors.foreground
                 font.pixelSize: 28
                 font.weight: Font.DemiBold
             }
