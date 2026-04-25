@@ -83,7 +83,7 @@ Item {
         font.weight: Font.Thin
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        renderType: Text.NativeRendering
+        renderType: Text.QtRendering
         transform: Scale {
             origin.x: outgoingDigit.width / 2
             origin.y: outgoingDigit.height
@@ -114,7 +114,7 @@ Item {
         font.weight: Font.Thin
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        renderType: Text.NativeRendering
+        renderType: Text.QtRendering
         transform: Scale {
             origin.x: incomingDigit.width / 2
             origin.y: 0
@@ -142,21 +142,24 @@ Item {
                 easing.type: Easing.OutCubic
             }
             SequentialAnimation {
-                NumberAnimation {
-                    target: root
-                    property: "_springOffset"
-                    from: 0
-                    to: root._glyphHeight * 0.06
-                    duration: Math.round(root.duration * 0.45)
-                    easing.type: Easing.OutSine
+                PauseAnimation {
+                    duration: Math.round(root.duration * 0.37)
                 }
                 NumberAnimation {
                     target: root
                     property: "_springOffset"
-                    from: root._glyphHeight * 0.06
+                    from: 0
+                    to: root._glyphHeight * 0.05
+                    duration: Math.round(root.duration * 0.26)
+                    easing.type: Easing.InOutCubic
+                }
+                NumberAnimation {
+                    target: root
+                    property: "_springOffset"
+                    from: root._glyphHeight * 0.05
                     to: 0
-                    duration: Math.round(root.duration * 0.55)
-                    easing.type: Easing.OutCubic
+                    duration: Math.round(root.duration * 0.32)
+                    easing.type: Easing.InOutCubic
                 }
             }
             NumberAnimation {
@@ -165,7 +168,7 @@ Item {
                 from: 0.0
                 to: 1.0
                 duration: root.duration
-                easing.type: Easing.OutCubic
+                easing.type: Easing.OutQuint
             }
             NumberAnimation {
                 target: root
@@ -173,7 +176,7 @@ Item {
                 from: 1.0
                 to: 0.0
                 duration: root.duration
-                easing.type: Easing.OutCubic
+                easing.type: Easing.OutQuint
             }
         }
         onFinished: {
