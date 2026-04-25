@@ -30,19 +30,15 @@ PlasmoidItem {
     // First day of week: 0 = Sunday, 1 = Monday
     readonly property int firstDow: plasmoid.configuration.firstDayOfWeek
 
-    readonly property var monthNames: [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ]
+    readonly property var monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     readonly property var weekdayShortSun: ["S", "M", "T", "W", "T", "F", "S"]
     readonly property var weekdayShortMon: ["M", "T", "W", "T", "F", "S", "S"]
     readonly property var weekdayShort: firstDow === 1 ? weekdayShortMon : weekdayShortSun
 
     // Column [0..6] → is this a Sat/Sun column, given the current firstDow?
     function isWeekendCol(col) {
-        return firstDow === 1
-            ? (col === 5 || col === 6) // Mon-first: cols 5,6 = Sat,Sun
-            : (col === 0 || col === 6) // Sun-first: cols 0,6 = Sun,Sat
+        return firstDow === 1 ? (col === 5 || col === 6) // Mon-first: cols 5,6 = Sat,Sun
+        : (col === 0 || col === 6); // Sun-first: cols 0,6 = Sun,Sat
     }
 
     // Precomputed day-of-month per grid slot [0..41]; 0 means empty.
@@ -50,23 +46,24 @@ PlasmoidItem {
     // delegates read from this instead of calling Date() 42× per redraw.
     property var monthDays: []
     function rebuildMonthDays() {
-        const firstOfMonth = new Date(viewYear, viewMonth, 1)
-        let offset = firstOfMonth.getDay() - firstDow
-        if (offset < 0) offset += 7
-        const lastDay = new Date(viewYear, viewMonth + 1, 0).getDate()
-        const out = new Array(42)
+        const firstOfMonth = new Date(viewYear, viewMonth, 1);
+        let offset = firstOfMonth.getDay() - firstDow;
+        if (offset < 0)
+            offset += 7;
+        const lastDay = new Date(viewYear, viewMonth + 1, 0).getDate();
+        const out = new Array(42);
         for (let i = 0; i < 42; i++) {
-            const day = i - offset + 1
-            out[i] = (day < 1 || day > lastDay) ? 0 : day
+            const day = i - offset + 1;
+            out[i] = (day < 1 || day > lastDay) ? 0 : day;
         }
-        monthDays = out
+        monthDays = out;
     }
     onViewYearChanged: rebuildMonthDays()
     onViewMonthChanged: rebuildMonthDays()
     onFirstDowChanged: rebuildMonthDays()
     Component.onCompleted: {
-        rebuildMonthDays()
-        scheduleNextMidnight()
+        rebuildMonthDays();
+        scheduleNextMidnight();
     }
 
     // Midnight rollover: fire once exactly at next local midnight, then
@@ -75,18 +72,20 @@ PlasmoidItem {
         id: midnightTimer
         repeat: false
         onTriggered: {
-            const n = new Date()
-            root.today = n
-            if (n.getFullYear() !== root.viewYear) root.viewYear = n.getFullYear()
-            if (n.getMonth() !== root.viewMonth) root.viewMonth = n.getMonth()
-            root.scheduleNextMidnight()
+            const n = new Date();
+            root.today = n;
+            if (n.getFullYear() !== root.viewYear)
+                root.viewYear = n.getFullYear();
+            if (n.getMonth() !== root.viewMonth)
+                root.viewMonth = n.getMonth();
+            root.scheduleNextMidnight();
         }
     }
     function scheduleNextMidnight() {
-        const now = new Date()
-        const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5)
-        midnightTimer.interval = Math.max(1000, next.getTime() - now.getTime())
-        midnightTimer.start()
+        const now = new Date();
+        const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
+        midnightTimer.interval = Math.max(1000, next.getTime() - now.getTime());
+        midnightTimer.start();
     }
 
     fullRepresentation: Item {
@@ -183,9 +182,7 @@ PlasmoidItem {
 
                 readonly property real cellW: width / 7
                 readonly property real cellH: height / 6
-                // Circle diameter — slightly tighter so it reads as a chip,
-                // not a blob that fills the whole cell.
-                readonly property real badgeDiameter: Math.min(cellW, cellH) * 0.78
+                readonly property real badgeDiameter: Math.min(cellW, cellH) * 1.02
 
                 Grid {
                     id: dayGrid
@@ -201,10 +198,7 @@ PlasmoidItem {
 
                             readonly property int day: root.monthDays[index] || 0
                             readonly property bool empty: day === 0
-                            readonly property bool isCurrent: !empty
-                                && day === root.today.getDate()
-                                && root.viewMonth === root.today.getMonth()
-                                && root.viewYear === root.today.getFullYear()
+                            readonly property bool isCurrent: !empty && day === root.today.getDate() && root.viewMonth === root.today.getMonth() && root.viewYear === root.today.getFullYear()
                             readonly property bool isWeekend: root.isWeekendCol(index % 7)
 
                             Text {
@@ -220,11 +214,19 @@ PlasmoidItem {
 
                             TodayBadge {
                                 anchors.centerIn: parent
+                                width: parent.width + gridWrap.badgeDiameter * 0.30
+                                height: parent.height + gridWrap.badgeDiameter * 0.30
                                 visible: isCurrent
+                                contentRect: Qt.rect((width - parent.width) / 2, (height - parent.height) / 2, parent.width, parent.height)
                                 dayNumber: day
                                 diameter: gridWrap.badgeDiameter
+                                circleXOffset: full.labelSize * 0.04
+                                circleYOffset: -full.labelSize * 0.05
+                                fontPixelSize: full.labelSize
                                 fontFamily: sfRegular.name
                                 badgeColor: colors.todayAccent
+                                textColor: "#ffffff"
+                                punchOutText: colors.isGlass
                             }
                         }
                     }
