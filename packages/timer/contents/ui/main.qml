@@ -38,7 +38,7 @@ PlasmoidItem {
         id: countdownTick
         interval: 100
         repeat: true
-        running: root.timerState === 1
+        running: root.timerState === 1 && !startDelayTimer.running
         onTriggered: {
             var now = Date.now()
             root.remainingMs = Math.max(0, root.targetTime - now)
@@ -47,6 +47,15 @@ PlasmoidItem {
                 timerFinishedNotification.sendEvent()
             }
         }
+    }
+
+    // Delay between pressing Start and the countdown actually beginning —
+    // gives the RollingDigit entrance animations time to play first
+    Timer {
+        id: startDelayTimer
+        interval: 420
+        repeat: false
+        onTriggered: root.targetTime = Date.now() + root.remainingMs
     }
 
     Notification {
@@ -64,8 +73,8 @@ PlasmoidItem {
         if (ms <= 0) return
         totalMs = ms
         remainingMs = ms
-        targetTime = Date.now() + ms
         timerState = 1
+        startDelayTimer.restart()
     }
 
     function pauseTimer() {
@@ -79,23 +88,21 @@ PlasmoidItem {
     }
 
     function cancelTimer() {
+        startDelayTimer.stop()
         timerState = 0
         remainingMs = 0
-    }
-
-    function restartTimer() {
-        remainingMs = totalMs
-        targetTime = Date.now() + totalMs
-        timerState = 1
     }
 
     // ── UI ────────────────────────────────────────────────────────────────
     fullRepresentation: Item {
         id: full
-        Layout.preferredWidth: 240
-        Layout.preferredHeight: 280
-        Layout.minimumWidth: 200
-        Layout.minimumHeight: 240
+        Layout.preferredWidth: 200
+        Layout.preferredHeight: 200
+        Layout.minimumWidth: 160
+        Layout.minimumHeight: 160
+
+        readonly property real _minSide: Math.min(width, height)
+        readonly property real _btnSize: _minSide * 0.22
 
         LiquidGlass {
             id: glass
@@ -130,7 +137,8 @@ PlasmoidItem {
 
             Row {
                 anchors.centerIn: parent
-                spacing: 32
+                // Extra right spacing to account for the label text overflowing picker bounds
+                spacing: full._minSide * 0.12
 
                 CylinderPicker {
                     id: minPicker
@@ -141,8 +149,8 @@ PlasmoidItem {
                     labelFontFamily: sfRegular.name
                     textColor: colors.foreground
                     separatorColor: colors.foreground
-                    height: pickerArea.height * 0.82
-                    width: Math.min(pickerArea.width * 0.28, 80)
+                    height: pickerArea.height * 0.86
+                    width: full._minSide * 0.22
                     onCurrentIndexChanged: root.selectedMinutes = currentIndex
                 }
 
@@ -155,8 +163,8 @@ PlasmoidItem {
                     labelFontFamily: sfRegular.name
                     textColor: colors.foreground
                     separatorColor: colors.foreground
-                    height: pickerArea.height * 0.82
-                    width: Math.min(pickerArea.width * 0.28, 80)
+                    height: pickerArea.height * 0.86
+                    width: full._minSide * 0.22
                     onCurrentIndexChanged: root.selectedSeconds = currentIndex
                 }
             }
@@ -177,13 +185,13 @@ PlasmoidItem {
 
             CountdownDisplay {
                 anchors.centerIn: parent
-                width: parent.width * 0.9
-                height: parent.height * 0.7
+                width: parent.width * 0.92
+                height: parent.height * 0.75
                 minutes: root.displayMinutes
                 seconds: root.displaySeconds
-                fontFamily: sfThin.name
-                textColor: colors.foreground
-                digitOpacity: colors.isGlass ? 0.72 : 0.95
+                fontFamily: sfRegular.name
+                textColor: "#FF8B00"
+                digitOpacity: 1.0
                 flashing: root.timerState === 3
             }
         }
@@ -195,55 +203,55 @@ PlasmoidItem {
                 left: parent.left
                 right: parent.right
                 bottom: parent.bottom
-                bottomMargin: 18
+                bottomMargin: full._minSide * 0.08
             }
-            height: btnSize
+            height: full._btnSize
 
-            readonly property real btnSize: Math.min(full.width, full.height) * 0.26
-
-            // Cancel button — only visible when timer is active
+            // Cancel — left half, visible when timer is active
             TimerButton {
                 id: cancelBtn
-                diameter: buttonRow.btnSize
-                text: "Cancel"
-                fontFamily: sfRegular.name
-                backgroundColor: Qt.rgba(colors.foreground.r, colors.foreground.g, colors.foreground.b, 0.18)
-                textColor: colors.foreground
+                diameter: full._btnSize
+                iconSource: Qt.resolvedUrl("widget/icons/cancel.svg")
+                iconColor: "#ffffff"
+                backgroundColor: Qt.rgba(1, 1, 1, 0.15)
                 visible: root.timerState !== 0
-                anchors.left: parent.left
-                anchors.leftMargin: (parent.width / 2 - diameter) / 2
+                opacity: root.timerState !== 0 ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: 160 } }
                 anchors.verticalCenter: parent.verticalCenter
+                x: parent.width / 4 - diameter / 2
                 onClicked: root.cancelTimer()
             }
 
-            // Start / Pause / Resume button
+            // Action button — centered when IDLE, right quarter when active
             TimerButton {
                 id: actionBtn
-                diameter: buttonRow.btnSize
-                fontFamily: sfRegular.name
-                textColor: "#ffffff"
+                diameter: full._btnSize
 
-                text: {
-                    if (root.timerState === 0) return "Start"
-                    if (root.timerState === 1) return "Pause"
-                    if (root.timerState === 2) return "Resume"
-                    return "Start"
+                iconSource: {
+                    if (root.timerState === 1) return Qt.resolvedUrl("widget/icons/pause.svg")
+                    if (root.timerState === 3) return Qt.resolvedUrl("widget/icons/reload.svg")
+                    return Qt.resolvedUrl("widget/icons/play.svg")
                 }
 
-                backgroundColor: root.timerState === 1 ? "#ff9f0a" : "#30d158"
+                iconColor: root.timerState === 1 ? "#FF8E00" : "#00D443"
 
-                Behavior on backgroundColor { ColorAnimation { duration: 200 } }
-                Behavior on x { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                backgroundColor: {
+                    if (root.timerState === 1)
+                        return Qt.rgba(1, 0.557, 0, 0.18)
+                    return Qt.rgba(0, 0.831, 0.263, 0.18)
+                }
 
-                // When IDLE: center the button; when active: right half
+                Behavior on iconColor { ColorAnimation { duration: 180 } }
+                Behavior on x { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+
                 x: root.timerState === 0
                     ? (parent.width - diameter) / 2
-                    : parent.width / 2 + (parent.width / 2 - diameter) / 2
+                    : parent.width * 3 / 4 - diameter / 2
 
                 anchors.verticalCenter: parent.verticalCenter
 
                 enabled: root.timerState !== 0 || (root.selectedMinutes > 0 || root.selectedSeconds > 0)
-                opacity: enabled ? 1.0 : 0.4
+                opacity: enabled ? 1.0 : 0.35
                 Behavior on opacity { NumberAnimation { duration: 150 } }
 
                 onClicked: {
