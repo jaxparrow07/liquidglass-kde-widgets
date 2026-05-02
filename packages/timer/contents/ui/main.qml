@@ -219,6 +219,16 @@ PlasmoidItem {
         }
     }
 
+    ListModel {
+        id: presetsModel
+        ListElement { label: "1 min";  mins: 1;  secs: 0; pillColor: "#4ECDC4" }
+        ListElement { label: "2 min";  mins: 2;  secs: 0; pillColor: "#45B7D1" }
+        ListElement { label: "3 min";  mins: 3;  secs: 0; pillColor: "#96CEB4" }
+        ListElement { label: "5 min";  mins: 5;  secs: 0; pillColor: "#FF6B6B" }
+        ListElement { label: "10 min"; mins: 10; secs: 0; pillColor: "#DDA0DD" }
+        ListElement { label: "15 min"; mins: 15; secs: 0; pillColor: "#FFB347" }
+    }
+
     fullRepresentation: Item {
         id: full
         Layout.preferredWidth: 200
@@ -226,6 +236,8 @@ PlasmoidItem {
         Layout.minimumWidth: 160
         Layout.minimumHeight: 160
 
+        readonly property bool isWide: full.width >= full.height * 2
+        readonly property real wideGap: Math.round(full.height * 0.04)
         readonly property real _minSide: Math.min(width, height)
         readonly property real _btnSize: _minSide * 0.22
 
@@ -250,9 +262,92 @@ PlasmoidItem {
             solidColor: colors.solidBackground
         }
 
+        // ── Left panel: Presets (wide mode only) ──────────────────────────
+        Item {
+            id: leftPanel
+            visible: full.isWide
+            clip: true
+            anchors {
+                top: parent.top
+                left: parent.left
+                bottom: parent.bottom
+                right: rightPanel.left
+                rightMargin: full.wideGap
+            }
+
+            readonly property real _margin: Math.round(full.height * 0.09)
+            readonly property real _cardSize: Math.max(10, Math.round(full.height * 0.052))
+            readonly property real _cardSpacing: Math.round(full.height * 0.025)
+
+            Text {
+                id: presetsTitle
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                    topMargin: leftPanel._margin
+                    leftMargin: leftPanel._margin
+                }
+                text: "Presets"
+                color: colors.foreground
+                font.family: sfRegular.name
+                font.pixelSize: Math.max(10, Math.round(full.height * 0.058))
+                font.weight: Font.Regular
+                opacity: 0.55
+                font.letterSpacing: 0.5
+            }
+
+            ListView {
+                id: presetsList
+                anchors {
+                    top: presetsTitle.bottom
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                    topMargin: leftPanel._cardSpacing
+                    leftMargin: leftPanel._margin
+                    rightMargin: leftPanel._margin
+                    bottomMargin: leftPanel._margin
+                }
+                model: presetsModel
+                spacing: leftPanel._cardSpacing
+                clip: true
+
+                delegate: PresetCard {
+                    width: presetsList.width
+                    label: model.label
+                    pillColor: model.pillColor
+                    textColor: colors.foreground
+                    fontFamily: sfRegular.name
+                    fontSize: leftPanel._cardSize
+                    isGlass: colors.isGlass
+                    isLight: colors.isLight
+                    active: root.timerState === 0
+                    onClicked: {
+                        root.selectedMinutes = model.mins
+                        root.selectedSeconds = model.secs
+                        root.startTimer()
+                    }
+                }
+            }
+
+        }
+
+        // ── Right panel: Timer content ────────────────────────────────────
+        Item {
+            id: rightPanel
+            width: full.isWide ? full.height : full.width
+            anchors {
+                top: parent.top
+                right: parent.right
+                bottom: parent.bottom
+            }
+        }
+
         // ── Picker (IDLE) ─────────────────────────────────────────────────
         Item {
             id: pickerArea
+            parent: rightPanel
             anchors {
                 top: parent.top
                 left: parent.left
@@ -305,6 +400,7 @@ PlasmoidItem {
         // ── Countdown (RUNNING / PAUSED / FINISHED) ───────────────────────
         Item {
             id: countdownArea
+            parent: rightPanel
             anchors {
                 top: parent.top
                 left: parent.left
@@ -331,6 +427,7 @@ PlasmoidItem {
         // ── Button row ─────────────────────────────────────────────────────
         Item {
             id: buttonRow
+            parent: rightPanel
             anchors {
                 left: parent.left
                 right: parent.right

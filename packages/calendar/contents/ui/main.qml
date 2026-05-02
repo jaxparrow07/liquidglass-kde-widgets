@@ -88,15 +88,25 @@ PlasmoidItem {
         midnightTimer.start();
     }
 
+    ListModel {
+        id: eventsModel
+        ListElement { title: "Team Standup"; timeLabel: "9:00 AM"; pillColor: "#FF6B6B" }
+        ListElement { title: "Lunch Break"; timeLabel: "12:00 PM"; pillColor: "#4ECDC4" }
+        ListElement { title: "Design Review"; timeLabel: "2:30 PM"; pillColor: "#45B7D1" }
+        ListElement { title: "Focus Time"; timeLabel: "4:00 PM"; pillColor: "#96CEB4" }
+    }
+
     fullRepresentation: Item {
         id: full
         Layout.preferredWidth: 200
         Layout.preferredHeight: 200
-        Layout.minimumWidth: 200
-        Layout.minimumHeight: 200
+        Layout.minimumWidth: 160
+        Layout.minimumHeight: 160
 
+        readonly property bool isWide: full.width >= full.height * 2
+        readonly property real wideGap: Math.round(full.height * 0.04)
         // Single unified type scale — everything uses this size.
-        readonly property real labelSize: Math.max(10, Math.round(Math.min(full.width, full.height) * 0.058))
+        readonly property real labelSize: Math.max(10, Math.round(full.height * 0.058))
 
         LiquidGlass {
             id: glass
@@ -116,10 +126,87 @@ PlasmoidItem {
             solidColor: colors.solidBackground
         }
 
+        // ── Left panel: Events (wide mode only) ───────────────────────────
+        Item {
+            id: leftPanel
+            visible: full.isWide
+            anchors {
+                top: parent.top
+                left: parent.left
+                bottom: parent.bottom
+                right: rightPanel.left
+                rightMargin: full.wideGap
+            }
+
+            readonly property real _margin: Math.round(full.height * 0.09)
+            readonly property real _cardSize: Math.max(10, Math.round(full.height * 0.052))
+            readonly property real _cardSpacing: Math.round(full.height * 0.025)
+
+            Text {
+                id: eventsTitle
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                    topMargin: leftPanel._margin
+                    leftMargin: leftPanel._margin
+                }
+                text: "Events"
+                color: colors.foreground
+                font.family: sfRegular.name
+                font.pixelSize: full.labelSize
+                font.weight: Font.Regular
+                opacity: 0.55
+                font.letterSpacing: 0.5
+            }
+
+            ListView {
+                id: eventsList
+                anchors {
+                    top: eventsTitle.bottom
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                    topMargin: leftPanel._cardSpacing
+                    leftMargin: leftPanel._margin
+                    rightMargin: leftPanel._margin
+                    bottomMargin: leftPanel._margin
+                }
+                model: eventsModel
+                spacing: leftPanel._cardSpacing
+                clip: true
+                interactive: false
+
+                delegate: EventCard {
+                    width: eventsList.width
+                    title: model.title
+                    timeLabel: model.timeLabel
+                    pillColor: model.pillColor
+                    textColor: colors.foreground
+                    fontFamily: sfRegular.name
+                    fontSize: leftPanel._cardSize
+                    isGlass: colors.isGlass
+                    isLight: colors.isLight
+                }
+            }
+        }
+
+        // ── Right panel: Calendar grid ────────────────────────────────────
+        Item {
+            id: rightPanel
+            width: full.isWide ? full.height : full.width
+            anchors {
+                top: parent.top
+                right: parent.right
+                bottom: parent.bottom
+            }
+        }
+
         ColumnLayout {
+            parent: rightPanel
             anchors.fill: parent
-            anchors.margins: Math.round(Math.min(full.width, full.height) * 0.09)
-            anchors.topMargin: Math.round(Math.min(full.width, full.height) * 0.14)
+            anchors.margins: Math.round(full.height * 0.09)
+            anchors.topMargin: Math.round(full.height * 0.14)
             spacing: Math.round(full.height * 0.02)
 
             // --- Month header — left edge aligned with the optical left
