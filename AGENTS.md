@@ -163,6 +163,84 @@ Item { id: rightPanel; width: isWide ? full.height : full.width; anchors.right: 
 - `packages/calendar/contents/ui/main.qml` + `packages/calendar/contents/ui/widget/EventCard.qml`
 - `packages/timer/contents/ui/main.qml` + `packages/timer/contents/ui/widget/PresetCard.qml`
 
+## Calendar event integration
+
+The calendar widget reads live events from KDE's calendar system and groups them into temporal sections in the wide-mode left panel. Events are **never shown in narrow mode** — the left panel is hidden when `width < height * 2`.
+
+### System requirements
+
+- **`plasma-workspace`** — provides `org.kde.plasma.workspace.calendar 2.0` (always present on Plasma 6). The QML module lives at `/usr/lib/x86_64-linux-gnu/qt6/qml/org/kde/plasma/workspace/calendar/`.
+- **`kpim6-kdepim-addons`** (optional) — provides the `pimevents` calendar plugin at `/usr/lib/x86_64-linux-gnu/qt6/plugins/plasmacalendarplugins/pimevents.so`. Without it, Akonadi/PIM events are silently skipped and the widget shows "No upcoming events". Install with `sudo apt install kpim6-kdepim-addons`.
+- **`kdepim-runtime`** — the Akonadi server that syncs with Nextcloud, Google Calendar, Outlook, etc. via CalDAV/CardDAV. `kpim6-kdepim-addons` depends on it.
+- **Holiday and astronomical event plugins** (`holidaysevents.so`, `astronomicalevents.so`) ship with `plasma-workspace` and require no extra packages.
+- Calendar sources (CalDAV accounts, local calendars) are configured system-wide in **Merkuro Calendar** or **KOrganizer** — the widget reads whatever Akonadi has already synced.
+
+### Architecture
+
+**Import:** `import org.kde.plasma.workspace.calendar 2.0 as PlasmaCalendar`
+
+**Key types** (from `calendarplugin.qmltypes`):
+- `PlasmaCalendar.EventPluginsManager` — loads/unloads calendar plugins. Set `enabledPlugins` to a `QStringList` of plugin IDs. Known IDs: `pimevents`, `holidaysevents`, `astronomicalevents`.
+- `PlasmaCalendar.Calendar` — a non-visual backend for a single calendar month. Properties: `days` (7), `weeks` (6), `firstDayOfWeek`, `today`. Methods: `goToYearAndMonth(year, month)` where `month` is **1-based**. The `daysModel` property is a `DaysModel`.
+- `DaysModel` (not directly creatable) — call `daysModel.setPluginsManager(manager)` once on `Component.onCompleted`. Then `daysModel.eventsForDate(date)` returns a `QVariantList` of `EventDataDecorator` objects. The `agendaUpdated(date)` signal fires when event data for a date changes.
+- `EventDataDecorator` properties: `title` (string), `startDateTime` (QDateTime), `endDateTime` (QDateTime), `isAllDay` (bool), `isMinor` (bool), `eventColor` (string, may be empty), `description` (string), `eventType` (string).
+
+**Multi-month lookahead:** A single `Calendar` backend only holds data for one displayed month. The calendar widget uses **three backends** (current, next, and month-after-next) to cover up to a 90-day lookahead:
+
+```qml
+PlasmaCalendar.Calendar { id: calendarBackend; ... Component.onCompleted: daysModel.setPluginsManager(eventPluginsManager) }
+PlasmaCalendar.Calendar { id: nextMonthBackend; ... Component.onCompleted: { daysModel.setPluginsManager(eventPluginsManager); goToYearAndMonth(...) } }
+PlasmaCalendar.Calendar { id: thirdMonthBackend; ... Component.onCompleted: { daysModel.setPluginsManager(eventPluginsManager); goToYearAndMonth(...) } }
+```
+
+Call `goToYearAndMonth(year, 1basedMonth)` — note month is 1-based, opposite of JS `Date.getMonth()`.
+
+**Event collection:** `_doRebuildEventsModel()` iterates dates from today through the lookahead end, calls `daysModel.eventsForDate(date)` on the backend whose displayed month matches the date, deduplicates multi-day events by `title + startDateTime.getTime()`, sorts all-day events before timed events, and groups results into three buckets: today, this week (after today), upcoming (beyond this week).
+
+**Debounce:** Multiple `agendaUpdated` signals fire in rapid succession when plugins load. Use an 80ms debounce Timer to coalesce them before calling `_doRebuildEventsModel()`.
+
+**Section header + card mixed ListView:** The `eventsModel` ListModel holds both section headers (`isHeader: true`) and event entries (`isHeader: false`) interleaved. Use a `Loader` delegate that switches `sourceComponent` based on `model.isHeader`. Pass data to the loaded item via `onLoaded { item.prop = model.value }` rather than `required property` (which doesn't cross the Loader boundary from a delegate context).
+
+### Config entries
+
+Three files must stay in sync (see `contents/config/main.xml`, `contents/ui/config/ConfigGeneral.qml`):
+
+| Entry | Type | Default | Meaning |
+|---|---|---|---|
+| `eventLookaheadDays` | Int | `2` | Index into `[7, 14, 30, 60]` preset days array |
+| `enabledCalendarPlugins` | StringList | `pimevents,holidaysevents` | Plugin IDs to load |
+
+`enabledCalendarPlugins` is a `StringList` kcfg type but QML stores/reads it as a JS array via `plasmoid.configuration.enabledCalendarPlugins`. In `ConfigGeneral.qml` it's bridged with a `cfg_` string property and helper functions that split/join on commas.
+
+### Event colors
+
+`EventDataDecorator.eventColor` is populated from `Akonadi::CollectionColorAttribute` — the per-collection color the user sets in Merkuro or KOrganizer. When it is empty (collection has no color, or event comes from a plugin that doesn't set colors), `_pillColorFor(ev)` falls back to a color keyed on `ev.eventType`:
+
+| `eventType` string | Meaning | Fallback color |
+|---|---|---|
+| `"Event"` | Calendar event (VEVENT) | `#4B9EFF` blue |
+| `"Todo"` | Task / to-do (VTODO) | `#FF9500` orange |
+| `"Journal"` | Journal entry (VJOURNAL) | `#34C759` green |
+| `"Holiday"` | Public holiday (holidaysevents plugin) | `#FF6B6B` red |
+
+If `eventType` is unrecognised, `colors.accent` (#0a84ff) is used. Collection colors always win over type fallbacks.
+
+### Display rules
+
+- **"Events today"** — `startDate == today`. `timeLabel` = `Qt.formatDateTime(ev.startDateTime, "h:mm AP")` or `"All day"`.
+- **"This week"** — after today, before start of next week. `timeLabel` = `Qt.formatDateTime(d, "ddd d")` (e.g. "Wed 7").
+- **"Upcoming"** — beyond this week, within lookahead. `timeLabel` = `Qt.formatDateTime(d, "MMM d")` (e.g. "May 15").
+- **Empty state** — when `eventsModel.count === 0`, show `"No upcoming events"` centered in `leftPanel` at 45% opacity.
+- Section headers that are not the first item get extra `topPadding` to visually separate groups.
+
+### Plugin config pages (collection picker)
+
+The `pimevents` plugin stores which Akonadi collections to monitor in `~/.config/plasmashellrc` under `[PIMEventsPlugin] calendars=<comma-separated collection IDs>`. Without this config, the plugin monitors nothing and returns zero events.
+
+`config.qml` uses the same dynamic `Instantiator` pattern as the Plasma digital clock: it iterates `EventPluginsManager.model`, reads each plugin's `configUi` role (e.g. `"pimevents/PimEventsConfig.qml"`), and appends a `ConfigCategory` tab for each enabled plugin. The pimevents config page shows a tree of Akonadi collections with checkboxes — the user must check the ones they want. Holidays plugin has a similar config page for region selection.
+
+Reference implementation: `KDE/plasma-workspace/applets/digital-clock/config.qml` — the `Instantiator` with `delegate: ConfigCategory` pattern.
+
 ## Plan files
 
 Ongoing design decisions for in-progress work may live in `~/.claude/plans/` outside the repo. When resuming work, check there before making architectural assumptions.

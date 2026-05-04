@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.workspace.calendar 2.0 as PlasmaCalendar
 import "components"
 import "widget"
 
@@ -42,8 +43,6 @@ PlasmoidItem {
     }
 
     // Precomputed day-of-month per grid slot [0..41]; 0 means empty.
-    // Recomputed only when (viewYear, viewMonth, firstDow) changes —
-    // delegates read from this instead of calling Date() 42× per redraw.
     property var monthDays: []
     function rebuildMonthDays() {
         const firstOfMonth = new Date(viewYear, viewMonth, 1);
@@ -58,16 +57,33 @@ PlasmoidItem {
         }
         monthDays = out;
     }
-    onViewYearChanged: rebuildMonthDays()
-    onViewMonthChanged: rebuildMonthDays()
+    onViewYearChanged: {
+        rebuildMonthDays();
+        _syncCalendarBackends();
+        _scheduleRebuildEvents();
+    }
+    onViewMonthChanged: {
+        rebuildMonthDays();
+        _syncCalendarBackends();
+        _scheduleRebuildEvents();
+    }
     onFirstDowChanged: rebuildMonthDays()
     Component.onCompleted: {
         rebuildMonthDays();
         scheduleNextMidnight();
+        // Delay initial event load so all three Calendar backends finish their
+        // Component.onCompleted (setPluginsManager + goToYearAndMonth) first.
+        initialLoadTimer.start();
     }
 
-    // Midnight rollover: fire once exactly at next local midnight, then
-    // update state and reschedule. Much cheaper than polling.
+    Timer {
+        id: initialLoadTimer
+        interval: 500
+        repeat: false
+        onTriggered: root._scheduleRebuildEvents()
+    }
+
+    // Midnight rollover
     Timer {
         id: midnightTimer
         repeat: false
@@ -79,6 +95,7 @@ PlasmoidItem {
             if (n.getMonth() !== root.viewMonth)
                 root.viewMonth = n.getMonth();
             root.scheduleNextMidnight();
+            root._scheduleRebuildEvents();
         }
     }
     function scheduleNextMidnight() {
@@ -88,12 +105,226 @@ PlasmoidItem {
         midnightTimer.start();
     }
 
+    // --- Event lookahead preset ---
+    readonly property var _lookaheadPresets: [7, 14, 30, 60]
+    readonly property int effectiveLookahead: {
+        var idx = plasmoid.configuration.eventLookaheadDays;
+        return (idx >= 0 && idx < _lookaheadPresets.length) ? _lookaheadPresets[idx] : 30;
+    }
+    onEffectiveLookaheadChanged: _scheduleRebuildEvents()
+
+    // --- Plasma Calendar backends ---
+    PlasmaCalendar.EventPluginsManager {
+        id: eventPluginsManager
+        enabledPlugins: plasmoid.configuration.enabledCalendarPlugins
+        onPluginsChanged: {
+            // Plugins take a moment to load and push data into the backends.
+            // Use the longer initialLoadTimer so we don't query before data arrives.
+            initialLoadTimer.restart();
+        }
+    }
+
+    // Current-month backend (also tracks viewYear/viewMonth for the grid)
+    PlasmaCalendar.Calendar {
+        id: calendarBackend
+        days: 7
+        weeks: 6
+        firstDayOfWeek: root.firstDow
+        today: root.today
+        Component.onCompleted: {
+            daysModel.setPluginsManager(eventPluginsManager);
+        }
+    }
+
+    // Next-month backend for lookahead spanning the month boundary
+    PlasmaCalendar.Calendar {
+        id: nextMonthBackend
+        days: 7
+        weeks: 6
+        firstDayOfWeek: root.firstDow
+        today: root.today
+        Component.onCompleted: {
+            daysModel.setPluginsManager(eventPluginsManager);
+            var d = new Date(root.viewYear, root.viewMonth + 1, 1);
+            goToYearAndMonth(d.getFullYear(), d.getMonth() + 1);
+        }
+    }
+
+    // Third backend: covers the month after next (for 60-day lookahead starting late in a month)
+    PlasmaCalendar.Calendar {
+        id: thirdMonthBackend
+        days: 7
+        weeks: 6
+        firstDayOfWeek: root.firstDow
+        today: root.today
+        Component.onCompleted: {
+            daysModel.setPluginsManager(eventPluginsManager);
+            var d = new Date(root.viewYear, root.viewMonth + 2, 1);
+            goToYearAndMonth(d.getFullYear(), d.getMonth() + 1);
+        }
+    }
+
+    function _syncCalendarBackends() {
+        var d1 = new Date(viewYear, viewMonth + 1, 1);
+        nextMonthBackend.goToYearAndMonth(d1.getFullYear(), d1.getMonth() + 1);
+        var d2 = new Date(viewYear, viewMonth + 2, 1);
+        thirdMonthBackend.goToYearAndMonth(d2.getFullYear(), d2.getMonth() + 1);
+    }
+
+    // Pick the right DaysModel for a given date
+    function _daysModelForDate(d) {
+        var m = d.getMonth();
+        var y = d.getFullYear();
+        if (y === viewYear && m === viewMonth) return calendarBackend.daysModel;
+        var nextD = new Date(viewYear, viewMonth + 1, 1);
+        if (y === nextD.getFullYear() && m === nextD.getMonth()) return nextMonthBackend.daysModel;
+        return thirdMonthBackend.daysModel;
+    }
+
+    Connections {
+        target: calendarBackend.daysModel
+        function onAgendaUpdated() { root._scheduleRebuildEvents(); }
+    }
+    Connections {
+        target: nextMonthBackend.daysModel
+        function onAgendaUpdated() { root._scheduleRebuildEvents(); }
+    }
+    Connections {
+        target: thirdMonthBackend.daysModel
+        function onAgendaUpdated() { root._scheduleRebuildEvents(); }
+    }
+
+    // Debounce rapid re-build signals
+    Timer {
+        id: rebuildDebounce
+        interval: 80
+        repeat: false
+        onTriggered: root._doRebuildEventsModel()
+    }
+    function _scheduleRebuildEvents() {
+        rebuildDebounce.restart();
+    }
+
+    // --- Flat events model (section headers + event cards) ---
     ListModel {
         id: eventsModel
-        ListElement { title: "Team Standup"; timeLabel: "9:00 AM"; pillColor: "#FF6B6B" }
-        ListElement { title: "Lunch Break"; timeLabel: "12:00 PM"; pillColor: "#4ECDC4" }
-        ListElement { title: "Design Review"; timeLabel: "2:30 PM"; pillColor: "#45B7D1" }
-        ListElement { title: "Focus Time"; timeLabel: "4:00 PM"; pillColor: "#96CEB4" }
+    }
+
+    // Fallback pill colors by event type when the collection has no color set.
+    // These are matched against EventDataDecorator.eventType (strings from libcalendarplugin.so).
+    readonly property var _eventTypeColors: ({
+        "Event":    "#4B9EFF",   // blue  — calendar events
+        "Todo":     "#FF9500",   // orange — tasks / todos
+        "Journal":  "#34C759",   // green  — journal entries
+        "Holiday":  "#FF6B6B"    // red    — public holidays
+    })
+
+    function _pillColorFor(ev) {
+        var c = ev.eventColor ? ev.eventColor.toString() : "";
+        if (c.length > 0 && c !== "#000000" && c !== "#00000000") return c;
+        var tc = _eventTypeColors[ev.eventType];
+        return tc ? tc : "#0a84ff";
+    }
+
+    function _formatTime(ev) {
+        if (ev.isAllDay) return "All day";
+        return Qt.formatDateTime(ev.startDateTime, "h:mm AP");
+    }
+
+    function _formatWeekDate(d) {
+        return Qt.formatDateTime(d, "ddd d");
+    }
+
+    function _formatUpcomingDate(d) {
+        return Qt.formatDateTime(d, "MMM d");
+    }
+
+    function _doRebuildEventsModel() {
+        eventsModel.clear();
+
+        var now = root.today;
+        var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        // End of current week (exclusive): the first day of next week
+        // Sun-first: week ends Saturday (day 6), so next week starts Sunday
+        // Mon-first: week ends Sunday (day 0), so next week starts Monday
+        var weekEndDay = todayStart.getDay(); // 0=Sun..6=Sat
+        var daysUntilNextWeek;
+        if (firstDow === 1) {
+            // Mon-first: last day = Sun (0), next week starts Mon
+            daysUntilNextWeek = weekEndDay === 0 ? 1 : (8 - weekEndDay);
+        } else {
+            // Sun-first: last day = Sat (6), next week starts Sun
+            daysUntilNextWeek = weekEndDay === 0 ? 7 : (7 - weekEndDay);
+        }
+        var weekEnd = new Date(todayStart.getTime() + daysUntilNextWeek * 86400000);
+
+        var lookaheadEnd = new Date(todayStart.getTime() + effectiveLookahead * 86400000);
+
+        var todayEvents = [];
+        var weekEvents = [];
+        var upcomingEvents = [];
+        var seen = {};
+
+        for (var d = new Date(todayStart); d < lookaheadEnd; d = new Date(d.getTime() + 86400000)) {
+            var dm = _daysModelForDate(d);
+            var rawEvents = dm.eventsForDate(d);
+            if (!rawEvents || rawEvents.length === 0) continue;
+
+            // QVariantList → JS array so we can sort
+            var events = [];
+            for (var ei = 0; ei < rawEvents.length; ei++) events.push(rawEvents[ei]);
+
+            events.sort(function(a, b) {
+                if (a.isAllDay && !b.isAllDay) return -1;
+                if (!a.isAllDay && b.isAllDay) return 1;
+                return a.startDateTime.getTime() - b.startDateTime.getTime();
+            });
+
+            for (var i = 0; i < events.length; i++) {
+                var ev = events[i];
+                // Deduplicate multi-day events
+                var key = ev.title + "|" + ev.startDateTime.getTime();
+                if (seen[key]) continue;
+                seen[key] = true;
+
+                var entry = {
+                    isHeader: false,
+                    title: ev.title,
+                    pillColor: _pillColorFor(ev),
+                    isAllDay: ev.isAllDay,
+                    timeLabel: ""
+                };
+
+                var dTime = d.getTime();
+                var todayTime = todayStart.getTime();
+
+                if (dTime === todayTime) {
+                    entry.timeLabel = _formatTime(ev);
+                    todayEvents.push(entry);
+                } else if (d < weekEnd) {
+                    entry.timeLabel = _formatWeekDate(d);
+                    weekEvents.push(entry);
+                } else {
+                    entry.timeLabel = _formatUpcomingDate(d);
+                    upcomingEvents.push(entry);
+                }
+            }
+        }
+
+        if (todayEvents.length > 0) {
+            eventsModel.append({ isHeader: true, title: "Events today", pillColor: "", timeLabel: "", isAllDay: false });
+            for (var ti = 0; ti < todayEvents.length; ti++) eventsModel.append(todayEvents[ti]);
+        }
+        if (weekEvents.length > 0) {
+            eventsModel.append({ isHeader: true, title: "This week", pillColor: "", timeLabel: "", isAllDay: false });
+            for (var wi = 0; wi < weekEvents.length; wi++) eventsModel.append(weekEvents[wi]);
+        }
+        if (upcomingEvents.length > 0) {
+            eventsModel.append({ isHeader: true, title: "Upcoming", pillColor: "", timeLabel: "", isAllDay: false });
+            for (var ui = 0; ui < upcomingEvents.length; ui++) eventsModel.append(upcomingEvents[ui]);
+        }
+
     }
 
     fullRepresentation: Item {
@@ -142,46 +373,89 @@ PlasmoidItem {
             readonly property real _cardSize: Math.max(10, Math.round(full.height * 0.052))
             readonly property real _cardSpacing: Math.round(full.height * 0.025)
 
+            // Empty state
             Text {
-                id: eventsTitle
-                anchors {
-                    top: parent.top
-                    left: parent.left
-                    right: parent.right
-                    topMargin: leftPanel._margin
-                    leftMargin: leftPanel._margin
-                }
-                text: "Events"
+                anchors.centerIn: parent
+                visible: eventsModel.count === 0
+                text: "No upcoming events"
                 color: colors.foreground
                 font.family: sfRegular.name
                 font.pixelSize: full.labelSize
                 font.weight: Font.Regular
-                opacity: 0.55
-                font.letterSpacing: 0.5
+                opacity: 0.45
+                horizontalAlignment: Text.AlignHCenter
             }
 
+            // Section headers + event cards
             ListView {
                 id: eventsList
                 anchors {
-                    top: eventsTitle.bottom
+                    top: parent.top
                     left: parent.left
                     right: parent.right
                     bottom: parent.bottom
-                    topMargin: leftPanel._cardSpacing
+                    topMargin: leftPanel._margin
                     leftMargin: leftPanel._margin
                     rightMargin: leftPanel._margin
                     bottomMargin: leftPanel._margin
                 }
+                visible: eventsModel.count > 0
                 model: eventsModel
                 spacing: leftPanel._cardSpacing
                 clip: true
-                interactive: false
+                interactive: contentHeight > height
 
-                delegate: EventCard {
+                delegate: Item {
                     width: eventsList.width
-                    title: model.title
-                    timeLabel: model.timeLabel
-                    pillColor: model.pillColor
+                    height: loader.height
+
+                    Loader {
+                        id: loader
+                        width: parent.width
+                        sourceComponent: model.isHeader ? sectionHeaderComponent : eventCardComponent
+                        onLoaded: {
+                            if (model.isHeader) {
+                                item.headerTitle = model.title;
+                                item.isFirstHeader = (index === 0);
+                            } else {
+                                item.cardTitle = model.title;
+                                item.cardTime = model.timeLabel;
+                                item.cardPill = model.pillColor;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Component {
+                id: sectionHeaderComponent
+                Text {
+                    property string headerTitle: ""
+                    property bool isFirstHeader: false
+
+                    text: headerTitle
+                    color: colors.foreground
+                    font.family: sfRegular.name
+                    font.pixelSize: full.labelSize
+                    font.weight: Font.Regular
+                    opacity: 0.55
+                    font.letterSpacing: 0.5
+                    topPadding: isFirstHeader ? 0 : leftPanel._cardSpacing
+                    height: Math.round(font.pixelSize * 1.4) + topPadding
+                }
+            }
+
+            Component {
+                id: eventCardComponent
+                EventCard {
+                    property string cardTitle: ""
+                    property string cardTime: ""
+                    property string cardPill: ""
+
+                    width: parent ? parent.width : 0
+                    title: cardTitle
+                    timeLabel: cardTime
+                    pillColor: cardPill
                     textColor: colors.foreground
                     fontFamily: sfRegular.name
                     fontSize: leftPanel._cardSize
@@ -209,9 +483,7 @@ PlasmoidItem {
             anchors.topMargin: Math.round(full.height * 0.14)
             spacing: Math.round(full.height * 0.02)
 
-            // --- Month header — left edge aligned with the optical left
-            //     edge of the "S" below (first column's center minus half
-            //     the "S" width).
+            // --- Month header ---
             Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: full.labelSize * 1.4

@@ -42,5 +42,11 @@
         <entry name="firstDayOfWeek" type="Int">
             <default>0</default>
         </entry>
+        <entry name="eventLookaheadDays" type="Int">
+            <default>2</default>
+        </entry>
+        <entry name="enabledCalendarPlugins" type="StringList">
+            <default>pimevents,holidaysevents</default>
+        </entry>
     </group>
 </kcfg>
