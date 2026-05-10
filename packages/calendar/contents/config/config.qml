@@ -24,14 +24,7 @@ ConfigModel {
         visible: Plasmoid.configuration.enabledCalendarPlugins.indexOf("pimevents") > -1
     }
 
-    ConfigCategory {
-        name: i18n("Holidays")
-        icon: "view-calendar-holiday"
-        source: "config/ConfigHolidays.qml"
-        visible: Plasmoid.configuration.enabledCalendarPlugins.indexOf("holidaysevents") > -1
-    }
-
-    // Remaining plugins (e.g. astronomical) use their own built-in config pages.
+    // Remaining plugins (holidays, astronomical, etc.) use their own built-in config pages.
     readonly property PlasmaCalendar.EventPluginsManager _epm: PlasmaCalendar.EventPluginsManager {
         Component.onCompleted: {
             populateEnabledPluginsList(Plasmoid.configuration.enabledCalendarPlugins);
@@ -53,7 +46,7 @@ ConfigModel {
             source: configUi
             configUiModule: configModule
             configUiComponent: configComponent
-            visible: pluginId !== "pimevents" && pluginId !== "holidaysevents"
+            visible: pluginId !== "pimevents"
                      && Plasmoid.configuration.enabledCalendarPlugins.indexOf(pluginId) > -1
         }
 
