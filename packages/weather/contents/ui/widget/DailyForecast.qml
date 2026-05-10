@@ -14,18 +14,32 @@ Item {
     property color rangeBarFill: Qt.rgba(1, 1, 1, 0.50)
     property string fontFamily: ""
     property real fontSize: 12
+    property real rowSpacing: Math.round(df.height * 0.02)
+    property bool centerContentVertically: false
     property var iconNameForCode
 
+    readonly property real _rowHeight: Math.max(fontSize * 1.7, 24)
+    readonly property real contentHeight: {
+        const count = Math.max(1, df.days.length)
+        return count * df._rowHeight + (count - 1) * df.rowSpacing
+    }
+
     Column {
+        id: contentColumn
+
         anchors.fill: parent
-        spacing: Math.round(df.height * 0.02)
+        anchors.top: df.centerContentVertically ? undefined : parent.top
+        anchors.bottom: df.centerContentVertically ? undefined : parent.bottom
+        anchors.verticalCenter: df.centerContentVertically ? parent.verticalCenter : undefined
+        height: df.centerContentVertically ? Math.min(df.height, df.contentHeight) : df.height
+        spacing: df.rowSpacing
 
         Repeater {
             model: df.days.length
 
             Item {
                 width: df.width
-                height: (df.height - (df.days.length - 1) * Math.round(df.height * 0.02)) / Math.max(1, df.days.length)
+                height: (contentColumn.height - (df.days.length - 1) * contentColumn.spacing) / Math.max(1, df.days.length)
 
                 readonly property var entry: index < df.days.length ? df.days[index] : null
                 readonly property real range: df.overallHigh - df.overallLow

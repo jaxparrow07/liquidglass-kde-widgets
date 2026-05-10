@@ -40,7 +40,8 @@ PlasmoidItem {
         readonly property bool isSmall: !isWide && _minSide < 350
         readonly property bool isBig: !isSmall && !isWide
 
-        readonly property real labelSize: Math.max(10, Math.round(full.height * 0.065))
+        readonly property real labelSize: Math.max(10, Math.round(Math.min(full.height, 350) * 0.065))
+        readonly property real bigLabelSize: Math.max(10, Math.round(Math.min(Math.min(full.height, full.width / 2), 350) * 0.065))
 
         LiquidGlass {
             id: glass
@@ -227,7 +228,7 @@ PlasmoidItem {
                         text: weatherData.cityName || weatherData.location
                         color: colors.weatherForeground
                         font.family: sfRegular.name
-                        font.pixelSize: full.labelSize
+                        font.pixelSize: Math.round(full.bigLabelSize * 1.15)
                         font.weight: Font.Medium
                     }
 
@@ -235,7 +236,7 @@ PlasmoidItem {
                         text: weatherData.currentTemp + "°"
                         color: colors.weatherForeground
                         font.family: sfLight.name
-                        font.pixelSize: Math.round(full.labelSize * 2.5)
+                        font.pixelSize: Math.round(full.bigLabelSize * 3.5)
                         font.weight: Font.Thin
                     }
                 }
@@ -243,13 +244,13 @@ PlasmoidItem {
                 Column {
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    spacing: Math.round(full.labelSize * 0.3)
+                    spacing: Math.round(full.bigLabelSize * 0.3)
 
                     WeatherIcon {
                         anchors.right: parent.right
                         iconName: weatherData.iconNameForCode(weatherData.weatherCode, weatherData.isNight)
                         iconSet: colors.weatherIconSet
-                        iconSize: Math.round(full.labelSize * 2.2)
+                        iconSize: full.bigLabelSize * 3
                     }
 
                     Text {
@@ -257,7 +258,7 @@ PlasmoidItem {
                         text: weatherData.condition
                         color: colors.weatherForeground
                         font.family: sfRegular.name
-                        font.pixelSize: full.labelSize
+                        font.pixelSize: full.bigLabelSize
                         font.weight: Font.Medium
                     }
 
@@ -267,7 +268,7 @@ PlasmoidItem {
                         color: colors.weatherForeground
                         opacity: 0.70
                         font.family: sfRegular.name
-                        font.pixelSize: full.labelSize
+                        font.pixelSize: full.bigLabelSize
                         font.weight: Font.Medium
                     }
                 }
@@ -296,7 +297,7 @@ PlasmoidItem {
                 secondaryTextColor: colors.weatherForeground
                 secondaryOpacity: 0.70
                 fontFamily: sfRegular.name
-                baseFontSize: full.labelSize
+                baseFontSize: full.bigLabelSize
             }
 
             Rectangle {
@@ -325,7 +326,7 @@ PlasmoidItem {
                 rangeBarBg: colors.weatherRangeBarBg
                 rangeBarFill: colors.weatherRangeBarFill
                 fontFamily: sfRegular.name
-                fontSize: full.labelSize
+                fontSize: full.bigLabelSize
                 iconNameForCode: function(code, night) { return weatherData.iconNameForCode(code, night) }
             }
         }
