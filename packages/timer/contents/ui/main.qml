@@ -148,8 +148,8 @@ PlasmoidItem {
 
             Canvas {
                 id: progressRing
-                width: compact.height * 0.72
-                height: compact.height * 0.72
+                width: compact.height * 0.92
+                height: compact.height * 0.92
                 anchors.verticalCenter: parent.verticalCenter
                 antialiasing: true
 
@@ -216,7 +216,7 @@ PlasmoidItem {
                     : "Timer"
                 color: "#ffffff"
                 font.family: sfRegular.name
-                font.pixelSize: Math.round(compact.height * 0.36)
+                font.pixelSize: Math.round(compact.height * 0.55)
                 horizontalAlignment: Text.AlignLeft
 
                 TextMetrics {
