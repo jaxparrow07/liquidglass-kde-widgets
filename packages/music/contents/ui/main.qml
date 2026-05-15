@@ -288,7 +288,8 @@ PlasmoidItem {
         readonly property string _layout:
             _ar >= 3.0  ? "bar"
           : _ar >= 1.6  ? "wide"
-          : _ar <= 0.6  ? "tall"
+          : _ar <= 0.35 ? "tall"
+          : _ar <= 0.85 ? "tallwide"
           :               "square"
 
         LiquidGlass {
@@ -341,6 +342,30 @@ PlasmoidItem {
         TallLayout {
             anchors.fill: parent
             visible: full._layout === "tall"
+            colors: colors
+            accentColor: root._hasSampledColor ? root._sampledPrimaryColor : colors.foreground
+            fontFamily: sfRegular.name
+            fontFamilyThin: sfThin.name
+            track: root.track
+            artist: root.artist
+            albumArt: root.albumArt
+            isPlaying: root.isPlaying
+            canGoPrevious: root.canGoPrevious
+            canGoNext: root.canGoNext
+            canPlay: root.canPlay
+            canPause: root.canPause
+            position: root.position
+            length: root.length
+            onTogglePlaying: root.togglePlaying()
+            onNextTrack: root.next()
+            onPreviousTrack: root.previous()
+            onSeek: function(pos) { root.seek(pos) }
+            formatTime: root.formatTime
+        }
+
+        TallWideLayout {
+            anchors.fill: parent
+            visible: full._layout === "tallwide"
             colors: colors
             accentColor: root._hasSampledColor ? root._sampledPrimaryColor : colors.foreground
             fontFamily: sfRegular.name
