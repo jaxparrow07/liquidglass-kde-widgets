@@ -45,10 +45,18 @@ QtObject {
     // Tuned reds for the today badge in Solid mode (Glass keeps it white).
     readonly property color accentRed: isLight ? "#D70015" : "#FF3B30"
 
+    // Per-widget override: set to true/false to force foreground polarity
+    // independent of appearance. Null means use the normal isLight logic.
+    property var foregroundDarkOverride: null
+
+    readonly property bool effectiveLight: foregroundDarkOverride !== null
+        ? !foregroundDarkOverride
+        : isLight
+
     // Foreground used by widget content. Glass stays monochromatic white
     // so the translucent shader keeps its existing look regardless of
     // appearance; Solid follows light/dark inversion.
-    readonly property color foreground: isGlass ? "#ffffff" : solidForeground
+    readonly property color foreground: isGlass ? "#ffffff" : (effectiveLight ? "#1A1B1E" : "#ffffff")
 
     // Today/highlight accent: white in Glass (monochrome) and red in Solid.
     readonly property color todayAccent: isGlass ? "#ffffff" : accentRed
@@ -105,10 +113,12 @@ QtObject {
     }
 
     // Music widget — secondary text (artist name, time labels)
-    readonly property color musicSecondary: {
-        var c = foreground
-        return Qt.rgba(c.r, c.g, c.b, 0.55)
-    }
+    // Use explicit RGBA values here instead of deriving channels from another
+    // color property; QML can coerce those through a string path and collapse
+    // the channel reads to black in dark/glass modes.
+    readonly property color musicSecondary: (isGlass ? false : effectiveLight)
+        ? Qt.rgba(0.102, 0.106, 0.118, 0.55)
+        : Qt.rgba(1, 1, 1, 0.55)
 
     readonly property color weatherForeground: "#ffffff"
     readonly property string weatherIconSet: isGlass ? "mono-light" : "default"

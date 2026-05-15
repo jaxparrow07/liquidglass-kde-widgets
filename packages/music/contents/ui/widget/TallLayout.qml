@@ -61,14 +61,14 @@ Item {
                 textColor: layout.colors.foreground
             }
 
-            Text {
+            MarqueeText {
                 width: parent.width
+                height: Math.max(10, Math.round(layout._s * 0.045)) + 4
                 text: layout.artist || "—"
-                font.pixelSize: Math.max(8, Math.round(layout._s * 0.045))
-                font.family: layout.fontFamily
-                color: layout.colors.musicSecondary
-                elide: Text.ElideRight
-                maximumLineCount: 1
+                fontSize: Math.max(8, Math.round(layout._s * 0.045))
+                fontWeight: Font.Medium
+                fontFamily: layout.fontFamily
+                textColor: layout.colors.musicSecondary
             }
         }
 
@@ -101,7 +101,7 @@ Item {
             readonly property real _rowH: _playSize * 1.6
 
             ControlButton {
-                iconSource: "media-skip-backward"
+                iconSource: Qt.resolvedUrl("../icons/previous.svg")
                 iconColor: layout.colors.foreground
                 iconSize: controls._skipSize
                 height: controls._rowH
@@ -110,7 +110,7 @@ Item {
             }
 
             ControlButton {
-                iconSource: layout.isPlaying ? "media-playback-pause" : "media-playback-start"
+                iconSource: layout.isPlaying ? Qt.resolvedUrl("../icons/pause.svg") : Qt.resolvedUrl("../icons/play.svg")
                 iconColor: layout.colors.foreground
                 iconSize: controls._playSize
                 height: controls._rowH
@@ -119,7 +119,7 @@ Item {
             }
 
             ControlButton {
-                iconSource: "media-skip-forward"
+                iconSource: Qt.resolvedUrl("../icons/next.svg")
                 iconColor: layout.colors.foreground
                 iconSize: controls._skipSize
                 height: controls._rowH

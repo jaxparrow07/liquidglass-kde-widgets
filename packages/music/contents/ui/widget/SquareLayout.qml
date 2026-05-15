@@ -6,6 +6,8 @@ Item {
     id: layout
 
     required property QtObject colors
+    property real cornerRadius: 24
+    property real roundness: 7.5
     property string fontFamily: ""
     property string fontFamilyThin: ""
     property string track: ""
@@ -27,29 +29,115 @@ Item {
 
     readonly property real _m: Math.round(Math.min(width, height) * 0.08)
     readonly property real _s: Math.min(width, height)
+    readonly property real _bgArtRadius: Math.min(layout.cornerRadius, layout._s * 0.18)
+
+    clip: true
+
+    onCornerRadiusChanged: squircleMaskCanvas.requestPaint()
+    onRoundnessChanged: squircleMaskCanvas.requestPaint()
+    onWidthChanged: squircleMaskCanvas.requestPaint()
+    onHeightChanged: squircleMaskCanvas.requestPaint()
 
     // Album art as full background with gradient fade-out toward bottom
     Item {
         id: bgArtContainer
         anchors.fill: parent
         visible: layout.albumArt !== ""
-        layer.enabled: true
 
-        Image {
+        Item {
+            id: bgArtSource
             anchors.fill: parent
-            source: layout.albumArt
-            fillMode: Image.PreserveAspectCrop
-            smooth: true
+            visible: false
+            layer.enabled: true
+
+            Image {
+                anchors.fill: parent
+                source: layout.albumArt
+                fillMode: Image.PreserveAspectCrop
+                smooth: true
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                gradient: Gradient {
+                    GradientStop { position: 0.0;  color: Qt.rgba(0, 0, 0, 0.35) }
+                    GradientStop { position: 0.35; color: Qt.rgba(0, 0, 0, 0.45) }
+                    GradientStop { position: 0.85; color: Qt.rgba(0, 0, 0, 0.90) }
+                    GradientStop { position: 1.0;  color: Qt.rgba(0, 0, 0, 0.97) }
+                }
+            }
         }
 
-        Rectangle {
+        Item {
+            id: bgArtMask
             anchors.fill: parent
-            gradient: Gradient {
-                GradientStop { position: 0.0;  color: "transparent" }
-                GradientStop { position: 0.35; color: "transparent" }
-                GradientStop { position: 0.85; color: Qt.rgba(0, 0, 0, 0.85) }
-                GradientStop { position: 1.0;  color: Qt.rgba(0, 0, 0, 0.95) }
+            visible: false
+            layer.enabled: true
+
+            Canvas {
+                id: squircleMaskCanvas
+                anchors.fill: parent
+
+                onPaint: {
+                    var ctx = getContext("2d")
+                    ctx.reset()
+
+                    var w = width, h = height
+                    var r = Math.min(layout._bgArtRadius, Math.min(w, h) / 2)
+                    var n = Math.max(layout.roundness, 2.0)
+                    var steps = 16
+
+                    ctx.beginPath()
+                    ctx.moveTo(r, 0)
+                    ctx.lineTo(w - r, 0)
+
+                    for (var i = 0; i <= steps; i++) {
+                        var a = (i / steps) * Math.PI / 2
+                        var px = w - r + r * Math.pow(Math.abs(Math.cos(a)), 2.0 / n)
+                        var py = r - r * Math.pow(Math.abs(Math.sin(a)), 2.0 / n)
+                        ctx.lineTo(px, py)
+                    }
+
+                    ctx.lineTo(w, h - r)
+
+                    for (var i = 0; i <= steps; i++) {
+                        var a = (i / steps) * Math.PI / 2
+                        var px = w - r + r * Math.pow(Math.abs(Math.sin(a)), 2.0 / n)
+                        var py = h - r + r * Math.pow(Math.abs(Math.cos(a)), 2.0 / n)
+                        ctx.lineTo(px, py)
+                    }
+
+                    ctx.lineTo(r, h)
+
+                    for (var i = 0; i <= steps; i++) {
+                        var a = (i / steps) * Math.PI / 2
+                        var px = r - r * Math.pow(Math.abs(Math.cos(a)), 2.0 / n)
+                        var py = h - r + r * Math.pow(Math.abs(Math.sin(a)), 2.0 / n)
+                        ctx.lineTo(px, py)
+                    }
+
+                    ctx.lineTo(0, r)
+
+                    for (var i = 0; i <= steps; i++) {
+                        var a = (i / steps) * Math.PI / 2
+                        var px = r - r * Math.pow(Math.abs(Math.sin(a)), 2.0 / n)
+                        var py = r - r * Math.pow(Math.abs(Math.cos(a)), 2.0 / n)
+                        ctx.lineTo(px, py)
+                    }
+
+                    ctx.closePath()
+                    ctx.fillStyle = "white"
+                    ctx.fill()
+                }
             }
+        }
+
+        MultiEffect {
+            anchors.fill: parent
+            source: bgArtSource
+            maskEnabled: true
+            maskSource: bgArtMask
+            visible: layout.albumArt !== ""
         }
     }
 
@@ -84,22 +172,22 @@ Item {
 
             MarqueeText {
                 width: parent.width
-                height: Math.round(layout._s * 0.06) + 4
+                height: Math.round(layout._s * 0.07) + 4
                 text: layout.track || "Not Playing"
-                fontSize: Math.max(10, Math.round(layout._s * 0.055))
+                fontSize: Math.max(12, Math.round(layout._s * 0.065))
                 fontWeight: Font.DemiBold
                 fontFamily: layout.fontFamily
                 textColor: layout.colors.foreground
             }
 
-            Text {
+            MarqueeText {
                 width: parent.width
+                height: Math.max(12, Math.round(layout._s * 0.048)) + 4
                 text: layout.artist || "—"
-                font.pixelSize: Math.max(8, Math.round(layout._s * 0.04))
-                font.family: layout.fontFamily
-                color: layout.colors.musicSecondary
-                elide: Text.ElideRight
-                maximumLineCount: 1
+                fontSize: Math.max(9, Math.round(layout._s * 0.047))
+                fontWeight: Font.Medium
+                fontFamily: layout.fontFamily
+                textColor: layout.colors.musicSecondary
             }
         }
 
@@ -113,10 +201,7 @@ Item {
             length: layout.length
             fillColor: layout.colors.foreground
             trackColor: layout.colors.foreground
-            timeLabelColor: layout.colors.foreground
-            fontFamily: layout.fontFamily
-            fontSize: Math.max(8, Math.round(layout._s * 0.033))
-            formatTime: layout.formatTime
+            showTimeLabels: false
             onSeek: function(pos) { layout.seek(pos) }
         }
 
@@ -126,12 +211,12 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: Math.round(layout._s * 0.08)
 
-            readonly property real _playSize: Math.max(18, Math.round(layout._s * 0.10))
-            readonly property real _skipSize: Math.max(14, Math.round(layout._s * 0.07))
+            readonly property real _playSize: Math.max(20, Math.round(layout._s * 0.11))
+            readonly property real _skipSize: Math.max(15, Math.round(layout._s * 0.077))
             readonly property real _rowH: _playSize * 1.6
 
             ControlButton {
-                iconSource: "media-skip-backward"
+                iconSource: Qt.resolvedUrl("../icons/previous.svg")
                 iconColor: layout.colors.foreground
                 iconSize: controls._skipSize
                 height: controls._rowH
@@ -140,7 +225,7 @@ Item {
             }
 
             ControlButton {
-                iconSource: layout.isPlaying ? "media-playback-pause" : "media-playback-start"
+                iconSource: layout.isPlaying ? Qt.resolvedUrl("../icons/pause.svg") : Qt.resolvedUrl("../icons/play.svg")
                 iconColor: layout.colors.foreground
                 iconSize: controls._playSize
                 height: controls._rowH
@@ -149,7 +234,7 @@ Item {
             }
 
             ControlButton {
-                iconSource: "media-skip-forward"
+                iconSource: Qt.resolvedUrl("../icons/next.svg")
                 iconColor: layout.colors.foreground
                 iconSize: controls._skipSize
                 height: controls._rowH
