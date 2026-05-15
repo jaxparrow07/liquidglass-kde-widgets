@@ -83,35 +83,57 @@ Item {
                     ctx.reset()
 
                     var w = width, h = height
-                    var r = Math.min(layout._bgArtRadius, w / 2, h / 2)
+                    var r = Math.min(layout.cornerRadius, w / 2, h / 2)
                     var n = Math.max(layout.roundness, 2.0)
-                    var steps = 20
+                    var steps = 32
 
-                    function sx(a) { return Math.pow(Math.abs(Math.cos(a)), 2.0 / n) * (Math.cos(a) >= 0 ? 1 : -1) }
-                    function sy(a) { return Math.pow(Math.abs(Math.sin(a)), 2.0 / n) * (Math.sin(a) >= 0 ? 1 : -1) }
+                    // Trace the superellipse corner arc matching the shader's SDF:
+                    //   q = abs(p) - b + r; corner boundary: (qx^n + qy^n)^(1/n) = r
+                    // Parametrically: qx = r*cos(t)^(2/n), qy = r*sin(t)^(2/n)
+                    function cornerX(t) { return r * Math.pow(Math.abs(Math.cos(t)), 2.0 / n) }
+                    function cornerY(t) { return r * Math.pow(Math.abs(Math.sin(t)), 2.0 / n) }
 
                     ctx.beginPath()
+
+                    // Start at top-left corner, top tangent point
                     ctx.moveTo(r, 0)
+
+                    // Top edge
                     ctx.lineTo(w - r, 0)
-                    for (var i = 0; i <= steps; i++) {
-                        var a = (i / steps) * Math.PI / 2
-                        ctx.lineTo(w - r + r * sx(a), r - r * sy(a))
+
+                    // Top-right corner: from (w-r, 0) to (w, r)
+                    for (var i = 1; i <= steps; i++) {
+                        var t = (1 - i / steps) * Math.PI / 2
+                        ctx.lineTo(w - r + cornerX(t), r - cornerY(t))
                     }
+
+                    // Right edge
                     ctx.lineTo(w, h - r)
-                    for (var i = 0; i <= steps; i++) {
-                        var a = (i / steps) * Math.PI / 2
-                        ctx.lineTo(w - r + r * sy(a), h - r + r * sx(a))
+
+                    // Bottom-right corner: from (w, h-r) to (w-r, h)
+                    for (var i = 1; i <= steps; i++) {
+                        var t = (1 - i / steps) * Math.PI / 2
+                        ctx.lineTo(w - r + cornerY(t), h - r + cornerX(t))
                     }
+
+                    // Bottom edge
                     ctx.lineTo(r, h)
-                    for (var i = 0; i <= steps; i++) {
-                        var a = (i / steps) * Math.PI / 2
-                        ctx.lineTo(r - r * sx(a), h - r + r * sy(a))
+
+                    // Bottom-left corner: from (r, h) to (0, h-r)
+                    for (var i = 1; i <= steps; i++) {
+                        var t = (1 - i / steps) * Math.PI / 2
+                        ctx.lineTo(r - cornerX(t), h - r + cornerY(t))
                     }
+
+                    // Left edge
                     ctx.lineTo(0, r)
-                    for (var i = 0; i <= steps; i++) {
-                        var a = (i / steps) * Math.PI / 2
-                        ctx.lineTo(r - r * sy(a), r - r * sx(a))
+
+                    // Top-left corner: from (0, r) to (r, 0)
+                    for (var i = 1; i <= steps; i++) {
+                        var t = (1 - i / steps) * Math.PI / 2
+                        ctx.lineTo(r - cornerY(t), r - cornerX(t))
                     }
+
                     ctx.closePath()
                     ctx.fillStyle = "white"
                     ctx.fill()
