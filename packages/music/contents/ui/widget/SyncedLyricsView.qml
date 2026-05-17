@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 
 Item {
     id: lv
@@ -129,6 +130,13 @@ Item {
                 return lv.inactiveOpacity * (1 - frac * 0.85)
             }
 
+            readonly property real _viewY: del.y - lyricsList.contentY
+            readonly property bool _onScreen: _viewY >= 0 && _viewY < lyricsList.height
+            readonly property real _blurFrac: lv.blurEnabled && _dist >= 2 && _onScreen && !lv._isUserScrolling
+                ? Math.min(1, (_dist - 1) / (lv._visibleCount + 2))
+                : 0
+            readonly property bool _needsBlur: _blurFrac > 0.01
+
             Rectangle {
                 id: bg
                 width: parent.width
@@ -143,9 +151,14 @@ Item {
                 transformOrigin: Item.Left
                 Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
-                layer.enabled: _activeScale > 1.01
+                layer.enabled: _activeScale > 1.01 || del._needsBlur
                 layer.smooth: true
                 layer.textureSize: Qt.size(width * 2, height * 2)
+                layer.effect: MultiEffect {
+                    blurEnabled: del._needsBlur
+                    blurMax: 48
+                    blur: del._blurFrac * 0.7
+                }
 
                 readonly property real _vPad: Math.round(lv.baseFontSize * 0.45)
                 readonly property real _hPad: Math.round(lv.baseFontSize * 0.6)
