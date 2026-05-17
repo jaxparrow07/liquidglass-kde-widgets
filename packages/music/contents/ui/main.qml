@@ -21,9 +21,6 @@ PlasmoidItem {
 
     FontLoader { id: sfThin;    source: Qt.resolvedUrl("../fonts/sf_pro_display_thin.otf") }
     FontLoader { id: sfRegular; source: Qt.resolvedUrl("../fonts/sf_pro_display_regular.otf") }
-    FontLoader { id: sfSemibold; source: Qt.resolvedUrl("../fonts/sf_pro_semibold.otf") }
-    FontLoader { id: sfSemiboldRounded; source: Qt.resolvedUrl("../fonts/sf_pro_semibold_rounded.otf") }
-
     // ── MPRIS ─────────────────────────────────────────────────────────────
 
     Mpris.Mpris2Model { id: mpris2Model }
@@ -504,7 +501,10 @@ PlasmoidItem {
             lyricsState: root._lyricsState
             lyricsPositionMs: root.position / 1000
             lyricsBlur: plasmoid.configuration.lyricsBlur
-            lyricsFontFamily: sfSemibold.name
+            lyricsActiveOpacity: plasmoid.configuration.lyricsActiveOpacity / 100
+            lyricsInactiveOpacity: plasmoid.configuration.lyricsInactiveOpacity / 100
+            lyricsActiveScale: plasmoid.configuration.lyricsActiveScale / 100
+            lyricsFontSizeFactor: plasmoid.configuration.lyricsFontSizeTall / 1000
             fontFamily: sfRegular.name
             fontFamilyThin: sfThin.name
             track: root.track
@@ -538,7 +538,10 @@ PlasmoidItem {
             lyricsState: root._lyricsState
             lyricsPositionMs: root.position / 1000
             lyricsBlur: plasmoid.configuration.lyricsBlur
-            lyricsFontFamily: sfSemibold.name
+            lyricsActiveOpacity: plasmoid.configuration.lyricsActiveOpacity / 100
+            lyricsInactiveOpacity: plasmoid.configuration.lyricsInactiveOpacity / 100
+            lyricsActiveScale: plasmoid.configuration.lyricsActiveScale / 100
+            lyricsFontSizeFactor: plasmoid.configuration.lyricsFontSizeWide / 1000
             fontFamily: sfRegular.name
             fontFamilyThin: sfThin.name
             track: root.track

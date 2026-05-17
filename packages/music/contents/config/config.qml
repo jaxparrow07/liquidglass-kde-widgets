@@ -7,4 +7,9 @@ ConfigModel {
         icon: "preferences-desktop-theme"
         source: "config/ConfigAppearance.qml"
     }
+    ConfigCategory {
+        name: i18n("Lyrics")
+        icon: "preferences-desktop-font"
+        source: "config/ConfigLyrics.qml"
+    }
 }

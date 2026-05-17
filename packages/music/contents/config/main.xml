@@ -48,5 +48,23 @@
         <entry name="lyricsBlur" type="Bool">
             <default>true</default>
         </entry>
+        <entry name="lyricsFont" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="lyricsActiveOpacity" type="Int">
+            <default>100</default>
+        </entry>
+        <entry name="lyricsInactiveOpacity" type="Int">
+            <default>40</default>
+        </entry>
+        <entry name="lyricsFontSizeWide" type="Int">
+            <default>77</default>
+        </entry>
+        <entry name="lyricsFontSizeTall" type="Int">
+            <default>55</default>
+        </entry>
+        <entry name="lyricsActiveScale" type="Int">
+            <default>105</default>
+        </entry>
     </group>
 </kcfg>
