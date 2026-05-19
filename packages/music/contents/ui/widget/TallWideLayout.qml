@@ -42,6 +42,17 @@ Item {
     readonly property real _s: width
     readonly property real _btnH: Math.round(_s * 0.075)
 
+    property bool _lyricsAnimating: false
+    onLyricsActiveChanged: {
+        _lyricsAnimating = true
+        _lyricsAnimResetTimer.restart()
+    }
+    Timer {
+        id: _lyricsAnimResetTimer
+        interval: 250
+        onTriggered: layout._lyricsAnimating = false
+    }
+
     // ── Main content area with margins ─────────────────────────────────────
     Item {
         id: rootContent
@@ -162,7 +173,7 @@ Item {
             y: layout.lyricsActive
                 ? (layout.height - layout._m - lyricsControls.height - Math.round(layout._s * 0.04) - layout._btnH - layout._m)
                 : _btnNormalY
-            Behavior on y { NumberAnimation { duration: 180; easing.type: Easing.InOutQuart } }
+            Behavior on y { enabled: layout._lyricsAnimating; NumberAnimation { duration: 180; easing.type: Easing.InOutQuart } }
 
             readonly property real _btnNormalY: albumArtItem.height
                 + Math.round(layout._s * 0.03)
@@ -218,7 +229,7 @@ Item {
         y: layout.lyricsActive
             ? (layout.height - layout._m - lyricsControls.height)
             : _normalY
-        Behavior on y { NumberAnimation { duration: 180; easing.type: Easing.InOutQuart } }
+        Behavior on y { enabled: layout._lyricsAnimating; NumberAnimation { duration: 180; easing.type: Easing.InOutQuart } }
 
 
         spacing: Math.round(layout._s * 0.08)

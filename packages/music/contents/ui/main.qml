@@ -429,7 +429,7 @@ PlasmoidItem {
             _ar >= 3.0  ? "bar"
           : _ar >= 1.6  ? "wide"
           : _ar <= 0.35 ? "tall"
-          : _ar <= 0.85 ? "tallwide"
+          : _ar <= 0.85 && full.height >= full.width * 1.55 ? "tallwide"
           :               "square"
 
         LiquidGlass {
