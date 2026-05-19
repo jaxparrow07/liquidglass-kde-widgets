@@ -4,8 +4,42 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Colors
+RESET='\033[0m'
+BOLD='\033[1m'
+DIM='\033[2m'
+GREEN='\033[38;5;83m'
+YELLOW='\033[38;5;220m'
+RED='\033[38;5;203m'
+CYAN='\033[38;5;117m'
+BLUE='\033[38;5;75m'
+GRAY='\033[38;5;244m'
+
+_info()    { echo -e "${CYAN}  →${RESET} $*"; }
+_success() { echo -e "${GREEN}  ✓${RESET} $*"; }
+_warn()    { echo -e "${YELLOW}  ⚠${RESET} $*"; }
+_error()   { echo -e "${RED}  ✗${RESET} $*"; }
+_dim()     { echo -e "${GRAY}$*${RESET}"; }
+_header()  { echo -e "\n${BOLD}${BLUE}$*${RESET}"; }
+_divider() { echo -e "${GRAY}  ────────────────────────────────${RESET}"; }
+
+spinner() {
+	local pid=$1
+	local label="${2:-Working}"
+	local frames=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+	local i=0
+	tput civis 2>/dev/null || true
+	while kill -0 "$pid" 2>/dev/null; do
+		printf "\r  ${CYAN}%s${RESET}  %s " "${frames[$i]}" "$label"
+		i=$(( (i + 1) % ${#frames[@]} ))
+		sleep 0.08
+	done
+	printf "\r\033[K"
+	tput cnorm 2>/dev/null || true
+}
+
 restart_plasmashell() {
-	echo "[*] Reloading plasmashell..."
+	_header "Reloading Plasmashell"
 
 	if pgrep -x plasmashell >/dev/null; then
 		if command -v kquitapp6 >/dev/null; then
@@ -13,7 +47,7 @@ restart_plasmashell() {
 		elif command -v qdbus6 >/dev/null; then
 			qdbus6 org.kde.plasmashell /MainApplication quit >/dev/null 2>&1 || true
 		else
-			echo "[!] kquitapp6/qdbus6 not found; falling back to SIGTERM"
+			_warn "kquitapp6/qdbus6 not found — falling back to SIGTERM"
 			killall plasmashell >/dev/null 2>&1 || true
 		fi
 
@@ -25,21 +59,22 @@ restart_plasmashell() {
 		done
 
 		if pgrep -x plasmashell >/dev/null; then
-			echo "[!] Plasmashell did not quit cleanly; sending SIGTERM"
+			_warn "Plasmashell did not quit cleanly — sending SIGTERM"
 			killall plasmashell >/dev/null 2>&1 || true
 			sleep 0.5
 		fi
 	fi
 
 	if command -v kstart6 >/dev/null; then
-		kstart6 plasmashell >/dev/null 2>&1
+		kstart6 plasmashell >/dev/null 2>&1 &
 	elif command -v kstart >/dev/null; then
-		kstart plasmashell >/dev/null 2>&1
+		kstart plasmashell >/dev/null 2>&1 &
 	else
 		nohup plasmashell >/dev/null 2>&1 &
 	fi
 
-	echo "[+] Plasmashell reloaded"
+	spinner $! "Starting plasmashell"
+	_success "Plasmashell reloaded"
 }
 
 install_widget() {
@@ -48,27 +83,33 @@ install_widget() {
 	local WIDGET_DIR="packages/${WIDGET_NAME}"
 	local METADATA_FILE="${WIDGET_DIR}/metadata.json"
 
-	echo ""
-	echo "================================"
-	echo "[*] Processing widget: ${WIDGET_NAME}"
-	echo "================================"
+	_header "Installing: ${WIDGET_NAME}"
+	_divider
 
-	local widgetId=$(jq -r ".KPlugin.Id" "$METADATA_FILE")
+	local widgetId
+	widgetId=$(jq -r ".KPlugin.Id" "$METADATA_FILE")
 
+	local install_result=0
 	if [[ -d "$HOME/.local/share/plasma/plasmoids/${widgetId}" ]]; then
-		echo "[+] Widget already installed. Updating: ${widgetId}"
-		kpackagetool6 --type=Plasma/Applet -u "${WIDGET_DIR}"
-		local install_result=$?
+		_info "Updating ${DIM}${widgetId}${RESET}"
+		if [[ "$VERBOSE" == "true" ]]; then
+			kpackagetool6 --type=Plasma/Applet -u "${WIDGET_DIR}" 2>&1 || install_result=$?
+		else
+			kpackagetool6 --type=Plasma/Applet -u "${WIDGET_DIR}" >/dev/null 2>&1 || install_result=$?
+		fi
 	else
-		echo "[+] Installing widget: ${widgetId}"
-		kpackagetool6 --type=Plasma/Applet -i "${WIDGET_DIR}"
-		local install_result=$?
+		_info "Installing ${DIM}${widgetId}${RESET}"
+		if [[ "$VERBOSE" == "true" ]]; then
+			kpackagetool6 --type=Plasma/Applet -i "${WIDGET_DIR}" 2>&1 || install_result=$?
+		else
+			kpackagetool6 --type=Plasma/Applet -i "${WIDGET_DIR}" >/dev/null 2>&1 || install_result=$?
+		fi
 	fi
 
 	if [[ $install_result -eq 0 ]]; then
-		echo "[+] Widget installed/updated successfully!"
+		_success "Done"
 	else
-		echo "[!] Installation/update failed"
+		_error "Failed"
 		return 1
 	fi
 
@@ -80,45 +121,35 @@ install_widget() {
 }
 
 print_usage() {
-	echo "Usage:"
-	echo "  ./install.sh <package_folder>    Install a single widget (works for test-* too)"
-	echo "  ./install.sh -a | --all          Install all non-test widgets"
-	echo "  ./install.sh -t | --test         Install only test-* widgets"
-	echo "  ./install.sh -a -t               Install everything (or: -at)"
+	echo -e "\n${BOLD}Usage${RESET}"
+	echo -e "  ${CYAN}./install.sh${RESET} ${GREEN}<name>${RESET}     Install a single widget"
+	echo -e "  ${CYAN}./install.sh${RESET} ${GREEN}-a${RESET}         Install all non-test widgets"
+	echo -e "  ${CYAN}./install.sh${RESET} ${GREEN}-t${RESET}         Install only test-* widgets"
+	echo -e "  ${CYAN}./install.sh${RESET} ${GREEN}-a -t${RESET}      Install everything"
+	echo -e "  ${CYAN}./install.sh${RESET} ${GREEN}-v${RESET}         Verbose output (show kpackagetool6 logs)"
 }
 
 # Parse flags and positional name
 WANT_ALL=false
 WANT_TEST=false
+VERBOSE=false
 WIDGET_NAME=""
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
-		-a|--all)
-			WANT_ALL=true
-			shift
-			;;
-		-t|--test)
-			WANT_TEST=true
-			shift
-			;;
-		-at|-ta)
-			WANT_ALL=true
-			WANT_TEST=true
-			shift
-			;;
-		-h|--help)
-			print_usage
-			exit 0
-			;;
+		-a|--all)     WANT_ALL=true;  shift ;;
+		-t|--test)    WANT_TEST=true; shift ;;
+		-v|--verbose) VERBOSE=true;   shift ;;
+		-at|-ta)      WANT_ALL=true; WANT_TEST=true; shift ;;
+		-h|--help)  print_usage; exit 0 ;;
 		-*)
-			echo "[!] Unknown flag: $1"
+			_error "Unknown flag: $1"
 			print_usage
 			exit 1
 			;;
 		*)
 			if [[ -n "$WIDGET_NAME" ]]; then
-				echo "[!] Multiple widget names not supported: $WIDGET_NAME and $1"
+				_error "Multiple widget names not supported: $WIDGET_NAME and $1"
 				exit 1
 			fi
 			WIDGET_NAME="$1"
@@ -129,37 +160,33 @@ done
 
 if [[ "$WANT_ALL" == "true" || "$WANT_TEST" == "true" ]]; then
 	if [[ -n "$WIDGET_NAME" ]]; then
-		echo "[!] Cannot combine a widget name with -a / -t"
+		_error "Cannot combine a widget name with -a / -t"
 		exit 1
 	fi
 
 	ALL_WIDGETS=($(ls -d packages/*/ 2>/dev/null | xargs -n 1 basename))
 	if [[ ${#ALL_WIDGETS[@]} -eq 0 ]]; then
-		echo "[!] No widgets found in packages directory"
+		_error "No widgets found in packages/"
 		exit 1
 	fi
 
 	WIDGETS=()
 	for widget in "${ALL_WIDGETS[@]}"; do
 		if [[ "$widget" == test-* ]]; then
-			if [[ "$WANT_TEST" == "true" ]]; then
-				WIDGETS+=("$widget")
-			fi
+			[[ "$WANT_TEST" == "true" ]] && WIDGETS+=("$widget")
 		else
-			if [[ "$WANT_ALL" == "true" ]]; then
-				WIDGETS+=("$widget")
-			fi
+			[[ "$WANT_ALL" == "true" ]] && WIDGETS+=("$widget")
 		fi
 	done
 
 	if [[ ${#WIDGETS[@]} -eq 0 ]]; then
-		echo "[!] No matching widgets to install"
+		_error "No matching widgets to install"
 		exit 1
 	fi
 
-	echo "[+] Installing ${#WIDGETS[@]} widget(s):"
+	_header "Widgets to install"
 	for widget in "${WIDGETS[@]}"; do
-		echo "    - $widget"
+		_dim "    ${widget}"
 	done
 
 	FAILED_WIDGETS=()
@@ -170,42 +197,51 @@ if [[ "$WANT_ALL" == "true" || "$WANT_TEST" == "true" ]]; then
 			SUCCESSFUL_WIDGETS+=("$widget")
 		else
 			FAILED_WIDGETS+=("$widget")
-			echo "[!] Failed to install: $widget"
 		fi
 	done
 
-	echo ""
-	echo "================================"
-	echo "[*] Installation Summary"
-	echo "================================"
-	echo "[+] Successfully installed: ${#SUCCESSFUL_WIDGETS[@]}"
+	_header "Summary"
+	_divider
+	echo -e "  ${GREEN}✓ Installed: ${#SUCCESSFUL_WIDGETS[@]}${RESET}"
 	for widget in "${SUCCESSFUL_WIDGETS[@]}"; do
-		echo "    ✓ $widget"
+		echo -e "    ${GRAY}${widget}${RESET}"
 	done
 
 	if [[ ${#FAILED_WIDGETS[@]} -gt 0 ]]; then
-		echo "[!] Failed to install: ${#FAILED_WIDGETS[@]}"
+		echo -e "  ${RED}✗ Failed: ${#FAILED_WIDGETS[@]}${RESET}"
 		for widget in "${FAILED_WIDGETS[@]}"; do
-			echo "    ✗ $widget"
+			echo -e "    ${GRAY}${widget}${RESET}"
 		done
 	fi
 
 	echo ""
 	restart_plasmashell
-	echo "[+] All done!"
+
+	echo ""
+	_success "All done!"
 
 elif [[ -n "$WIDGET_NAME" && -d "packages/$WIDGET_NAME" ]]; then
 	install_widget "$WIDGET_NAME" "false"
-	echo "[+] Installation complete!"
+	echo ""
+	_success "Installation complete!"
 else
 	if [[ -n "$WIDGET_NAME" ]]; then
-		echo "[!] Widget package not found: $WIDGET_NAME"
+		_error "Widget package not found: ${WIDGET_NAME}"
 	else
-		echo "[!] No widget specified"
+		_error "No widget specified"
 	fi
-	echo "[+] Available packages:"
-	ls packages
-	echo ""
+
+	echo -e "\n  ${GRAY}Widgets:${RESET}"
+	for pkg in packages/*/; do
+		name=$(basename "$pkg")
+		[[ "$name" == test-* ]] || echo -e "    ${CYAN}${name}${RESET}"
+	done
+	echo -e "\n  ${GRAY}Test packages:${RESET}"
+	for pkg in packages/*/; do
+		name=$(basename "$pkg")
+		[[ "$name" == test-* ]] && echo -e "    ${GRAY}${name}${RESET}"
+	done
+
 	print_usage
 	exit 1
 fi
