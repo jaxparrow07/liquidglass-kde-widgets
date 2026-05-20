@@ -187,7 +187,7 @@ ColumnLayout {
         SpinBox {
             id: blurRadiusSpin
             Kirigami.FormData.label: i18n("Blur radius (px):")
-            from: 0; to: 30; stepSize: 1
+            from: 0; to: 100; stepSize: 1
         }
 
         CheckBox {

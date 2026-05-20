@@ -11,6 +11,7 @@ ColumnLayout {
     property alias cfg_lyricsInactiveOpacity: inactiveOpacitySpin.value
     property alias cfg_lyricsFontSizeWide: wideFontSpin.value
     property alias cfg_lyricsFontSizeTall: tallFontSpin.value
+    property alias cfg_lyricsBlur: lyricsBlurCheck.checked
 
     Kirigami.FormLayout {
         Layout.fillWidth: true
@@ -47,6 +48,17 @@ ColumnLayout {
             id: tallFontSpin
             Kirigami.FormData.label: i18n("Tall layout font (‰):")
             from: 30; to: 120; stepSize: 5
+        }
+
+        Kirigami.Separator {
+            Kirigami.FormData.isSection: true
+            Kirigami.FormData.label: i18n("Effects")
+        }
+
+        CheckBox {
+            id: lyricsBlurCheck
+            Kirigami.FormData.label: i18n("Blur upcoming lines:")
+            text: i18n("Blur upcoming lyrics lines (disable on slow hardware)")
         }
 
     }

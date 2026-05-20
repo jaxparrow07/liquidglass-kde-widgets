@@ -1,12 +1,11 @@
 #version 440
 
-// Horizontal Gaussian blur — 9 bilinear taps covering 17 texels.
+// Horizontal Gaussian blur — 9 bilinear taps.
 //
-// Sigma is derived from radiusPx (sigma = radiusPx / 3) so the kernel
-// shape stays correct at any radius. Bilinear tap optimization merges
-// adjacent texel pairs: each hardware read blends two texels, and the
-// tap offset is placed between them weighted by their Gaussian values.
-// This gives 17-texel coverage from only 9 texture reads.
+// Sigma = radiusPx / 3. Tap offsets are scaled by sigma so the kernel
+// always covers the full blur radius regardless of radiusPx. Bilinear
+// tap optimization merges adjacent texel pairs for 17-texel coverage
+// from only 9 texture reads.
 
 layout(location = 0) in vec2 qt_TexCoord0;
 layout(location = 0) out vec4 fragColor;
@@ -27,29 +26,35 @@ void main() {
     float sigma = max(radiusPx / 3.0, 0.001);
     float s2 = 2.0 * sigma * sigma;
 
-    // Compute raw Gaussian weights at texel offsets 0..8
-    float g0 = 1.0;
-    float g1 = exp(-1.0  / s2);
-    float g2 = exp(-4.0  / s2);
-    float g3 = exp(-9.0  / s2);
-    float g4 = exp(-16.0 / s2);
-    float g5 = exp(-25.0 / s2);
-    float g6 = exp(-36.0 / s2);
-    float g7 = exp(-49.0 / s2);
-    float g8 = exp(-64.0 / s2);
+    float t1 = sigma * (3.0 / 8.0);
+    float t2 = sigma * (6.0 / 8.0);
+    float t3 = sigma * (9.0 / 8.0);
+    float t4 = sigma * (12.0 / 8.0);
+    float t5 = sigma * (15.0 / 8.0);
+    float t6 = sigma * (18.0 / 8.0);
+    float t7 = sigma * (21.0 / 8.0);
+    float t8 = sigma * (24.0 / 8.0);
 
-    // Bilinear merge: pair (1,2), (3,4), (5,6), (7,8)
-    float w0 = g0;
+    float g0 = 1.0;
+    float g1 = exp(-(t1 * t1) / s2);
+    float g2 = exp(-(t2 * t2) / s2);
+    float g3 = exp(-(t3 * t3) / s2);
+    float g4 = exp(-(t4 * t4) / s2);
+    float g5 = exp(-(t5 * t5) / s2);
+    float g6 = exp(-(t6 * t6) / s2);
+    float g7 = exp(-(t7 * t7) / s2);
+    float g8 = exp(-(t8 * t8) / s2);
+
+    float w0  = g0;
     float w12 = g1 + g2;
     float w34 = g3 + g4;
     float w56 = g5 + g6;
     float w78 = g7 + g8;
 
-    // Bilinear tap offsets (in texels): weighted average of pair positions
-    float o12 = (1.0 * g1 + 2.0 * g2) / w12;
-    float o34 = (3.0 * g3 + 4.0 * g4) / w34;
-    float o56 = (5.0 * g5 + 6.0 * g6) / w56;
-    float o78 = (7.0 * g7 + 8.0 * g8) / w78;
+    float o12 = (t1 * g1 + t2 * g2) / w12;
+    float o34 = (t3 * g3 + t4 * g4) / w34;
+    float o56 = (t5 * g5 + t6 * g6) / w56;
+    float o78 = (t7 * g7 + t8 * g8) / w78;
 
     vec4 c = texture(source, uv) * w0;
 

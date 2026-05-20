@@ -5,14 +5,16 @@ import org.kde.plasma.plasmoid
 // Place inside a PlasmoidItem, anchors.fill: parent.
 //
 // Pipeline:
-//   wallpaperTex -> crop (extract widget region) -> blurH1 -> blurV1
-//     -> blurH2 -> blurV2 -> glassShader (refraction + chroma + tint)
+//   wallpaperTex -> crop (extract widget region)
+//     -> Dual Kawase downsample (1-6 levels, halving resolution each)
+//     -> Dual Kawase upsample (back to full resolution)
+//     -> glassShader (refraction + chroma + tint)
 //
 // The crop shader maps wallpaper UV to widget-local UV so the blur
-// passes operate in widget pixel space. The glass shader then applies
-// refraction on the blurred result with identity UV mapping. When
-// blurRadius <= 0 the crop/blur chain is inert and the glass shader
-// samples wallpaperTex directly with uvOffset/uvScale.
+// passes operate in widget pixel space. blurRadius controls the number
+// of downsample/upsample iterations (each level doubles the effective
+// blur reach). When blurRadius <= 0 the crop/blur chain is inert and
+// the glass shader samples wallpaperTex directly with uvOffset/uvScale.
 //
 // Falls back to a flat translucent rounded rect when wallpaperGraphicsObject
 // is null or zero-size (panels, plasmoidviewer).
@@ -164,24 +166,35 @@ Item {
         }
     }
 
-    // --- Frosted-glass blur pipeline ---
+    // --- Frosted-glass blur pipeline (Dual Kawase) ---
     //
-    // crop → blurH1 → blurV1 → blurH2 → blurV2
+    // crop → downsample 1..N → upsample N..1
     //
     // The crop shader extracts the widget's wallpaper region into a
-    // widget-sized texture (widget-local UV space). The four separable
-    // Gaussian passes (17-tap each, two full H+V iterations) then blur
-    // in that local space — no wallpaper-vs-widget UV mismatch.
-    //
-    // The glass shader receives the blurred crop with identity UV
-    // mapping (uvOffset=0, uvScale=1) and applies refraction + chroma
-    // on top of the already-blurred image.
+    // widget-sized texture. Dual Kawase then downsamples through a
+    // resolution pyramid (each level halves dimensions, 5 taps) and
+    // upsamples back (9 taps per level). blurRadius controls the number
+    // of levels (1-6). This gives smooth, artifact-free blur at any
+    // radius up to ~128px with only 5-9 taps per pass.
     //
     // When blurRadius <= 0 or in solid mode, the crop/blur chain is
     // inert and the glass shader samples wallpaperTex directly with
     // the standard uvOffset/uvScale.
 
     readonly property bool _blurActive: !glass.solidMode && glass.blurRadius > 0 && glass.active
+
+    // Dual Kawase: number of downsample iterations (each doubles blur reach).
+    // radius ~2→1, ~4→2, ~8→3, ~16→4, ~32→5, ~64→6, ~100→6.
+    readonly property int _blurIters: {
+        if (!_blurActive) return 0;
+        var r = glass.blurRadius;
+        if (r <= 2) return 1;
+        if (r <= 4) return 2;
+        if (r <= 8) return 3;
+        if (r <= 16) return 4;
+        if (r <= 32) return 5;
+        return 6;
+    }
 
     readonly property vector2d _uvOff: glass.active
         ? Qt.vector2d(glass._offX / glass.wallpaperItem.width,
@@ -214,80 +227,199 @@ Item {
         smooth: true
     }
 
+    // --- Dual Kawase blur: downsample chain (up to 6 levels) ---
+
     ShaderEffect {
-        id: blurH1
-        anchors.fill: parent
-        visible: false
-        fragmentShader: Qt.resolvedUrl("shaders/blur_h.frag.qsb")
+        id: down1
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_down.frag.qsb")
         property variant source: cropTex
-        property real radiusPx: glass.blurRadius
-        property vector2d sourceSizePx: Qt.vector2d(glass._widgetW, glass._widgetH)
+        property vector2d halfpixel: Qt.vector2d(0.5 / glass._widgetW, 0.5 / glass._widgetH)
     }
     ShaderEffectSource {
-        id: blurH1Tex
-        anchors.fill: parent
-        opacity: 0
-        sourceItem: glass._blurActive ? blurH1 : null
-        live: glass._blurActive
-        hideSource: true
-        smooth: true
+        id: down1Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive && glass._blurIters >= 1 ? down1 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 2)),
+                             Math.max(1, Math.round(glass._widgetH / 2)))
     }
 
     ShaderEffect {
-        id: blurV1
-        anchors.fill: parent
-        visible: false
-        fragmentShader: Qt.resolvedUrl("shaders/blur_v.frag.qsb")
-        property variant source: blurH1Tex
-        property real radiusPx: glass.blurRadius
-        property vector2d sourceSizePx: Qt.vector2d(glass._widgetW, glass._widgetH)
+        id: down2
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_down.frag.qsb")
+        property variant source: down1Tex
+        property vector2d halfpixel: Qt.vector2d(0.5 / Math.max(1, down1Tex.textureSize.width),
+                                                  0.5 / Math.max(1, down1Tex.textureSize.height))
     }
     ShaderEffectSource {
-        id: blurV1Tex
-        anchors.fill: parent
-        opacity: 0
-        sourceItem: glass._blurActive ? blurV1 : null
-        live: glass._blurActive
-        hideSource: true
-        smooth: true
+        id: down2Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive && glass._blurIters >= 2 ? down2 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 4)),
+                             Math.max(1, Math.round(glass._widgetH / 4)))
     }
 
     ShaderEffect {
-        id: blurH2
-        anchors.fill: parent
-        visible: false
-        fragmentShader: Qt.resolvedUrl("shaders/blur_h.frag.qsb")
-        property variant source: blurV1Tex
-        property real radiusPx: glass.blurRadius
-        property vector2d sourceSizePx: Qt.vector2d(glass._widgetW, glass._widgetH)
+        id: down3
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_down.frag.qsb")
+        property variant source: down2Tex
+        property vector2d halfpixel: Qt.vector2d(0.5 / Math.max(1, down2Tex.textureSize.width),
+                                                  0.5 / Math.max(1, down2Tex.textureSize.height))
     }
     ShaderEffectSource {
-        id: blurH2Tex
-        anchors.fill: parent
-        opacity: 0
-        sourceItem: glass._blurActive ? blurH2 : null
-        live: glass._blurActive
-        hideSource: true
-        smooth: true
+        id: down3Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive && glass._blurIters >= 3 ? down3 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 8)),
+                             Math.max(1, Math.round(glass._widgetH / 8)))
     }
 
     ShaderEffect {
-        id: blurV2
-        anchors.fill: parent
-        visible: false
-        fragmentShader: Qt.resolvedUrl("shaders/blur_v.frag.qsb")
-        property variant source: blurH2Tex
-        property real radiusPx: glass.blurRadius
-        property vector2d sourceSizePx: Qt.vector2d(glass._widgetW, glass._widgetH)
+        id: down4
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_down.frag.qsb")
+        property variant source: down3Tex
+        property vector2d halfpixel: Qt.vector2d(0.5 / Math.max(1, down3Tex.textureSize.width),
+                                                  0.5 / Math.max(1, down3Tex.textureSize.height))
     }
     ShaderEffectSource {
-        id: blurV2Tex
-        anchors.fill: parent
-        opacity: 0
-        sourceItem: glass._blurActive ? blurV2 : null
-        live: glass._blurActive
-        hideSource: true
-        smooth: true
+        id: down4Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive && glass._blurIters >= 4 ? down4 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 16)),
+                             Math.max(1, Math.round(glass._widgetH / 16)))
+    }
+
+    ShaderEffect {
+        id: down5
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_down.frag.qsb")
+        property variant source: down4Tex
+        property vector2d halfpixel: Qt.vector2d(0.5 / Math.max(1, down4Tex.textureSize.width),
+                                                  0.5 / Math.max(1, down4Tex.textureSize.height))
+    }
+    ShaderEffectSource {
+        id: down5Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive && glass._blurIters >= 5 ? down5 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 32)),
+                             Math.max(1, Math.round(glass._widgetH / 32)))
+    }
+
+    ShaderEffect {
+        id: down6
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_down.frag.qsb")
+        property variant source: down5Tex
+        property vector2d halfpixel: Qt.vector2d(0.5 / Math.max(1, down5Tex.textureSize.width),
+                                                  0.5 / Math.max(1, down5Tex.textureSize.height))
+    }
+    ShaderEffectSource {
+        id: down6Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive && glass._blurIters >= 6 ? down6 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 64)),
+                             Math.max(1, Math.round(glass._widgetH / 64)))
+    }
+
+    // --- Dual Kawase blur: upsample chain (mirrors downsample) ---
+
+    // Bottom of the pyramid — picks the deepest downsample level reached.
+    readonly property var _bottomTex: _blurIters >= 6 ? down6Tex :
+                                      _blurIters >= 5 ? down5Tex :
+                                      _blurIters >= 4 ? down4Tex :
+                                      _blurIters >= 3 ? down3Tex :
+                                      _blurIters >= 2 ? down2Tex : down1Tex
+
+    ShaderEffect {
+        id: up6
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_up.frag.qsb")
+        property variant source: down6Tex
+        property vector2d halfpixel: Qt.vector2d(0.5 / Math.max(1, down5Tex.textureSize.width),
+                                                  0.5 / Math.max(1, down5Tex.textureSize.height))
+    }
+    ShaderEffectSource {
+        id: up6Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive && glass._blurIters >= 6 ? up6 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: down5Tex.textureSize
+    }
+
+    ShaderEffect {
+        id: up5
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_up.frag.qsb")
+        property variant source: glass._blurIters >= 6 ? up6Tex : down5Tex
+        property vector2d halfpixel: Qt.vector2d(0.5 / Math.max(1, down4Tex.textureSize.width),
+                                                  0.5 / Math.max(1, down4Tex.textureSize.height))
+    }
+    ShaderEffectSource {
+        id: up5Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive && glass._blurIters >= 5 ? up5 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: down4Tex.textureSize
+    }
+
+    ShaderEffect {
+        id: up4
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_up.frag.qsb")
+        property variant source: glass._blurIters >= 5 ? up5Tex : down4Tex
+        property vector2d halfpixel: Qt.vector2d(0.5 / Math.max(1, down3Tex.textureSize.width),
+                                                  0.5 / Math.max(1, down3Tex.textureSize.height))
+    }
+    ShaderEffectSource {
+        id: up4Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive && glass._blurIters >= 4 ? up4 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: down3Tex.textureSize
+    }
+
+    ShaderEffect {
+        id: up3
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_up.frag.qsb")
+        property variant source: glass._blurIters >= 4 ? up4Tex : down3Tex
+        property vector2d halfpixel: Qt.vector2d(0.5 / Math.max(1, down2Tex.textureSize.width),
+                                                  0.5 / Math.max(1, down2Tex.textureSize.height))
+    }
+    ShaderEffectSource {
+        id: up3Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive && glass._blurIters >= 3 ? up3 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: down2Tex.textureSize
+    }
+
+    ShaderEffect {
+        id: up2
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_up.frag.qsb")
+        property variant source: glass._blurIters >= 3 ? up3Tex : down2Tex
+        property vector2d halfpixel: Qt.vector2d(0.5 / Math.max(1, down1Tex.textureSize.width),
+                                                  0.5 / Math.max(1, down1Tex.textureSize.height))
+    }
+    ShaderEffectSource {
+        id: up2Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive && glass._blurIters >= 2 ? up2 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: down1Tex.textureSize
+    }
+
+    ShaderEffect {
+        id: up1
+        anchors.fill: parent; visible: false
+        fragmentShader: Qt.resolvedUrl("shaders/kawase_up.frag.qsb")
+        property variant source: glass._blurIters >= 2 ? up2Tex : down1Tex
+        property vector2d halfpixel: Qt.vector2d(0.5 / glass._widgetW, 0.5 / glass._widgetH)
+    }
+    ShaderEffectSource {
+        id: up1Tex; anchors.fill: parent; opacity: 0
+        sourceItem: glass._blurActive ? up1 : null
+        live: glass._blurActive; hideSource: true; smooth: true
+        textureSize: Qt.size(Math.round(glass._widgetW), Math.round(glass._widgetH))
     }
 
     // --- Glass shader (refraction + chroma + tint + specular + mask) ---
@@ -303,7 +435,7 @@ Item {
         visible: glass.solidMode || glass.active
         fragmentShader: Qt.resolvedUrl("shaders/liquidglass.frag.qsb")
 
-        property variant backdrop: glass._blurActive ? blurV2Tex : wallpaperTex
+        property variant backdrop: glass._blurActive ? up1Tex : wallpaperTex
         property size size: Qt.size(glass._widgetW, glass._widgetH)
         property real radius: glass.radius
         property real roundness: glass.roundness

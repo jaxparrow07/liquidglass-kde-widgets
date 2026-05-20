@@ -446,6 +446,7 @@ PlasmoidItem {
                 : plasmoid.configuration.tintAlphaPct / 100
             chromaStrength: plasmoid.configuration.chromaStrengthPct / 100
             specStrength: plasmoid.configuration.specStrengthPct / 100
+            blurRadius: plasmoid.configuration.blurRadiusPx
             realtimeRefraction: plasmoid.configuration.realtimeRefraction
             fallbackOpacity: colors.glassFallbackOpacity
             solidMode: colors.isSolid
