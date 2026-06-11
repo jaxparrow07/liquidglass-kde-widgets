@@ -13,7 +13,7 @@
         "Icon": "/icon.png",
         "Id": "com.jaxparrow07.macoswidgets.clock-square",
         "License": "GPL-3.0",
-        "Name": "macOS Clock (Square)",
+        "Name": "macOS Clock Digital",
         "Version": "0.1",
         "Website": "https://github.com/jaxparrow07/macos-widgets"
     },
