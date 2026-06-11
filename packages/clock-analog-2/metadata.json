@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "rjackfaith@gmail.com",
+                "Name": "Jack Faith"
+            }
+        ],
+        "Category": "Date and Time",
+        "Description": "macOS Tahoe style liquid-glass analog clock widget with minimal hour marks.",
+        "EnabledByDefault": true,
+        "Icon": "/icon.png",
+        "Id": "com.jaxparrow07.macoswidgets.clock-analog-2",
+        "License": "GPL-3.0",
+        "Name": "macOS Clock II",
+        "Version": "0.1",
+        "Website": "https://github.com/jaxparrow07/macos-widgets"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
