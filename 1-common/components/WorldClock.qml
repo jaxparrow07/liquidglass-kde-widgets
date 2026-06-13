@@ -89,13 +89,14 @@ Item {
         return sign * parseInt(m[2], 10);
     }
 
-    // Difference of a zone's offset vs. local offset, in whole hours.
+    // Difference of a zone's offset vs. local offset, in (possibly fractional)
+    // hours. Kept fractional so half-hour zones (India +5:30, Nepal +5:45,
+    // etc.) read correctly against each other — e.g. Tokyo vs India is +3.5.
     function _relHours(zoneOffsetStr) {
         var localMin = -(new Date().getTimezoneOffset());      // minutes east of UTC
         var localHr  = localMin / 60;
         var zoneHr   = _offsetHoursFromStringFractional(zoneOffsetStr);
-        var diff = zoneHr - localHr;
-        return (diff < 0 ? Math.ceil(diff) : Math.floor(diff));
+        return zoneHr - localHr;
     }
 
     // Fractional hours from "UTC+09:30" etc. (keeps the :30 for the diff math).
@@ -111,7 +112,11 @@ Item {
 
     function _offsetLabel(relHrs) {
         var sign = relHrs > 0 ? "+" : (relHrs < 0 ? "-" : "");
-        return sign + Math.abs(relHrs) + "HRS";
+        var abs  = Math.abs(relHrs);
+        // Trim trailing ".0" but keep ".5" / ".75" for fractional-offset zones.
+        var num  = (abs % 1 === 0) ? abs.toString()
+                                   : abs.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+        return sign + num + "HRS";
     }
 
     // Day word for a zone's date vs. local date.
