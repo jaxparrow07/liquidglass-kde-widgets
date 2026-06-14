@@ -1,45 +1,193 @@
-# macos-widgets
+<div align="center">
 
-macOS Tahoe / iOS 18 style widgets for KDE Plasma 6.
+<a href="https://www.youtube.com/watch?v=6UInZ-c01Do">
+  <img width="1280" alt="Liquid Glass KDE Widgets" src="0-images/header.png" />
+</a>
 
-## Status
+# Liquid Glass — macOS Widgets for KDE
 
-Phase 1: scaffolding + liquid-glass background component. One test widget (`test-glass`).
+<i>v1.0</i><br>
+macOS&nbsp;Tahoe / iOS-style liquid-glass widgets for KDE Plasma 6.<br><br>
 
-## Requirements
+<a href="https://github.com/jaxparrow07/liquidglass-kde-widgets/releases/latest">
+  <img src="https://img.shields.io/github/downloads/jaxparrow07/liquidglass-kde-widgets/latest/total?style=for-the-badge" alt="Download Latest Release">
+</a>
+<a href="https://ko-fi.com/devrinth">
+  <img src="https://img.shields.io/badge/Buy_me_a_Kofi-donate-blue?style=for-the-badge&logo=kofi&color=%23FF6433" alt="Support on Ko-fi">
+</a>
 
-- KDE Plasma 6.x
-- Qt 6.x with `qsb` (from `qt6-base-dev-tools`) — only needed if you rebuild shaders
-- `jq`, `zip`, `kpackagetool6`
+</div>
 
-## Install
+---
 
+## Widgets
+
+### Clocks
+
+<img src="0-images/clocks_glass.png" width="420"> <img src="0-images/clocks_solid.png" width="420">
+
+Three analog faces and a digital tile, in glass or solid
+
+### World / City clocks
+
+<img src="0-images/clocks_city1-2.png" width="420"> <img src="0-images/city_3-city_digital.png" width="420">
+
+Track time in cities around the world. DST-correct per-zone time, half-hour offsets handled,
+and a GMT-offset city picker.
+
+### Music
+
+<img src="0-images/music_glass.png" width="420"> <img src="0-images/music_solid.png" width="420">
+
+Now-playing controls for whatever's playing on your system (MPRIS) — album art, track details
+and transport buttons. **Supports synced lyrics via LRCLIB**, and adapts between wide and tall-wide layouts
+as you resize it.
+
+### Weather
+
+<img src="0-images/weather.png" width="640">
+A better looking weather widget for your desktop. Auto colors based on the weather and time. Supports 3 layout modes and liquid glass.
+A compact **panel** variant is also available (see below).
+
+### Calendar
+
+<img src="0-images/calendar.png" width="640">
+
+Stretch the widget wide to see upcoming events fetched from your actual calendar.
+
+> **Note:** the events side panel reads from KDE's calendar system (Akonadi). It needs a little
+> one-time setup — see [Additional Setup → Calendar Events](#calendar-events-akonadi).
+
+### Timer
+
+<img src="0-images/timer.png" width="640">
+
+A countdown timer with quick presets and a notification when time's up. Works on the desktop or
+tucked into a panel.
+
+### Panel widgets
+
+<img src="0-images/panel_widgets.png" width="420">
+
+Several widgets ship a compact **panel** representation (e.g. Weather, Timer) that follows your
+system theme, with the full view a click away. 
+
+**NOTE: WEATHER ON PANEL IS A SEPARATE WIDGET NAMED "Weather (Panel)"**
+
+---
+
+## Installation
+
+### Prerequisites
+
+- KDE Plasma **6.x** and Qt **6.x**
+- `kpackagetool6` (ships with Plasma), plus `jq` and `zip`
+- `qsb` (from `qt6-base-dev-tools`) — **only** needed if you rebuild the shaders
+
+Clone the repository:
+
+```bash
+git clone https://github.com/jaxparrow07/liquidglass-kde-widgets.git
+cd liquidglass-kde-widgets
 ```
-./install.sh test-glass          # single widget (test-* names work too)
-./install.sh -a                  # all non-test widgets in packages/
-./install.sh -t                  # only test-* widgets
-./install.sh -a -t               # everything
+
+### Build the shaders (optional)
+
+Compiled `.qsb` shaders are committed, so you can skip this. Rebuild them only if you've changed
+a shader source:
+
+```bash
+./build-shaders.sh        # 1-common/components/shaders/*.frag -> *.qsb
 ```
 
-Then add the "macOS Glass Test" widget to the desktop.
+### Method 1 — Install script (recommended)
 
-## Package
+Install everything:
 
-```
-./build-shaders.sh               # rebuild .qsb files (commit the outputs)
-./package.sh test-glass          # -> 2-packaged/test-glass-0.1.plasmoid
-./package.sh -a                  # all non-test widgets
-./package.sh -t                  # only test-* widgets
-./package.sh -a -t               # everything
+```bash
+./install.sh --all        # or: ./install.sh -a
 ```
 
-## Layout
+Or install a single widget by its package name:
 
-- `1-common/` — shared QML components, shaders, fonts
-- `packages/` — individual widget sources; each symlinks into `1-common/`
-- `2-packaged/` — `.plasmoid` build outputs
-- `0-images/` — screenshots per widget
+```bash
+./install.sh <package_name>
+```
 
-## Liquid glass
+Available package names:
 
-`1-common/components/LiquidGlass.qml` samples `Plasmoid.containment.wallpaperGraphicsObject`, blurs it with `MultiEffect`, and runs a custom GLSL shader for edge refraction, tint, and specular. Works on desktop containments only — falls back to a flat translucent rect elsewhere (including `plasmoidviewer`).
+| Package | Widget |
+|---|---|
+| `calendar` | Calendar |
+| `clock-analog` / `clock-analog-2` / `clock-analog-3` | Analog clocks I / II / III |
+| `clock-digital` | Digital clock |
+| `city-1` / `city-2` / `city-3` / `city-digital` | World / City clocks |
+| `music` | Music player |
+| `weather` | Weather |
+| `weather-panel` | Weather (panel) |
+| `timer` | Timer |
+
+The install script restarts Plasma Shell for you on success.
+
+### Method 2 — Install from file
+
+Download the packaged widgets from the [releases page](https://github.com/jaxparrow07/liquidglass-kde-widgets/releases/latest)
+and load them manually:
+
+1. **Desktop** → Right Click → **Enter Edit Mode**
+2. **Add Widget** → **Get Widgets** → **Install Widget From Local File**
+3. Select the downloaded `.plasmoid` file
+
+### Method 3 — Manual
+
+```bash
+kpackagetool6 --type=Plasma/Applet -i packages/<package_name>   # install
+kpackagetool6 --type=Plasma/Applet -u packages/<package_name>   # update
+killall plasmashell && kstart plasmashell                       # restart
+```
+
+---
+
+## Translations & Contributing
+
+Every user-facing string is translatable. To add a language, see the
+[Translation Guide](translate/TRANSLATE.md).
+
+Contributions are welcome — please open issues and pull requests on
+[GitHub](https://github.com/jaxparrow07/liquidglass-kde-widgets).
+
+---
+
+## Additional Setup
+
+### Calendar Events (Akonadi)
+
+The Calendar widget's events side panel reads from KDE's calendar system.
+
+1. The base calendar support (`plasma-workspace`) is always present on Plasma 6. To pull in
+   events from your synced accounts (Nextcloud, Google, Outlook, …), install the PIM plugin:
+
+   ```bash
+   sudo apt install kpim6-kdepim-addons
+   ```
+
+   This also pulls in `kdepim-runtime` (the Akonadi server). Holiday and astronomical event
+   plugins ship with Plasma and need nothing extra.
+
+2. Add and sync your calendar sources in **Merkuro Calendar** or **KOrganizer** — the widget
+   shows whatever Akonadi has already synced.
+
+3. In the widget's settings, enable the calendar plugins (e.g. *pimevents*, *holidays*) and
+   tick the collections you want to display.
+
+Without this setup the side panel simply shows **"No upcoming events"**.
+
+---
+
+## Copyright & Attribution
+
+The bundled **fonts and icons are sourced from Apple's design system** and are included for
+**personal, non-commercial use only**. Do not use them for commercial purposes.
+
+**Disclaimer:** this project is **not affiliated with, endorsed by, or sponsored by Apple Inc.**
+All product names, logos and brands are property of their respective owners.

@@ -1,0 +1,11 @@
+# Packaged widget builds
+/2-packaged/*.plasmoid
+
+# Editor / OS cruft
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Translation sources (.pot/.po) and compiled catalogs (.mo) are committed on
+# purpose — translators need the templates and end users get the .mo files.
