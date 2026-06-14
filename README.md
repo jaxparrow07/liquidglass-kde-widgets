@@ -1,7 +1,7 @@
 <div align="center">
 
-<a href="https://www.youtube.com/watch?v=6UInZ-c01Do">
-  <img width="1280" alt="Liquid Glass KDE Widgets" src="0-images/header.png" />
+<a href="https://www.youtube.com/watch?v=POa255JazMo">
+  <img width="100%" alt="Liquid Glass KDE Widgets" src="0-images/header.png" />
 </a>
 
 # Liquid Glass — macOS Widgets for KDE
@@ -20,38 +20,42 @@ macOS&nbsp;Tahoe / iOS-style liquid-glass widgets for KDE Plasma 6.<br><br>
 
 ---
 
+An extensive widget set inspired from the latest MacOS (tahoe), along with liquid glass effect. Rather than taking the control away from the user, the widget offers all the parameters to be congfigured so you can basically customize EVERYTHING. The background for the widget is a custom shader, and even the solid modes are rendered by the shader since it supports gradients as well. If you want to make the custom styling consistent across your other widgets, you can simply copy and paste the widget style onto the other widgets.
+
+**Note: For use with video wallpapers, enable continuous sampling of background in the config (extra battery drain)** 
+
 ## Widgets
 
 ### Clocks
 
-<img src="0-images/clocks_glass.png" width="420"> <img src="0-images/clocks_solid.png" width="420">
+<img src="0-images/clocks_glass.png" width="100%">
+<img src="0-images/clocks_solid.png" width="100%">
 
-Three analog faces and a digital tile, in glass or solid
 
 ### World / City clocks
 
-<img src="0-images/clocks_city1-2.png" width="420"> <img src="0-images/city_3-city_digital.png" width="420">
+<img src="0-images/clocks_city1-2.png" width="100%">
+<img src="0-images/city_3-city_digital.png" width="100%">
 
-Track time in cities around the world. DST-correct per-zone time, half-hour offsets handled,
-and a GMT-offset city picker.
+DST-correct per-zone time, half-hour offsets handled.
 
 ### Music
 
-<img src="0-images/music_glass.png" width="420"> <img src="0-images/music_solid.png" width="420">
+<img src="0-images/music_glass.png" width="100%">
+<img src="0-images/music_solid.png" width="100%">
 
-Now-playing controls for whatever's playing on your system (MPRIS) — album art, track details
-and transport buttons. **Supports synced lyrics via LRCLIB**, and adapts between wide and tall-wide layouts
-as you resize it.
+Now-playing controls for whatever's playing on your system (MPRIS). **Supports synced lyrics via LRCLIB**, and adapts between wide and tall-wide layouts.
+as you resize it. **You gotta check the next/previous song album flip, it took me several hours to get it right :)**
 
 ### Weather
 
-<img src="0-images/weather.png" width="640">
-A better looking weather widget for your desktop. Auto colors based on the weather and time. Supports 3 layout modes and liquid glass.
+<img src="0-images/weather.png" width="100%">
+A better looking weather widget for your desktop. Auto colors based on the weather and time.
 A compact **panel** variant is also available (see below).
 
 ### Calendar
 
-<img src="0-images/calendar.png" width="640">
+<img src="0-images/calendar.png" width="100%">
 
 Stretch the widget wide to see upcoming events fetched from your actual calendar.
 
@@ -60,17 +64,17 @@ Stretch the widget wide to see upcoming events fetched from your actual calendar
 
 ### Timer
 
-<img src="0-images/timer.png" width="640">
+<img src="0-images/timer.png" width="100%">
 
-A countdown timer with quick presets and a notification when time's up. Works on the desktop or
-tucked into a panel.
+A countdown timer with quick presets and a notification when time's up. Works on both the desktop and
+the panel. I tried to make the animations 1:1 as much as possible despite the limiations QML has.
 
 ### Panel widgets
 
-<img src="0-images/panel_widgets.png" width="420">
+<img src="0-images/panel_widgets.png" width="100%">
 
 Several widgets ship a compact **panel** representation (e.g. Weather, Timer) that follows your
-system theme, with the full view a click away. 
+system theme, with the full view shown on click.
 
 **NOTE: WEATHER ON PANEL IS A SEPARATE WIDGET NAMED "Weather (Panel)"**
 
@@ -91,14 +95,6 @@ git clone https://github.com/jaxparrow07/liquidglass-kde-widgets.git
 cd liquidglass-kde-widgets
 ```
 
-### Build the shaders (optional)
-
-Compiled `.qsb` shaders are committed, so you can skip this. Rebuild them only if you've changed
-a shader source:
-
-```bash
-./build-shaders.sh        # 1-common/components/shaders/*.frag -> *.qsb
-```
 
 ### Method 1 — Install script (recommended)
 
@@ -113,6 +109,18 @@ Or install a single widget by its package name:
 ```bash
 ./install.sh <package_name>
 ```
+
+### Building shaders
+
+Compiled `.qsb` shaders are committed, so you dont have to compile the shaders again. Rebuild them only if you've changed
+a shader source:
+
+```bash
+./build-shaders.sh        # 1-common/components/shaders/*.frag -> *.qsb
+```
+
+Then install/package.
+
 
 Available package names:
 
