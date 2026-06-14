@@ -10,7 +10,7 @@
         "Category": "Date and Time",
         "Description": "Weather widget for KDE panels with native theming",
         "EnabledByDefault": true,
-        "Icon": "weather-clear",
+        "Icon": "/icon.png",
         "Id": "com.jaxparrow07.macoswidgets.weatherpanel",
         "License": "GPL-3.0",
         "Name": "Weather (Panel)",

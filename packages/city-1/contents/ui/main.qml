@@ -104,7 +104,12 @@ PlasmoidItem {
                 hourAngle:   singleView.e ? singleView.e.hourAngle : 0
                 minuteAngle: singleView.e ? singleView.e.minuteAngle : 0
                 secondAngle: world.sweepAngle
-                discVisible: !(colors.isSolid && root._realLight && plasmoid.configuration.opaqueBackground)
+                // Always show the disc in solid mode (matches clock-analog): the
+                // marks are foreground-colored, so they need the contrasting plate
+                // — white in light, #343436 in dark — even when the outer card is
+                // the flat opaque #1A1B1E fill. Hiding it left dark marks on the
+                // dark card (invisible) in solid light + opaque background.
+                discVisible: true
                 discColor: colors.isGlass ? Qt.rgba(1, 1, 1, 0.20)
                                           : (root._realLight ? "#ffffff" : "#343436")
                 markColor: colors.foreground
