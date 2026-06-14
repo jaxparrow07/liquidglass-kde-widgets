@@ -178,16 +178,22 @@ PlasmoidItem {
                     // offset block. Grid (2x2): code goes INSIDE the face, so the
                     // face fills the whole cell (centered).
                     readonly property real infoH: wide ? Math.round(height * 0.34) : 0
-                    // 2x2 grid: shave ~10px off the face for a bit more breathing
-                    // room inside the cell. Wide (4x2) faces keep their full size.
-                    readonly property real _faceInset: wide ? 0 : 10
-                    readonly property real faceSize: Math.max(0, Math.min(width, height - infoH) - _faceInset)
+                    // Inset between the face and its cell edges: 10px in the 2x2
+                    // grid, and a small wide-mode inset so adjacent 4x2 faces don't
+                    // crowd each other (margin between faces — faces stay full size).
+                    readonly property real _faceInset: wide ? Math.round(width * 0.08) : 10
+                    readonly property real faceSize: Math.max(0, Math.min(width - _faceInset, height - infoH))
 
-                    // Group the face (+ wide info block) and center it in the cell.
+                    // Group the face + (wide) label and center it in the cell. The
+                    // group height is the face plus the label's REAL content height
+                    // (not the infoH reservation) so centerIn centers the visible
+                    // block instead of leaving dead space below the text.
                     Item {
                         id: group
                         width: cell.faceSize
-                        height: cell.faceSize + cell.infoH
+                        height: cell.faceSize + (cell.wide ? cityLabel.fullContentHeight
+                                                                 + Math.round(cell.faceSize * 0.04)
+                                                           : 0)
                         anchors.centerIn: parent
 
                         ClockFace {
@@ -228,12 +234,13 @@ PlasmoidItem {
 
                         // Wide (4x2) only: NAME + day word + offset below the face.
                         CityLabel {
+                            id: cityLabel
                             visible: cell.wide
                             anchors.top: gridFace.bottom
                             anchors.topMargin: Math.round(cell.faceSize * 0.04)
                             anchors.left: parent.left
                             anchors.right: parent.right
-                            anchors.bottom: parent.bottom
+                            height: fullContentHeight
                             mode: "full"
                             fontFamily: sfProRounded.name
                             code: cell.modelData.code

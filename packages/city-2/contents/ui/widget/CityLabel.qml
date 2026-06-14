@@ -70,8 +70,13 @@ Item {
         horizontalAlignment: Text.AlignHCenter
     }
 
+    // Real height of the "full" stack, so callers can size/center a group to the
+    // actual content instead of a guessed reservation.
+    readonly property real fullContentHeight: fullColumn.implicitHeight
+
     // --- full (4x2) ---
     Column {
+        id: fullColumn
         visible: root.mode === "full"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
