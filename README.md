@@ -199,3 +199,7 @@ The bundled **fonts and icons are sourced from Apple's design system** and are i
 
 **Disclaimer:** this project is **not affiliated with, endorsed by, or sponsored by Apple Inc.**
 All product names, logos and brands are property of their respective owners.
+
+## AI Disclosure
+
+Most parts of this project is AI-assisted / spec developed. THIS PROJECT IS NOT VIBE CODED. I've manually rewritten several parts of the project and tested these for countless hours for all edge cases. Obviously, this wasn't developed with a single prompt, but I won't say I did all the heavy lifting. Perhaps this is what developing has come to, just shipping and making things faster. Because, USING AI, this project has taken me close to two months, and it would've taken me atleast 3-4 months without it. I, as a college student wouldn't have put that much time into a hobby project. So, I suppose as long as what you ship doesn't cost real money or is not slop, it's fine... I guess.
