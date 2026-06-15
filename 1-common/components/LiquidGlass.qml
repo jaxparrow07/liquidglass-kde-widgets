@@ -78,16 +78,21 @@ Item {
     function isLoader(n) {
         return n && n.sourceComponent !== undefined && n.item !== undefined
     }
+    // Pick the topmost sized item. ShaderEffectSource captures the whole
+    // subtree, so descending into children is only needed when the outer
+    // wrapper has no size yet (e.g. a Loader still resolving). Drilling
+    // past a sized parent caused us to land on hidden iChannel Images
+    // inside shader-wallpaper plugins (online.knowmad.shaderwallpaper).
     function findRenderableSource(node) {
         if (!node) return null
         if (isLoader(node)) return findRenderableSource(node.item)
+        if (node.width > 0 && node.height > 0) return node
         if (node.children && node.children.length > 0) {
             for (var i = 0; i < node.children.length; i++) {
                 const inner = findRenderableSource(node.children[i])
                 if (inner) return inner
             }
         }
-        if (node.width > 0 && node.height > 0) return node
         return null
     }
 
