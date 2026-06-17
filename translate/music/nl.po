@@ -1,0 +1,175 @@
+# macOS Music - Translation Template
+# Translators:
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: plasma_applet_com.jaxparrow07.macoswidgets.music 1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jaxparrow07/macos-widgets/issues\n"
+"POT-Creation-Date: 2026-06-14 18:01+0530\n"
+"PO-Revision-Date: 2026-06-17 19:41+0200\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Language-Team: \n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.9\n"
+
+#: packages/music/contents/config/config.qml:6
+msgid "Appearance"
+msgstr "Vormgeving"
+
+#: packages/music/contents/config/config.qml:11
+#: packages/music/contents/ui/widget/WideLayout.qml:234
+#: packages/music/contents/ui/widget/TallWideLayout.qml:205
+msgid "Lyrics"
+msgstr "Songtekst"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:55
+msgid "Applied!"
+msgstr "Toegepast!"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:57
+msgid "Invalid config string"
+msgstr "Ongeldige instelling"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:73
+msgid "Preset:"
+msgstr "Voorinstelling:"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:78
+msgid "Copy style"
+msgstr "Stijl kopiëren"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:83
+msgid "Copied!"
+msgstr "Gekopieerd!"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:91
+msgid "Paste style"
+msgstr "Stijl plakken"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:118
+msgid "Style:"
+msgstr "Stijl:"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:119
+msgid "Glass"
+msgstr "Glas"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:119
+msgid "Solid"
+msgstr "Vlakke kleur"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:124
+msgid "Appearance:"
+msgstr "Vormgeving:"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:125
+msgid "Dark"
+msgstr "Donker thema"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:125
+msgid "Light"
+msgstr "Licht thema"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:125
+msgid "Follow system"
+msgstr "Systeemthema"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:130
+msgid "Corner radius (px):"
+msgstr "Hoekstraal (in px):"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:136
+msgid "Roundness (×10, 2.0..10.0):"
+msgstr "Afgeronde hoeken (×10, 2.0..10.0):"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:148
+msgid "Glass effect"
+msgstr "Glaseffect"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:153
+msgid "Refraction thickness (px):"
+msgstr "Hoeveelheid weerspiegeling (in px):"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:159
+msgid "Index of refraction (×100):"
+msgstr "Weerspiegelingsindex (x100):"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:165
+msgid "Refraction strength:"
+msgstr "Weerspiegelingssterkte:"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:171
+msgid "Tint alpha (%):"
+msgstr "Alfatint (in %):"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:177
+msgid "Chromatic aberration (%):"
+msgstr "Kleurschifting (in %):"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:183
+msgid "Specular strength (%):"
+msgstr "Speculaire sterkte (in %):"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:189
+msgid "Blur radius (px):"
+msgstr "Vervagingsstraal (in px):"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:195
+msgid "Realtime refraction:"
+msgstr "Real-time weerspiegeling:"
+
+#: packages/music/contents/ui/config/ConfigAppearance.qml:196
+msgid "Recapture every frame (enable for video wallpapers)"
+msgstr "Ieder frame opnieuw vastleggen (schakel in bij gebruik van bewegende achtergronden)"
+
+#: packages/music/contents/ui/config/ConfigLyrics.qml:21
+msgid "Opacity"
+msgstr "Doorzichtigheid"
+
+#: packages/music/contents/ui/config/ConfigLyrics.qml:26
+msgid "Active line (%):"
+msgstr "Actieve regel (in %):"
+
+#: packages/music/contents/ui/config/ConfigLyrics.qml:32
+msgid "Inactive lines (%):"
+msgstr "Inactieve regels (in %):"
+
+#: packages/music/contents/ui/config/ConfigLyrics.qml:38
+msgid "Size"
+msgstr "Grootte"
+
+#: packages/music/contents/ui/config/ConfigLyrics.qml:43
+msgid "Wide layout font (‰):"
+msgstr "Lettertype op brede widget (in ‰):"
+
+#: packages/music/contents/ui/config/ConfigLyrics.qml:49
+msgid "Tall layout font (‰):"
+msgstr "Lettertype op verticale widget (in ‰):"
+
+#: packages/music/contents/ui/config/ConfigLyrics.qml:55
+msgid "Effects"
+msgstr "Effecten"
+
+#: packages/music/contents/ui/config/ConfigLyrics.qml:60
+msgid "Blur upcoming lines:"
+msgstr "Aankomende regels vervagen:"
+
+#: packages/music/contents/ui/config/ConfigLyrics.qml:61
+msgid "Blur upcoming lyrics lines (disable on slow hardware)"
+msgstr "Vervaag de aankomende songtekstregels (schakel uit op langzame hardware)"
+
+#: packages/music/contents/ui/widget/SyncedLyricsView.qml:236
+msgid "No lyrics available"
+msgstr "Er is geen songtekst beschikbaar"
+
+#: packages/music/contents/ui/widget/SyncedLyricsView.qml:249
+msgid ""
+"Couldn't load lyrics\n"
+"Tap to retry"
+msgstr ""
+"De songtekst kan niet worden geladen\n"
+"Klik om opnieuw te proberen"

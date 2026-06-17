@@ -1,0 +1,313 @@
+# macOS Weather - Translation Template
+# Translators:
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: plasma_applet_com.jaxparrow07.macoswidgets.weather 1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jaxparrow07/macos-widgets/issues\n"
+"POT-Creation-Date: 2026-06-14 18:01+0530\n"
+"PO-Revision-Date: 2026-06-17 19:46+0200\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Language-Team: \n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.9\n"
+
+#: packages/weather/contents/config/config.qml:6
+msgid "Appearance"
+msgstr "Vormgeving"
+
+#: packages/weather/contents/config/config.qml:11
+msgid "Weather"
+msgstr "Weer"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:55
+msgid "Applied!"
+msgstr "Toegepast!"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:57
+msgid "Invalid config string"
+msgstr "Ongeldige instelling"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:73
+msgid "Preset:"
+msgstr "Voorinstelling:"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:78
+msgid "Copy style"
+msgstr "Stijl kopiëren"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:83
+msgid "Copied!"
+msgstr "Gekopieerd!"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:91
+msgid "Paste style"
+msgstr "Stijl plakken"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:118
+msgid "Style:"
+msgstr "Stijl:"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:119
+msgid "Glass"
+msgstr "Glas"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:119
+msgid "Solid"
+msgstr "Vlakke kleur"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:124
+msgid "Appearance:"
+msgstr "Vormgeving:"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:125
+msgid "Dark"
+msgstr "Donker thema"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:125
+msgid "Light"
+msgstr "Licht thema"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:125
+msgid "Follow system"
+msgstr "Systeemthema"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:130
+msgid "Corner radius (px):"
+msgstr "Hoekstraal (in px):"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:136
+msgid "Roundness (×10, 2.0..10.0):"
+msgstr "Afgeronde hoeken (×10, 2.0..10.0):"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:148
+msgid "Glass effect"
+msgstr "Glaseffect"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:153
+msgid "Refraction thickness (px):"
+msgstr "Hoeveelheid weerspiegeling (in px):"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:159
+msgid "Index of refraction (×100):"
+msgstr "Weerspiegelingsindex (x100):"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:165
+msgid "Refraction strength:"
+msgstr "Weerspiegelingssterkte:"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:171
+msgid "Tint alpha (%):"
+msgstr "Alfatint (in %):"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:177
+msgid "Chromatic aberration (%):"
+msgstr "Kleurschifting (in %):"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:183
+msgid "Specular strength (%):"
+msgstr "Speculaire sterkte (in %):"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:189
+msgid "Blur radius (px):"
+msgstr "Vervagingsstraal (in px):"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:195
+msgid "Realtime refraction:"
+msgstr "Real-time weerspiegeling:"
+
+#: packages/weather/contents/ui/config/ConfigAppearance.qml:196
+msgid "Recapture every frame (enable for video wallpapers)"
+msgstr ""
+"Ieder frame opnieuw vastleggen (schakel in bij gebruik van bewegende "
+"achtergronden)"
+
+#: packages/weather/contents/ui/config/ConfigGeneral.qml:78
+msgid "Location"
+msgstr "Plaats"
+
+#: packages/weather/contents/ui/config/ConfigGeneral.qml:84
+msgid ""
+"Start typing a city name and pick a result to set your weather location."
+msgstr ""
+"Typ een plaatsnaam en klik het juiste resultaat aan om als locatie te "
+"gebruiken."
+
+#: packages/weather/contents/ui/config/ConfigGeneral.qml:93
+msgid "City name (e.g. London)"
+msgstr "Plaatsnaam (bijv. Amsterdam)"
+
+#: packages/weather/contents/ui/config/ConfigGeneral.qml:143
+msgid "Temperature unit:"
+msgstr "Temperatuureenheid:"
+
+#: packages/weather/contents/ui/config/ConfigGeneral.qml:148
+msgid "Celsius (°C)"
+msgstr "Celsius (°C)"
+
+#: packages/weather/contents/ui/config/ConfigGeneral.qml:148
+msgid "Fahrenheit (°F)"
+msgstr "Fahrenheit (°F)"
+
+#: packages/weather/contents/ui/config/ConfigGeneral.qml:164
+msgid ""
+"Locations are resolved with the Open-Meteo Geocoding API (geocoding-api.open-"
+"meteo.com) and forecasts are fetched from Open-Meteo (api.open-meteo.com). "
+"No account or API key is required. Selecting a result stores its coordinates "
+"directly, so weather refreshes skip the geocoding step."
+msgstr ""
+"Er wordt naar plaatsen gezocht aan de hand van de Open-Meteo Geocoding-api "
+"(geocoding-api.open-meteo.com). Weerberichten worden opgehaald van Open-"
+"Meteo (api.open-meteo.com). Hiervoor is geen account of api-sleutel vereist. "
+"Kies een resultaat om de coördinaten direct op te slaan."
+
+#: packages/weather/contents/ui/main.qml:171
+msgid "Precipitation"
+msgstr "Neerslag"
+
+#: packages/weather/contents/ui/main.qml:190
+msgid "Wind"
+msgstr "Windsnelheid"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:19
+msgid "Loading..."
+msgstr "Bezig met laden…"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:123
+msgid "Clear"
+msgstr "Helder"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:124
+msgid "Mainly Clear"
+msgstr "Hoofdzakelijk helder"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:125
+msgid "Partly Cloudy"
+msgstr "Deels bewolkt"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:126
+msgid "Overcast"
+msgstr "Bewolkt"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:127
+msgid "Fog"
+msgstr "Mist"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:128
+msgid "Rime Fog"
+msgstr "Rijpmist"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:129
+msgid "Light Drizzle"
+msgstr "Lichte motregen"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:130
+msgid "Drizzle"
+msgstr "Motregen"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:131
+msgid "Dense Drizzle"
+msgstr "Dichte motregen"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:132
+msgid "Freezing Drizzle"
+msgstr "IJsmotregen"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:133
+msgid "Heavy Freezing Drizzle"
+msgstr "Zware ijsmotregen"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:134
+msgid "Slight Rain"
+msgstr "Lichte regenval"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:135
+msgid "Rain"
+msgstr "Regen"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:136
+msgid "Heavy Rain"
+msgstr "Zware regenval"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:137
+msgid "Freezing Rain"
+msgstr "IJsregen"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:138
+msgid "Heavy Freezing Rain"
+msgstr "Zware ijsregen"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:139
+msgid "Slight Snow"
+msgstr "Lichte sneeuwval"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:140
+msgid "Snow"
+msgstr "Sneeuw"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:141
+msgid "Heavy Snow"
+msgstr "Zware sneeuwval"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:142
+msgid "Snow Grains"
+msgstr "Sneeuwvlokken"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:143
+msgid "Light Showers"
+msgstr "Lichte buien"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:144
+msgid "Showers"
+msgstr "Buien"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:145
+msgid "Heavy Showers"
+msgstr "Zware buien"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:146
+msgid "Light Snow Showers"
+msgstr "Lichte sneeuwbuien"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:147
+msgid "Heavy Snow Showers"
+msgstr "Zware sneeuwbuien"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:148
+msgid "Thunderstorm"
+msgstr "Onweersbui"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:149
+msgid "Thunderstorm with Hail"
+msgstr "Onweers- en hagelbui"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:150
+msgid "Heavy Thunderstorm"
+msgstr "Zware onweersbui met hagel"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:151
+msgid "Unknown"
+msgstr "Onbekend"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:210
+msgid "Location not found"
+msgstr "Er is geen plaats gevonden"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:356
+msgid "Precipitation expected today"
+msgstr "Verwachte neerslaghoeveelheid (vandaag)"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:358
+msgid "Precipitation expected tomorrow"
+msgstr "Verwachte neerslaghoeveelheid (morgen)"
+
+#: packages/weather/contents/ui/components/WeatherData.qml:360
+msgid "No precipitation for %1 day"
+msgid_plural "No precipitation for %1 days"
+msgstr[0] "Er wordt de komende %1 dag geen neerslag verwacht"
+msgstr[1] "Er wordt de komende %1 dagen geen neerslag verwacht"
