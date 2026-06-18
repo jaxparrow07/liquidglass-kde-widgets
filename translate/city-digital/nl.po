@@ -1,0 +1,137 @@
+# macOS City Digital - Translation Template
+# Translators:
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: plasma_applet_com.jaxparrow07.macoswidgets.city-digital 1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jaxparrow07/macos-widgets/issues\n"
+"POT-Creation-Date: 2026-06-14 18:01+0530\n"
+"PO-Revision-Date: 2026-06-17 18:31+0200\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Language-Team: \n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.9\n"
+
+#: packages/city-digital/contents/config/config.qml:6
+msgid "Clocks"
+msgstr "Klokken"
+
+#: packages/city-digital/contents/config/config.qml:11
+msgid "Appearance"
+msgstr "Vormgeving"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:55
+msgid "Applied!"
+msgstr "Toegepast!"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:57
+msgid "Invalid config string"
+msgstr "Ongeldige instelling"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:73
+msgid "Preset:"
+msgstr "Voorinstelling:"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:78
+msgid "Copy style"
+msgstr "Stijl kopiëren"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:83
+msgid "Copied!"
+msgstr "Gekopieerd!"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:91
+msgid "Paste style"
+msgstr "Stijl plakken"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:118
+msgid "Style:"
+msgstr "Stijl:"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:119
+msgid "Glass"
+msgstr "Glas"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:119
+msgid "Solid"
+msgstr "Vlakke kleur"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:124
+msgid "Appearance:"
+msgstr "Vormgeving:"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:125
+msgid "Dark"
+msgstr "Donker thema"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:125
+msgid "Light"
+msgstr "Licht thema"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:125
+msgid "Follow system"
+msgstr "Systeemthema"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:130
+msgid "Corner radius (px):"
+msgstr "Hoekstraal (in px):"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:136
+msgid "Roundness (×10, 2.0..10.0):"
+msgstr "Afgeronde hoeken (×10, 2.0..10.0):"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:148
+msgid "Glass effect"
+msgstr "Glaseffect"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:153
+msgid "Refraction thickness (px):"
+msgstr "Hoeveelheid weerspiegeling (in px):"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:159
+msgid "Index of refraction (×100):"
+msgstr "Weerspiegelingsindex (x100):"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:165
+msgid "Refraction strength:"
+msgstr "Weerspiegelingssterkte:"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:171
+msgid "Tint alpha (%):"
+msgstr "Alfatint (in %):"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:177
+msgid "Chromatic aberration (%):"
+msgstr "Kleurschifting (in %):"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:183
+msgid "Specular strength (%):"
+msgstr "Speculaire sterkte (in %):"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:189
+msgid "Blur radius (px):"
+msgstr "Vervagingsstraal (in px):"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:195
+msgid "Realtime refraction:"
+msgstr "Real-time weerspiegeling:"
+
+#: packages/city-digital/contents/ui/config/ConfigAppearance.qml:196
+msgid "Recapture every frame (enable for video wallpapers)"
+msgstr "Ieder frame opnieuw vastleggen (schakel in bij gebruik van bewegende achtergronden)"
+
+#: packages/city-digital/contents/ui/config/ConfigGeneral.qml:152
+msgid "Pick the city this clock shows."
+msgstr "Kies welke plaats op deze klok moet worden getoond."
+
+#: packages/city-digital/contents/ui/config/ConfigGeneral.qml:216
+msgid "Label"
+msgstr "Label"
+
+#: packages/city-digital/contents/ui/config/ConfigGeneral.qml:231
+msgid "Add city"
+msgstr "Plaats toevoegen"

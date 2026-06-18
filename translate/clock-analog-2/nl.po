@@ -1,0 +1,129 @@
+# macOS Clock II - Translation Template
+# Translators:
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: plasma_applet_com.jaxparrow07.macoswidgets.clock-analog-2 1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jaxparrow07/macos-widgets/issues\n"
+"POT-Creation-Date: 2026-06-14 18:01+0530\n"
+"PO-Revision-Date: 2026-06-17 18:32+0200\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Language-Team: \n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.9\n"
+
+#: packages/clock-analog-2/contents/config/config.qml:6
+msgid "Appearance"
+msgstr "Vormgeving"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:73
+msgid "Applied!"
+msgstr "Toegepast!"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:75
+msgid "Invalid config string"
+msgstr "Ongeldige instelling"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:91
+msgid "Preset:"
+msgstr "Voorinstelling:"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:96
+msgid "Copy style"
+msgstr "Stijl kopiëren"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:101
+msgid "Copied!"
+msgstr "Gekopieerd!"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:109
+msgid "Paste style"
+msgstr "Stijl plakken"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:136
+msgid "Style:"
+msgstr "Stijl:"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:137
+msgid "Glass"
+msgstr "Glas"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:137
+msgid "Solid"
+msgstr "Vlakke kleur"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:142
+msgid "Appearance:"
+msgstr "Vormgeving:"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:143
+msgid "Dark"
+msgstr "Donker thema"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:143
+msgid "Light"
+msgstr "Licht thema"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:143
+msgid "Follow system"
+msgstr "Systeemthema"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:148
+msgid "Corner radius (px):"
+msgstr "Hoekstraal (in px):"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:154
+msgid "Roundness (×10, 2.0..10.0):"
+msgstr "Afgeronde hoeken (×10, 2.0..10.0):"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:160
+msgid "Background:"
+msgstr "Achtergrond:"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:161
+msgid "Fully opaque background"
+msgstr "Volledig ondoorzichtige achtergrond"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:173
+msgid "Glass effect"
+msgstr "Glaseffect"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:178
+msgid "Refraction thickness (px):"
+msgstr "Hoeveelheid weerspiegeling (in px):"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:184
+msgid "Index of refraction (×100):"
+msgstr "Weerspiegelingsindex (x100):"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:190
+msgid "Refraction strength:"
+msgstr "Weerspiegelingssterkte:"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:196
+msgid "Tint alpha (%):"
+msgstr "Alfatint (in %):"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:202
+msgid "Chromatic aberration (%):"
+msgstr "Kleurschifting (in %):"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:208
+msgid "Specular strength (%):"
+msgstr "Speculaire sterkte (in %):"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:214
+msgid "Blur radius (px):"
+msgstr "Vervagingsstraal (in px):"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:220
+msgid "Realtime refraction:"
+msgstr "Real-time weerspiegeling:"
+
+#: packages/clock-analog-2/contents/ui/config/ConfigAppearance.qml:221
+msgid "Recapture every frame (enable for video wallpapers)"
+msgstr "Ieder frame opnieuw vastleggen (schakel in bij gebruik van bewegende achtergronden)"
