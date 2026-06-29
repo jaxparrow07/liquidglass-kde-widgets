@@ -1,0 +1,27 @@
+{
+  "KPackageStructure": "Plasma/Applet",
+  "KPlugin": {
+    "Authors": [
+      {
+        "Name": "LiquidGlass Widgets"
+      }
+    ],
+    "Category": "System Information",
+    "Description": "System monitor sensor widget with a liquid-glass frosted backdrop. Configure sensors, faces, and charts.",
+    "EnabledByDefault": true,
+    "FormFactors": [
+      "desktop"
+    ],
+    "Icon": "ksysguardd",
+    "Id": "org.kde.plasma.systemmonitor.liquidglass",
+    "License": "GPL-3.0",
+    "Name": "System Monitor (Liquid Glass)",
+    "Version": "1.0",
+    "Website": "https://github.com/jaxparrow07/macos-widgets"
+  },
+  "X-Plasma-API-Minimum-Version": "6.0",
+  "X-Plasma-Provides": [
+    "org.kde.plasma.systemmonitor"
+  ],
+  "X-Plasma-RootPath": "org.kde.plasma.systemmonitor"
+}
