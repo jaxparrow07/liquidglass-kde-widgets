@@ -199,6 +199,7 @@ PlasmoidItem {
         root._lastPosTick = 0
         root._lastSampledUrl = ""
         _scheduleArtRefresh()
+        _resampleTimer.restart()
         root._syncedLyrics = []
         root._plainLyrics = ""
         root._lyricsState = 0
@@ -206,6 +207,15 @@ PlasmoidItem {
         root._lyricsFailCount = 0
         _lyricsRetryTimer.stop()
         _lyricsFetchTimer.restart()
+    }
+    Timer {
+        id: _resampleTimer
+        interval: 350
+        repeat: false
+        onTriggered: {
+            if (root.albumArt !== "" && root.albumArt !== root._lastSampledUrl)
+                sampleCanvas.requestPaint()
+        }
     }
     onIsPlayingChanged: {
         root.position = mpris2Model.currentPlayer?.position ?? 0
@@ -343,6 +353,7 @@ PlasmoidItem {
         onImageLoaded: {
             if (root.albumArt !== "" && root.albumArt !== root._lastSampledUrl) {
                 root._lastSampledUrl = root.albumArt
+                _resampleTimer.stop()
                 requestPaint()
             }
         }
