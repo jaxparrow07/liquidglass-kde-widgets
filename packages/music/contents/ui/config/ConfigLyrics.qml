@@ -12,6 +12,7 @@ ColumnLayout {
     property alias cfg_lyricsFontSizeWide: wideFontSpin.value
     property alias cfg_lyricsFontSizeTall: tallFontSpin.value
     property alias cfg_lyricsBlur: lyricsBlurCheck.checked
+    property alias cfg_artRefreshEnabled: artRefreshCheck.checked
 
     Kirigami.FormLayout {
         Layout.fillWidth: true
@@ -59,6 +60,12 @@ ColumnLayout {
             id: lyricsBlurCheck
             Kirigami.FormData.label: i18n("Blur upcoming lines:")
             text: i18n("Blur upcoming lyrics lines (disable on slow hardware)")
+        }
+
+        CheckBox {
+            id: artRefreshCheck
+            Kirigami.FormData.label: i18n("Pause on track change:")
+            text: i18n("Briefly pause/resume to refresh album art (causes playback hiccups)")
         }
 
     }
