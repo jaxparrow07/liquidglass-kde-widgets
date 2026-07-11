@@ -115,7 +115,7 @@ PlasmoidItem {
                     var resp = JSON.parse(xhr.responseText)
                     var synced = resp.syncedLyrics || ""
                     root._plainLyrics = resp.plainLyrics || ""
-                    root._syncedLyrics = synced !== "" ? root._parseLrc(synced) : []
+                    root._syncedLyrics = synced !== "" ? root._parseLrc(synced, (resp.offset || 0) * 1000) : []
                     root._lyricsState = 2
                     root._lyricsFailCount = 0
                     _lyricsRetryTimer.stop()
@@ -140,15 +140,23 @@ PlasmoidItem {
         xhr.send()
     }
 
-    function _parseLrc(lrcContent) {
+    function _parseLrc(lrcContent, apiOffsetMs) {
         var lines = lrcContent.split("\n")
         var result = []
         var re = /\[(\d{2}):(\d{2})[.:](\d{2})\](.*)/
+        var offsetRe = /\[offset:([+-]?\d+)\]/i
+        var lrcOffsetMs = 0
         for (var i = 0; i < lines.length; i++) {
+            var om = offsetRe.exec(lines[i])
+            if (om) {
+                lrcOffsetMs += parseInt(om[1])
+                continue
+            }
             var m = re.exec(lines[i])
             if (m) {
                 result.push({
-                    timestamp: parseInt(m[1]) * 60000 + parseInt(m[2]) * 1000 + parseInt(m[3]) * 10,
+                    timestamp: parseInt(m[1]) * 60000 + parseInt(m[2]) * 1000 + parseInt(m[3]) * 10
+                               + lrcOffsetMs + (apiOffsetMs || 0),
                     text: m[4].trim()
                 })
             }
