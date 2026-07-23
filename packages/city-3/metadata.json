@@ -3,7 +3,7 @@
   "KPlugin": {
     "Authors": [
       {
-        "Email": "rjackfaith@gmail.com",
+        "Email": "zinczorphin@gmail.com",
         "Name": "Jack Faith"
       }
     ],
@@ -15,7 +15,7 @@
     "License": "GPL-3.0",
     "Name": "macOS City III",
     "Version": "1.1",
-    "Website": "https://github.com/jaxparrow07/macos-widgets"
+    "Website": "https://github.com/jaxparrow07/liquidglass-kde-widgets"
   },
   "X-Plasma-API-Minimum-Version": "6.0"
 }
