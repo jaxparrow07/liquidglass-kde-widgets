@@ -238,6 +238,7 @@ PlasmoidItem {
     }
 
     function _scheduleArtRefresh() {
+        if (!plasmoid.configuration.artRefreshEnabled) return
         artRefreshTimer.stop()
         artResumeTimer.stop()
         if (root.isPlaying) artRefreshTimer.start()
