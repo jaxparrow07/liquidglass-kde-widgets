@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+    <kcfgfile name=""/>
+
+    <group name="General">
+        <entry name="styleMode" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="appearance" type="Int">
+            <default>0</default>
+        </entry>
+        <!-- Index into the glyph-font list (see ConfigAppearance.qml / main.qml).
+             0 = SF Pro Soft (default). The day label font is fixed separately. -->
+        <entry name="glyphFont" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="refractThickness" type="Int">
+            <default>20</default>
+        </entry>
+        <entry name="refractIORx100" type="Int">
+            <default>170</default>
+        </entry>
+        <entry name="refractScale" type="Int">
+            <default>60</default>
+        </entry>
+        <entry name="chromaStrengthPct" type="Int">
+            <default>30</default>
+        </entry>
+        <entry name="specStrengthPct" type="Int">
+            <default>70</default>
+        </entry>
+        <entry name="blurRadiusPx" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="realtimeRefraction" type="Bool">
+            <default>true</default>
+        </entry>
+        <!-- Overlay legibility text on top of the glass digits.
+             textTintPct: 0 = fully transparent (refraction only), 100 = solid. -->
+        <entry name="textTintPct" type="Int">
+            <default>20</default>
+        </entry>
+        <entry name="textColor" type="String">
+            <default>#ffffff</default>
+        </entry>
+    </group>
+</kcfg>

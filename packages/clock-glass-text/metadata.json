@@ -1,0 +1,21 @@
+{
+  "KPackageStructure": "Plasma/Applet",
+  "KPlugin": {
+    "Authors": [
+      {
+        "Email": "zinczorphin@gmail.com",
+        "Name": "Jack Faith"
+      }
+    ],
+    "Category": "Examples",
+    "Description": "A clock whose digits ARE the liquid glass — the wallpaper refracts through every stroke. Day label above.",
+    "EnabledByDefault": true,
+    "Icon": "/icon.png",
+    "Id": "com.jaxparrow07.macoswidgets.clock-glass-text",
+    "License": "GPL-3.0",
+    "Name": "macOS Clock Glass Text",
+    "Version": "1.0",
+    "Website": "https://github.com/jaxparrow07/liquidglass-kde-widgets"
+  },
+  "X-Plasma-API-Minimum-Version": "6.0"
+}
