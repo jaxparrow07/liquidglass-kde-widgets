@@ -79,14 +79,18 @@ PlasmoidItem {
         onTriggered: root._fetchLyrics()
     }
 
+    property real _lastPosTick: 0
+
     Timer {
         id: lyricsPositionTimer
         interval: 80
         running: root.isPlaying && root.lyricsActive && root.length > 0
         repeat: true
         onTriggered: {
-            if (root.position < root.length)
-                root.position += interval * 1000
+            var now = Date.now()
+            if (root._lastPosTick > 0)
+                root.position += (now - root._lastPosTick) * 1000
+            root._lastPosTick = now
         }
     }
 
@@ -169,6 +173,7 @@ PlasmoidItem {
         target: mpris2Model.currentPlayer
         function onPositionChanged() {
             root.position = mpris2Model.currentPlayer?.position ?? 0
+            root._lastPosTick = 0
         }
     }
 
@@ -178,8 +183,10 @@ PlasmoidItem {
         running: root.isPlaying && root.length > 0 && !lyricsPositionTimer.running
         repeat: true
         onTriggered: {
-            if (root.position < root.length)
-                root.position += interval * 1000
+            var now = Date.now()
+            if (root._lastPosTick > 0)
+                root.position += (now - root._lastPosTick) * 1000
+            root._lastPosTick = now
         }
     }
 
@@ -189,6 +196,7 @@ PlasmoidItem {
             albumArt = _noAlbumUrl
         }
         root.position = mpris2Model.currentPlayer?.position ?? 0
+        root._lastPosTick = 0
         root._lastSampledUrl = ""
         _scheduleArtRefresh()
         root._syncedLyrics = []
@@ -199,7 +207,10 @@ PlasmoidItem {
         _lyricsRetryTimer.stop()
         _lyricsFetchTimer.restart()
     }
-    onIsPlayingChanged: root.position = mpris2Model.currentPlayer?.position ?? 0
+    onIsPlayingChanged: {
+        root.position = mpris2Model.currentPlayer?.position ?? 0
+        root._lastPosTick = 0
+    }
     onLengthChanged: {
         if (length > 0 && _lyricsState === 0 && track !== "")
             _lyricsFetchTimer.restart()
