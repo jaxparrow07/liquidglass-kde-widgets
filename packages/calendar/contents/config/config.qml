@@ -24,6 +24,12 @@ ConfigModel {
         visible: Plasmoid.configuration.enabledCalendarPlugins.indexOf("pimevents") > -1
     }
 
+    ConfigCategory {
+        name: i18n("More & Support")
+        icon: "love"
+        source: "config/ConfigAbout.qml"
+    }
+
     // Remaining plugins (holidays, astronomical, etc.) use their own built-in config pages.
     readonly property PlasmaCalendar.EventPluginsManager _epm: PlasmaCalendar.EventPluginsManager {
         Component.onCompleted: {

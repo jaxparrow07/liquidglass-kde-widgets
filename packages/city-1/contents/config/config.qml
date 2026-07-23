@@ -12,4 +12,9 @@ ConfigModel {
         icon: "preferences-desktop-theme"
         source: "config/ConfigAppearance.qml"
     }
+    ConfigCategory {
+        name: i18n("More & Support")
+        icon: "love"
+        source: "config/ConfigAbout.qml"
+    }
 }

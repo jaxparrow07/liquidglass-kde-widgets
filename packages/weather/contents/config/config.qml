@@ -12,4 +12,9 @@ ConfigModel {
         icon: "weather-clear"
         source: "config/ConfigGeneral.qml"
     }
+    ConfigCategory {
+        name: i18n("More & Support")
+        icon: "love"
+        source: "config/ConfigAbout.qml"
+    }
 }
