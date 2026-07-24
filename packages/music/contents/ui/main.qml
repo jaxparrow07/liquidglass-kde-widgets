@@ -12,6 +12,27 @@ PlasmoidItem {
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
     preferredRepresentation: fullRepresentation
 
+    readonly property bool _shouldShow: {
+        if (!plasmoid.configuration.autoHideEnabled) return true
+        return root.isPlaying
+    }
+
+    on_ShouldShowChanged: {
+        if (_shouldShow) {
+            root.visible = true
+            _autoHideTimer.stop()
+        } else if (plasmoid.configuration.autoHideEnabled) {
+            _autoHideTimer.restart()
+        }
+    }
+
+    Timer {
+        id: _autoHideTimer
+        interval: plasmoid.configuration.autoHideTimeout * 1000
+        repeat: false
+        onTriggered: root.visible = false
+    }
+
     MacOSColors {
         id: colors
         styleMode: plasmoid.configuration.styleMode
@@ -25,10 +46,39 @@ PlasmoidItem {
 
     Mpris.Mpris2Model { id: mpris2Model }
 
-    readonly property string track:   mpris2Model.currentPlayer?.track ?? ""
-    readonly property string artist:  mpris2Model.currentPlayer?.artist ?? ""
-    readonly property string album:   mpris2Model.currentPlayer?.album ?? ""
-    readonly property string _rawAlbumArt: mpris2Model.currentPlayer?.artUrl ?? ""
+    function _isPlayerAllowed(identity) {
+        var f = (plasmoid.configuration.playerFilter || "").toLowerCase()
+        if (f === "") return true
+        var list = f.split(",")
+        var id = (identity || "").toLowerCase()
+        var inList = false
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].trim() === id) { inList = true; break }
+        }
+        return plasmoid.configuration.filterMode === 1 ? !inList : inList
+    }
+
+    property var _activePlayer: {
+        var cp = mpris2Model.currentPlayer
+        if (cp && _isPlayerAllowed(cp.identity) && (cp.track || cp.artist))
+            return cp
+        const CONTAINER_ROLE = Qt.UserRole + 1
+        for (var i = 1; i < mpris2Model.rowCount(); i++) {
+            var p = mpris2Model.data(mpris2Model.index(i, 0), CONTAINER_ROLE)
+            if (p && _isPlayerAllowed(p.identity) && (p.track || p.artist))
+                return p
+        }
+        return cp
+    }
+    readonly property bool _playerAllowed: {
+        var cp = mpris2Model.currentPlayer
+        return cp ? _isPlayerAllowed(cp.identity) : true
+    }
+
+    readonly property string track:   _activePlayer?.track ?? ""
+    readonly property string artist:  _activePlayer?.artist ?? ""
+    readonly property string album:   _activePlayer?.album ?? ""
+    readonly property string _rawAlbumArt: _activePlayer?.artUrl ?? ""
     readonly property string _noAlbumUrl: Qt.resolvedUrl("icons/no_album.png")
     property string albumArt: _noAlbumUrl
 
@@ -42,13 +92,13 @@ PlasmoidItem {
         interval: 150
         onTriggered: root.albumArt = root._rawAlbumArt
     }
-    readonly property int playbackStatus: mpris2Model.currentPlayer?.playbackStatus ?? 0
+    readonly property int playbackStatus: _activePlayer?.playbackStatus ?? 0
     readonly property bool isPlaying: playbackStatus === Mpris.PlaybackStatus.Playing
-    readonly property bool canGoPrevious: mpris2Model.currentPlayer?.canGoPrevious ?? false
-    readonly property bool canGoNext:     mpris2Model.currentPlayer?.canGoNext ?? false
-    readonly property bool canPlay:  mpris2Model.currentPlayer?.canPlay ?? false
-    readonly property bool canPause: mpris2Model.currentPlayer?.canPause ?? false
-    readonly property real length: mpris2Model.currentPlayer?.length ?? 0
+    readonly property bool canGoPrevious: _activePlayer?.canGoPrevious ?? false
+    readonly property bool canGoNext:     _activePlayer?.canGoNext ?? false
+    readonly property bool canPlay:  _activePlayer?.canPlay ?? false
+    readonly property bool canPause: _activePlayer?.canPause ?? false
+    readonly property real length: _activePlayer?.length ?? 0
 
     property real position: 0
     property bool lyricsActive: false
@@ -170,9 +220,9 @@ PlasmoidItem {
     }
 
     Connections {
-        target: mpris2Model.currentPlayer
+        target: root._activePlayer
         function onPositionChanged() {
-            root.position = mpris2Model.currentPlayer?.position ?? 0
+            if (root._activePlayer) root.position = root._activePlayer.position
             root._lastPosTick = 0
         }
     }
@@ -195,7 +245,7 @@ PlasmoidItem {
             _artDebounceTimer.stop()
             albumArt = _noAlbumUrl
         }
-        root.position = mpris2Model.currentPlayer?.position ?? 0
+        root.position = root._activePlayer?.position ?? 0
         root._lastPosTick = 0
         root._lastSampledUrl = ""
         _scheduleArtRefresh()
@@ -208,7 +258,7 @@ PlasmoidItem {
         _lyricsFetchTimer.restart()
     }
     onIsPlayingChanged: {
-        root.position = mpris2Model.currentPlayer?.position ?? 0
+        root.position = root._activePlayer?.position ?? 0
         root._lastPosTick = 0
     }
     onLengthChanged: {
@@ -221,8 +271,8 @@ PlasmoidItem {
         interval: 300
         repeat: false
         onTriggered: {
-            if (mpris2Model.currentPlayer && root.isPlaying) {
-                mpris2Model.currentPlayer.Pause()
+            if (root._activePlayer && root.isPlaying) {
+                root._activePlayer.Pause()
                 artResumeTimer.start()
             }
         }
@@ -233,7 +283,7 @@ PlasmoidItem {
         interval: 80
         repeat: false
         onTriggered: {
-            if (mpris2Model.currentPlayer) mpris2Model.currentPlayer.Play()
+            if (root._activePlayer) root._activePlayer.Play()
         }
     }
 
@@ -245,25 +295,26 @@ PlasmoidItem {
     }
 
     function togglePlaying() {
-        if (mpris2Model.currentPlayer) mpris2Model.currentPlayer.PlayPause()
+        if (!root._activePlayer) return
+        root._activePlayer.PlayPause()
     }
     function next() {
-        if (!mpris2Model.currentPlayer) return
+        if (!root._activePlayer) return
         root._flipDirection = -1
-        mpris2Model.currentPlayer.Next()
+        root._activePlayer.Next()
     }
     function previous() {
-        if (!mpris2Model.currentPlayer) return
+        if (!root._activePlayer) return
         root._flipDirection = 1
-        mpris2Model.currentPlayer.Previous()
+        root._activePlayer.Previous()
     }
     function seek(positionUs) {
-        if (mpris2Model.currentPlayer) {
-            var current = mpris2Model.currentPlayer.position ?? 0
-            var offset = positionUs - current
-            mpris2Model.currentPlayer.Seek(offset)
-            root.position = positionUs
-        }
+        if (!root._activePlayer) return
+        var currentPos = root._activePlayer.position ?? root.position
+        var offset = positionUs - currentPos
+        root._activePlayer.Seek(offset)
+        root.position = positionUs
+        root._lastPosTick = 0
     }
 
     function formatTime(us) {
