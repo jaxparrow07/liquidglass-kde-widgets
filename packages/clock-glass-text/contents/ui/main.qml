@@ -59,8 +59,8 @@ PlasmoidItem {
 
     fullRepresentation: Item {
         id: full
-        Layout.preferredWidth: 300
-        Layout.preferredHeight: 180
+        Layout.preferredWidth:  full.width  > 0 ? full.width  : 300
+        Layout.preferredHeight: full.height > 0 ? full.height : 180
         Layout.minimumWidth: 180
         Layout.minimumHeight: 110
 
