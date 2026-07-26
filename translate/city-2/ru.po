@@ -1,0 +1,149 @@
+# macOS City II - Translation Template
+# Translators:
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: plasma_applet_com.jaxparrow07.macoswidgets.city-2 1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jaxparrow07/macos-widgets/issues\n"
+"POT-Creation-Date: 2026-06-14 18:01+0530\n"
+"PO-Revision-Date: 2026-06-14 18:01+0530\n"
+"Last-Translator: Russian translation contributors\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: packages/city-2/contents/config/config.qml:6
+msgid "Clocks"
+msgstr "Часы"
+
+#: packages/city-2/contents/config/config.qml:11
+msgid "Appearance"
+msgstr "Оформление"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:73
+msgid "Applied!"
+msgstr "Применено!"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:75
+msgid "Invalid config string"
+msgstr "Недопустимая строка конфигурации"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:91
+msgid "Preset:"
+msgstr "Предустановка:"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:96
+msgid "Copy style"
+msgstr "Копировать стиль"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:101
+msgid "Copied!"
+msgstr "Скопировано!"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:109
+msgid "Paste style"
+msgstr "Вставить стиль"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:136
+msgid "Style:"
+msgstr "Стиль:"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:137
+msgid "Glass"
+msgstr "Стекло"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:137
+msgid "Solid"
+msgstr "Сплошной"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:142
+msgid "Appearance:"
+msgstr "Оформление:"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:143
+msgid "Dark"
+msgstr "Тёмное"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:143
+msgid "Light"
+msgstr "Светлое"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:143
+msgid "Follow system"
+msgstr "Как в системе"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:148
+msgid "Corner radius (px):"
+msgstr "Радиус углов (пикс.):"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:154
+msgid "Roundness (×10, 2.0..10.0):"
+msgstr "Скруглённость (×10, 2,0…10,0):"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:160
+msgid "Background:"
+msgstr "Фон:"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:161
+msgid "Fully opaque background"
+msgstr "Полностью непрозрачный фон"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:173
+msgid "Glass effect"
+msgstr "Эффект стекла"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:178
+msgid "Refraction thickness (px):"
+msgstr "Толщина преломления (пикс.):"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:184
+msgid "Index of refraction (×100):"
+msgstr "Показатель преломления (×100):"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:190
+msgid "Refraction strength:"
+msgstr "Сила преломления:"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:196
+msgid "Tint alpha (%):"
+msgstr "Прозрачность оттенка (%):"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:202
+msgid "Chromatic aberration (%):"
+msgstr "Хроматическая аберрация (%):"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:208
+msgid "Specular strength (%):"
+msgstr "Интенсивность блика (%):"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:214
+msgid "Blur radius (px):"
+msgstr "Радиус размытия (пикс.):"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:220
+msgid "Realtime refraction:"
+msgstr "Преломление в реальном времени:"
+
+#: packages/city-2/contents/ui/config/ConfigAppearance.qml:221
+msgid "Recapture every frame (enable for video wallpapers)"
+msgstr "Обновлять каждый кадр (включите для видеообоев)"
+
+#: packages/city-2/contents/ui/config/ConfigGeneral.qml:152
+msgid ""
+"Add up to %1 cities. Resize the widget wide for a row layout, or square for "
+"a grid."
+msgstr ""
+"Добавьте до %1 городов. Растяните виджет по ширине для размещения в ряд или "
+"сделайте его квадратным для размещения в сетке."
+
+#: packages/city-2/contents/ui/config/ConfigGeneral.qml:216
+msgid "Label"
+msgstr "Подпись"
+
+#: packages/city-2/contents/ui/config/ConfigGeneral.qml:231
+msgid "Add city"
+msgstr "Добавить город"
