@@ -103,17 +103,34 @@ PlasmoidItem {
                         const isCtrl = event.modifiers & Qt.ControlModifier;
                         const isShift = event.modifiers & Qt.ShiftModifier;
 
-                        if (isCtrl && !isShift && event.key === Qt.Key_B) {
-                            noteText.cursorSelection.font.bold = !noteText.cursorSelection.font.bold;
+                        if (!isCtrl) return;
+
+                        // Helper function to normalize selection direction to correctly apply text decoration
+                        function toggleFormat(prop) {
+                            let rawStart = noteText.selectionStart;
+                            let rawEnd = noteText.selectionEnd;
+                            let start = Math.min(rawStart, rawEnd);
+                            let end = Math.max(rawStart, rawEnd);
+
+                            noteText.cursorSelection.font[prop] = !noteText.cursorSelection.font[prop];
+
+                            if (rawStart !== rawEnd) {
+                                noteText.select(Math.min(rawStart, rawEnd), Math.max(rawStart, rawEnd));
+                            }
+                        }
+
+                        // Shortcuts
+                        if (!isShift && event.key === Qt.Key_B) {
+                            toggleFormat("bold");
                             event.accepted = true;
-                        } else if (isCtrl && !isShift && event.key === Qt.Key_I) {
-                            noteText.cursorSelection.font.italic = !noteText.cursorSelection.font.italic;
+                        } else if (!isShift && event.key === Qt.Key_I) {
+                            toggleFormat("italic");
                             event.accepted = true;
-                        } else if (isCtrl && !isShift && event.key === Qt.Key_U) {
-                            noteText.cursorSelection.font.underline = !noteText.cursorSelection.font.underline;
+                        } else if (!isShift && event.key === Qt.Key_U) {
+                            toggleFormat("underline");
                             event.accepted = true;
-                        } else if (isCtrl && isShift && event.key === Qt.Key_S) {
-                            noteText.cursorSelection.font.strikeout = !noteText.cursorSelection.font.strikeout;
+                        } else if (isShift && event.key === Qt.Key_S) {
+                            toggleFormat("strikeout");
                             event.accepted = true;
                         }
                     }
