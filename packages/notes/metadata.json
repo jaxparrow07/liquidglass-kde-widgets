@@ -8,7 +8,7 @@
             }
         ],
         "Category": "Miscellaneous",
-        "Description": "Save your notes, and have access to different text decorations.",
+        "Description": "A macOS-styled sticky note with multiple text-decoration options.",
         "EnabledByDefault": true,
         "Icon": "org.kde.plasma.notes",
         "Id": "com.jaxparrow07.macoswidgets.notes",
