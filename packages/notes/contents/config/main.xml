@@ -9,7 +9,7 @@
     <!-- Notes Entries -->
     <entry name="Text" type="String">
       <label>Notes text</label>
-      <default>Hello!</default>
+      <default>Type here!</default>
     </entry>
 
     <!-- Shader Entries -->

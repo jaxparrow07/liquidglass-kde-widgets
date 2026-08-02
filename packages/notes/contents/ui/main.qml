@@ -99,24 +99,23 @@ PlasmoidItem {
                         showTextDecorationButtons = activeFocus;
                     }
 
-                    Shortcut {
-                        sequence: StandardKey.Bold
-                        onActivated: noteText.cursorSelection.font.bold = !noteText.cursorSelection.font.bold
-                    }
+                    Keys.onPressed: (event) => {
+                        const isCtrl = event.modifiers & Qt.ControlModifier;
+                        const isShift = event.modifiers & Qt.ShiftModifier;
 
-                    Shortcut {
-                        sequence: StandardKey.Italic
-                        onActivated: noteText.cursorSelection.font.italic = !noteText.cursorSelection.font.italic
-                    }
-
-                    Shortcut {
-                        sequence: StandardKey.Underline
-                        onActivated: noteText.cursorSelection.font.underline = !noteText.cursorSelection.font.underline
-                    }
-
-                    Shortcut {
-                        sequence: "Ctrl+Shift+S"
-                        onActivated: noteText.cursorSelection.font.strikeout = !noteText.cursorSelection.font.strikeout
+                        if (isCtrl && !isShift && event.key === Qt.Key_B) {
+                            noteText.cursorSelection.font.bold = !noteText.cursorSelection.font.bold;
+                            event.accepted = true;
+                        } else if (isCtrl && !isShift && event.key === Qt.Key_I) {
+                            noteText.cursorSelection.font.italic = !noteText.cursorSelection.font.italic;
+                            event.accepted = true;
+                        } else if (isCtrl && !isShift && event.key === Qt.Key_U) {
+                            noteText.cursorSelection.font.underline = !noteText.cursorSelection.font.underline;
+                            event.accepted = true;
+                        } else if (isCtrl && isShift && event.key === Qt.Key_S) {
+                            noteText.cursorSelection.font.strikeout = !noteText.cursorSelection.font.strikeout;
+                            event.accepted = true;
+                        }
                     }
                 }
             }
