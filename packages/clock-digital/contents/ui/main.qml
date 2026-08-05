@@ -32,7 +32,10 @@ PlasmoidItem {
     // second-hand sweep does NOT read `now` — it reads Date.now()
     // directly every frame (avoids per-frame property churn).
     property date now: new Date()
-    readonly property int hour12: ((now.getHours() + 11) % 12) + 1
+    readonly property bool use24Hour: plasmoid.configuration.use24Hour
+    readonly property int hourDisplay: use24Hour
+        ? now.getHours()
+        : ((now.getHours() + 11) % 12) + 1
     readonly property int minute: now.getMinutes()
 
     Timer {
@@ -110,7 +113,8 @@ PlasmoidItem {
             // on both sides that the ticks leave to the edge (5% inset
             // + 5% tick length + 5% pad = 15% each side).
             availableWidth: Math.max(40, full.width - 2 * Math.min(full.width, full.height) * 0.15)
-            hour12: root.hour12
+            hour: root.hourDisplay
+            use24Hour: root.use24Hour
             minute: root.minute
             digitOpacity: colors.isGlass ? 0.55 : 1.0
             textColor: colors.foreground
