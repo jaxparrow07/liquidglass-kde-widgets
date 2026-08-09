@@ -585,6 +585,7 @@ PlasmoidItem {
             lyricsActiveOpacity: plasmoid.configuration.lyricsActiveOpacity / 100
             lyricsInactiveOpacity: plasmoid.configuration.lyricsInactiveOpacity / 100
             lyricsFontSizeFactor: plasmoid.configuration.lyricsFontSizeTall / 1000
+            lyricsNotFoundMessage: plasmoid.configuration.lyricsNotFoundMessage
             fontFamily: sfRegular.name
             fontFamilyThin: sfThin.name
             track: root.track
@@ -622,6 +623,7 @@ PlasmoidItem {
             lyricsActiveOpacity: plasmoid.configuration.lyricsActiveOpacity / 100
             lyricsInactiveOpacity: plasmoid.configuration.lyricsInactiveOpacity / 100
             lyricsFontSizeFactor: plasmoid.configuration.lyricsFontSizeWide / 1000
+            lyricsNotFoundMessage: plasmoid.configuration.lyricsNotFoundMessage
             fontFamily: sfRegular.name
             fontFamilyThin: sfThin.name
             track: root.track

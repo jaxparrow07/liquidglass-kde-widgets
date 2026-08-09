@@ -13,6 +13,7 @@ ColumnLayout {
     property alias cfg_lyricsFontSizeTall: tallFontSpin.value
     property alias cfg_lyricsBlur: lyricsBlurCheck.checked
     property alias cfg_artRefreshEnabled: artRefreshCheck.checked
+    property alias cfg_lyricsNotFoundMessage: notFoundField.text
 
     Kirigami.FormLayout {
         Layout.fillWidth: true
@@ -66,6 +67,25 @@ ColumnLayout {
             id: artRefreshCheck
             Kirigami.FormData.label: i18n("Pause on track change:")
             text: i18n("Briefly pause/resume to refresh album art (causes playback hiccups)")
+        }
+
+        Kirigami.Separator {
+            Kirigami.FormData.isSection: true
+            Kirigami.FormData.label: i18n("Not found message")
+        }
+
+        TextField {
+            id: notFoundField
+            Kirigami.FormData.label: i18n("No-lyrics message:")
+            placeholderText: i18n("Leave empty for default \u201cNo lyrics available\u201d")
+            Layout.fillWidth: true
+        }
+
+        Label {
+            Layout.fillWidth: true
+            text: i18n("Custom text shown when lyrics cannot be found for the current track.")
+            wrapMode: Text.WordWrap
+            opacity: 0.7
         }
 
     }

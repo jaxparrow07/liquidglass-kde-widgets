@@ -15,6 +15,7 @@ Item {
     property bool blurEnabled: true
     property real activeOpacity: 1.0
     property real inactiveOpacity: 0.40
+    property string notFoundMessage: ""
     readonly property real activeScale: 1.05
 
     signal seekTo(real positionUs)
@@ -231,14 +232,17 @@ Item {
 
     // ── Not found ─────────────────────────────────────────────────────────
     Text {
+        id: notFoundLabel
         anchors.centerIn: parent
         visible: lv.lyricsState === 4 || (lv.lyricsState === 2 && lv.syncedLyrics.length === 0 && lv.plainLyrics === "")
-        text: i18n("No lyrics available")
+        text: lv.notFoundMessage !== "" ? lv.notFoundMessage : i18n("No lyrics available")
         color: "#ffffff"
         opacity: 0.45
+        horizontalAlignment: Text.AlignHCenter
         font.pixelSize: Math.max(12, Math.round(lv.baseFontSize * 0.8))
         font.weight: Font.Medium
         font.family: lv.fontFamily
+        wrapMode: Text.WordWrap
     }
 
     // ── Error (tap to retry) ──────────────────────────────────────────────
