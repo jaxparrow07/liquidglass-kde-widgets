@@ -44,6 +44,10 @@ PlasmoidItem {
 
     // Precomputed day-of-month per grid slot [0..41]; 0 means empty.
     property var monthDays: []
+    // Per-slot indicator dot color [0..41]; "" means no event/holiday on that day.
+    property var dayDots: []
+    // Per-slot tooltip text [0..41]; "" means no events/holidays on that day.
+    property var dayTitles: []
     function rebuildMonthDays() {
         const firstOfMonth = new Date(viewYear, viewMonth, 1);
         let offset = firstOfMonth.getDay() - firstDow;
@@ -56,6 +60,42 @@ PlasmoidItem {
             out[i] = (day < 1 || day > lastDay) ? 0 : day;
         }
         monthDays = out;
+        rebuildDayDots();
+    }
+
+    // Event summaries for a grid slot, used for dots and hover tooltips.
+    function _eventsForSlot(i) {
+        if (!monthDays[i]) return [];
+        const d = new Date(viewYear, viewMonth, monthDays[i]);
+        const dm = _daysModelForDate(d);
+        const raw = dm.eventsForDate(d);
+        if (!raw || raw.length === 0) return [];
+        const out = [];
+        for (let e = 0; e < raw.length; e++) {
+            const ev = raw[e];
+            out.push({
+                title: ev.title,
+                color: _pillColorFor(ev),
+                isHoliday: ev.eventType === "Holiday"
+            });
+        }
+        return out;
+    }
+    function rebuildDayDots() {
+        const dots = new Array(42);
+        const titles = new Array(42);
+        for (let i = 0; i < 42; i++) {
+            const evs = _eventsForSlot(i);
+            let color = "";
+            for (let e = 0; e < evs.length; e++) {
+                if (evs[e].isHoliday) { color = evs[e].color; break; }
+            }
+            if (!color && evs.length > 0) color = evs[0].color;
+            dots[i] = color;
+            titles[i] = evs.map(function (ev) { return ev.title; }).join("\n");
+        }
+        dayDots = dots;
+        dayTitles = titles;
     }
     onViewYearChanged: {
         rebuildMonthDays();
@@ -325,6 +365,7 @@ PlasmoidItem {
             for (var ui = 0; ui < upcomingEvents.length; ui++) eventsModel.append(upcomingEvents[ui]);
         }
 
+        rebuildDayDots();
     }
 
     fullRepresentation: Item {
@@ -338,6 +379,11 @@ PlasmoidItem {
         readonly property real wideGap: Math.round(full.height * 0.04)
         // Single unified type scale — everything uses this size.
         readonly property real labelSize: Math.max(10, Math.round(full.height * 0.058))
+
+        // Hover state for the day-grid tooltip (coordinates in full's space).
+        property string dayHoverText: ""
+        property real dayHoverCenterX: 0
+        property real dayHoverTop: 0
 
         LiquidGlass {
             id: glass
@@ -560,6 +606,7 @@ PlasmoidItem {
                             readonly property bool empty: day === 0
                             readonly property bool isCurrent: !empty && day === root.today.getDate() && root.viewMonth === root.today.getMonth() && root.viewYear === root.today.getFullYear()
                             readonly property bool isWeekend: root.isWeekendCol(index % 7)
+                            readonly property real dotDiameter: Math.max(3, Math.round(full.labelSize * 0.3))
 
                             Text {
                                 anchors.centerIn: parent
@@ -588,9 +635,75 @@ PlasmoidItem {
                                 textColor: "#ffffff"
                                 punchOutText: colors.punchOutText
                             }
+
+                            Rectangle {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                y: parent.height / 2 + full.labelSize * 0.55
+                                width: dotDiameter
+                                height: dotDiameter
+                                radius: dotDiameter / 2
+                                visible: !empty && !isCurrent && root.dayDots[index] !== ""
+                                color: root.dayDots[index] !== "" ? root.dayDots[index] : "transparent"
+                            }
                         }
                     }
                 }
+
+                MouseArea {
+                    id: gridHover
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    acceptedButtons: Qt.NoButton
+                    onEntered: gridHover._update(gridHover.mouseX, gridHover.mouseY)
+                    onPositionChanged: (mouse) => gridHover._update(mouse.x, mouse.y)
+                    onExited: full.dayHoverText = ""
+
+                    function _update(mx, my) {
+                        const col = Math.floor(mx / gridWrap.cellW);
+                        const row = Math.floor(my / gridWrap.cellH);
+                        const idx = row * 7 + col;
+                        if (idx >= 0 && idx < 42 && root.dayTitles[idx] !== "") {
+                            const p = mapToItem(full, col * gridWrap.cellW, row * gridWrap.cellH);
+                            full.dayHoverText = root.dayTitles[idx];
+                            full.dayHoverCenterX = p.x + gridWrap.cellW / 2;
+                            full.dayHoverTop = p.y;
+                        } else {
+                            full.dayHoverText = "";
+                        }
+                    }
+                }
+            }
+        }
+
+        // Hover tooltip for day dots (positioned in full's coordinate space).
+        Item {
+            id: dayTooltip
+            visible: full.dayHoverText !== ""
+            z: 10
+
+            readonly property real tipPad: Math.round(full.labelSize * 0.55)
+            readonly property real maxW: full.width * 0.8
+            width: Math.min(tooltipLabel.implicitWidth + 2 * tipPad, maxW)
+            height: tooltipLabel.implicitHeight + 2 * tipPad
+            x: Math.max(2, Math.min(full.dayHoverCenterX - width / 2, full.width - width - 2))
+            y: Math.max(2, full.dayHoverTop - height - Math.round(full.labelSize * 0.35))
+
+            Rectangle {
+                anchors.fill: parent
+                radius: Math.round(full.labelSize * 0.45)
+                color: colors.tooltipBackground
+            }
+
+            Text {
+                id: tooltipLabel
+                anchors.centerIn: parent
+                width: dayTooltip.width - 2 * dayTooltip.tipPad
+                text: full.dayHoverText
+                color: colors.tooltipForeground
+                font.family: sfRegular.name
+                font.pixelSize: Math.round(full.labelSize * 0.85)
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             }
         }
     }
