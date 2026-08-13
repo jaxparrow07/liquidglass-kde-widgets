@@ -591,6 +591,16 @@ PlasmoidItem {
         // Single unified type scale — everything uses this size.
         readonly property real labelSize: Math.max(10, Math.round(full.height * 0.058))
 
+        // The glass squircle's corner is sharper than a plain rounded rect
+        // with the same "radius". Convert the config cornerRadius into the
+        // equivalent circle radius (matching the superellipse at the 45°
+        // apex) so the solid-mode backdrop hugs the widget's corners.
+        readonly property real modalBackdropRadius: {
+            const n = Math.max(2, plasmoid.configuration.roundnessX10 / 10);
+            const factor = (1 - Math.pow(2, -1 / n)) / (1 - Math.pow(2, -0.5));
+            return Math.round(plasmoid.configuration.cornerRadius * factor);
+        }
+
         // Hover state for the day-grid tooltip (coordinates in full's space).
         property string dayHoverText: ""
         property real dayHoverCenterX: 0
@@ -1014,9 +1024,9 @@ PlasmoidItem {
                 anchors.fill: parent
                 color: "#000000"
                 // Glass mode: no dim backdrop (it fights the liquid-glass look).
-                // Solid mode: dim, with corners matching the widget's radius.
+                // Solid mode: dim, with corners matched to the widget's squircle.
                 opacity: colors.isGlass ? 0.0 : 0.35
-                radius: colors.isGlass ? 0 : plasmoid.configuration.cornerRadius
+                radius: colors.isGlass ? 0 : full.modalBackdropRadius
                 MouseArea {
                     anchors.fill: parent
                     onClicked: full.closeAddDialog()
