@@ -51,5 +51,8 @@
         <entry name="enabledCalendarPlugins" type="StringList">
             <default>pimevents,holidaysevents</default>
         </entry>
+        <entry name="customEvents" type="String">
+            <default>[]</default>
+        </entry>
     </group>
 </kcfg>

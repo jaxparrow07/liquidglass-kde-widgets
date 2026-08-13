@@ -67,17 +67,29 @@ PlasmoidItem {
     function _eventsForSlot(i) {
         if (!monthDays[i]) return [];
         const d = new Date(viewYear, viewMonth, monthDays[i]);
+        const out = [];
         const dm = _daysModelForDate(d);
         const raw = dm.eventsForDate(d);
-        if (!raw || raw.length === 0) return [];
-        const out = [];
-        for (let e = 0; e < raw.length; e++) {
-            const ev = raw[e];
-            out.push({
-                title: ev.title,
-                color: _pillColorFor(ev),
-                isHoliday: ev.eventType === "Holiday"
-            });
+        if (raw && raw.length > 0) {
+            for (let e = 0; e < raw.length; e++) {
+                const ev = raw[e];
+                out.push({
+                    title: ev.title,
+                    color: _pillColorFor(ev),
+                    isHoliday: ev.eventType === "Holiday"
+                });
+            }
+        }
+        const key = _dateKey(d);
+        const customs = _parseCustomEvents();
+        for (let c = 0; c < customs.length; c++) {
+            if (customs[c].date === key) {
+                out.push({
+                    title: customs[c].title,
+                    color: customs[c].color || customEventColor,
+                    isHoliday: false
+                });
+            }
         }
         return out;
     }
@@ -97,6 +109,60 @@ PlasmoidItem {
         dayDots = dots;
         dayTitles = titles;
     }
+
+    // --- Custom (user-added) events --------------------------------------
+    // Stored in plasmoid config as a JSON array of { id, title, date, color },
+    // where date is a "yyyy-mm-dd" string (local) and color is a hex string.
+    // Always all-day.
+    readonly property color customEventColor: "#BF5AF2"
+
+    // Preset event colors (macOS-style), shown as swatches in the add dialog.
+    readonly property var customEventPalette: [
+        "#FF3B30",   // red
+        "#FF9500",   // orange
+        "#FFD60A",   // yellow
+        "#34C759",   // green
+        "#00C7BE",   // teal
+        "#0A84FF",   // blue
+        "#BF5AF2",   // purple
+        "#FF2D55"    // pink
+    ]
+
+    property var addEventDate: new Date()
+    property string addEventColor: "#BF5AF2"
+    property bool addDialogOpen: false
+
+    function _dateKey(d) {
+        const m = ("0" + (d.getMonth() + 1)).slice(-2);
+        const day = ("0" + d.getDate()).slice(-2);
+        return d.getFullYear() + "-" + m + "-" + day;
+    }
+    function _parseDateKey(key) {
+        const p = key.split("-");
+        return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+    }
+    function _parseCustomEvents() {
+        try {
+            const arr = JSON.parse(plasmoid.configuration.customEvents);
+            return Array.isArray(arr) ? arr : [];
+        } catch (e) {
+            return [];
+        }
+    }
+    function _saveCustomEvents(arr) {
+        plasmoid.configuration.customEvents = JSON.stringify(arr);
+        _scheduleRebuildEvents();
+    }
+    function _addCustomEvent(title, dateKey, color) {
+        const arr = _parseCustomEvents();
+        arr.push({ id: Date.now(), title: title, date: dateKey, color: color });
+        _saveCustomEvents(arr);
+    }
+    function _removeCustomEvent(id) {
+        const arr = _parseCustomEvents();
+        _saveCustomEvents(arr.filter(function (e) { return String(e.id) !== String(id); }));
+    }
+
     onViewYearChanged: {
         rebuildMonthDays();
         _syncCalendarBackends();
@@ -333,7 +399,10 @@ PlasmoidItem {
                     title: ev.title,
                     pillColor: _pillColorFor(ev),
                     isAllDay: ev.isAllDay,
-                    timeLabel: ""
+                    timeLabel: "",
+                    isCustom: false,
+                    eventId: "",
+                    sortTime: ev.startDateTime.getTime()
                 };
 
                 var dTime = d.getTime();
@@ -351,6 +420,47 @@ PlasmoidItem {
                 }
             }
         }
+
+        // Merge custom (user-added) events into the same buckets.
+        var customs = _parseCustomEvents();
+        for (var ci = 0; ci < customs.length; ci++) {
+            var ce = customs[ci];
+            if (!ce.date || !ce.title) continue;
+            var cd = _parseDateKey(ce.date);
+            if (cd.getTime() < todayStart.getTime() || cd.getTime() >= lookaheadEnd.getTime()) continue;
+
+            var centry = {
+                isHeader: false,
+                title: ce.title,
+                pillColor: ce.color || customEventColor,
+                isAllDay: true,
+                timeLabel: "",
+                isCustom: true,
+                eventId: String(ce.id),
+                sortTime: cd.getTime()
+            };
+
+            if (cd.getTime() === todayStart.getTime()) {
+                centry.timeLabel = i18n("All day");
+                todayEvents.push(centry);
+            } else if (cd < weekEnd) {
+                centry.timeLabel = _formatWeekDate(cd);
+                weekEvents.push(centry);
+            } else {
+                centry.timeLabel = _formatUpcomingDate(cd);
+                upcomingEvents.push(centry);
+            }
+        }
+
+        // Re-sort each bucket so custom events land in date order (all-day first).
+        var bucketCompare = function(a, b) {
+            if (a.isAllDay && !b.isAllDay) return -1;
+            if (!a.isAllDay && b.isAllDay) return 1;
+            return a.sortTime - b.sortTime;
+        };
+        todayEvents.sort(bucketCompare);
+        weekEvents.sort(bucketCompare);
+        upcomingEvents.sort(bucketCompare);
 
         if (todayEvents.length > 0) {
             eventsModel.append({ isHeader: true, title: i18n("Events today"), pillColor: "", timeLabel: "", isAllDay: false });
@@ -384,6 +494,19 @@ PlasmoidItem {
         property string dayHoverText: ""
         property real dayHoverCenterX: 0
         property real dayHoverTop: 0
+
+        function confirmAddEvent() {
+            const title = addTitleInput.text.trim();
+            if (title.length === 0) {
+                addTitleInput.forceActiveFocus();
+                return;
+            }
+            root._addCustomEvent(title, root._dateKey(root.addEventDate), root.addEventColor);
+            root.addDialogOpen = false;
+        }
+        function closeAddDialog() {
+            root.addDialogOpen = false;
+        }
 
         LiquidGlass {
             id: glass
@@ -465,9 +588,14 @@ PlasmoidItem {
                                 item.headerTitle = model.title;
                                 item.isFirstHeader = (index === 0);
                             } else {
+                                const evId = model.eventId;
                                 item.cardTitle = model.title;
                                 item.cardTime = model.timeLabel;
                                 item.cardPill = model.pillColor;
+                                item.cardCustom = model.isCustom === true;
+                                item.deleteRequested.connect(function() {
+                                    root._removeCustomEvent(evId);
+                                });
                             }
                         }
                     }
@@ -498,11 +626,13 @@ PlasmoidItem {
                     property string cardTitle: ""
                     property string cardTime: ""
                     property string cardPill: ""
+                    property bool cardCustom: false
 
                     width: parent ? parent.width : 0
                     title: cardTitle
                     timeLabel: cardTime
                     pillColor: cardPill
+                    isCustom: cardCustom
                     textColor: colors.foreground
                     fontFamily: sfRegular.name
                     fontSize: leftPanel._cardSize
@@ -653,10 +783,11 @@ PlasmoidItem {
                     id: gridHover
                     anchors.fill: parent
                     hoverEnabled: true
-                    acceptedButtons: Qt.NoButton
+                    acceptedButtons: Qt.LeftButton
                     onEntered: gridHover._update(gridHover.mouseX, gridHover.mouseY)
                     onPositionChanged: (mouse) => gridHover._update(mouse.x, mouse.y)
                     onExited: full.dayHoverText = ""
+                    onClicked: (mouse) => gridHover._openAdd(mouse.x, mouse.y)
 
                     function _update(mx, my) {
                         const col = Math.floor(mx / gridWrap.cellW);
@@ -670,6 +801,17 @@ PlasmoidItem {
                         } else {
                             full.dayHoverText = "";
                         }
+                    }
+
+                    function _openAdd(mx, my) {
+                        const col = Math.floor(mx / gridWrap.cellW);
+                        const row = Math.floor(my / gridWrap.cellH);
+                        const idx = row * 7 + col;
+                        if (idx < 0 || idx >= 42 || !root.monthDays[idx]) return;
+                        full.dayHoverText = "";
+                        root.addEventDate = new Date(root.viewYear, root.viewMonth, root.monthDays[idx]);
+                        addTitleInput.text = "";
+                        root.addDialogOpen = true;
                     }
                 }
             }
@@ -704,6 +846,201 @@ PlasmoidItem {
                 font.pixelSize: Math.round(full.labelSize * 0.85)
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            }
+        }
+
+        // Add-event dialog (opened by clicking a day cell).
+        Item {
+            id: addDialog
+            anchors.fill: parent
+            visible: root.addDialogOpen
+            z: 20
+
+            onVisibleChanged: {
+                if (visible)
+                    addFocusTimer.start();
+            }
+
+            Timer {
+                id: addFocusTimer
+                interval: 0
+                repeat: false
+                onTriggered: addTitleInput.forceActiveFocus()
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                color: "#000000"
+                // Glass mode: no dim backdrop (it fights the liquid-glass look).
+                // Solid mode: dim, with corners matching the widget's radius.
+                opacity: colors.isGlass ? 0.0 : 0.35
+                radius: colors.isGlass ? 0 : plasmoid.configuration.cornerRadius
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: full.closeAddDialog()
+                }
+            }
+
+            Item {
+                id: dialogCard
+                anchors.centerIn: parent
+                width: Math.min(full.width * 0.8, 340)
+                height: dialogColumn.height + 2 * dialogCard.cardPad
+
+                readonly property real cardPad: Math.round(full.labelSize * 0.9)
+
+                LiquidGlass {
+                    anchors.fill: parent
+                    radius: Math.min(plasmoid.configuration.cornerRadius, 26)
+                    roundness: plasmoid.configuration.roundnessX10 / 10
+                    refractThickness: plasmoid.configuration.refractThickness
+                    refractIOR: plasmoid.configuration.refractIORx100 / 100
+                    refractScale: plasmoid.configuration.refractScale
+                    tint: colors.glassTint
+                    tintAlpha: plasmoid.configuration.tintAlphaPct / 100
+                    chromaStrength: plasmoid.configuration.chromaStrengthPct / 100
+                    specStrength: plasmoid.configuration.specStrengthPct / 100
+                    blurRadius: plasmoid.configuration.blurRadiusPx
+                    realtimeRefraction: plasmoid.configuration.realtimeRefraction
+                    fallbackOpacity: colors.glassFallbackOpacity
+                    solidMode: colors.isSolid
+                    solidColor: colors.solidBackground
+                }
+
+                Column {
+                    id: dialogColumn
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    y: dialogCard.cardPad
+                    width: dialogCard.width - 2 * dialogCard.cardPad
+                    spacing: Math.round(full.labelSize * 0.45)
+
+                    Text {
+                        text: i18n("New Event")
+                        color: colors.foreground
+                        font.family: sfRegular.name
+                        font.pixelSize: full.labelSize
+                    }
+
+                    Text {
+                        text: Qt.formatDateTime(root.addEventDate, "dddd, MMMM d")
+                        color: colors.foreground
+                        opacity: 0.6
+                        font.family: sfRegular.name
+                        font.pixelSize: Math.round(full.labelSize * 0.78)
+                    }
+
+                    Item {
+                        width: parent.width
+                        height: Math.round(full.labelSize * 1.9)
+
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: Math.round(full.labelSize * 0.4)
+                            color: colors.cardBackground
+                            opacity: colors.cardBackgroundOpacity
+                        }
+
+                        TextInput {
+                            id: addTitleInput
+                            anchors.fill: parent
+                            anchors.leftMargin: Math.round(full.labelSize * 0.5)
+                            anchors.rightMargin: Math.round(full.labelSize * 0.5)
+                            verticalAlignment: TextInput.AlignVCenter
+                            color: colors.foreground
+                            font.family: sfRegular.name
+                            font.pixelSize: full.labelSize
+                            activeFocusOnTab: true
+                            selectByMouse: true
+                            onAccepted: full.confirmAddEvent()
+                            Keys.onEscapePressed: full.closeAddDialog()
+                        }
+
+                        Text {
+                            anchors.left: parent.left
+                            anchors.leftMargin: Math.round(full.labelSize * 0.5)
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: addTitleInput.text === ""
+                            text: i18n("Event title")
+                            color: colors.foreground
+                            opacity: 0.4
+                            font.family: sfRegular.name
+                            font.pixelSize: full.labelSize
+                        }
+                    }
+
+                    Flow {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width
+                        spacing: Math.round(full.labelSize * 0.35)
+
+                        Repeater {
+                            model: root.customEventPalette
+                            delegate: Rectangle {
+                                readonly property real swatchSize: Math.round(full.labelSize * 1.3)
+                                width: swatchSize
+                                height: swatchSize
+                                radius: swatchSize / 2
+                                color: modelData
+                                border.width: root.addEventColor === modelData ? 2 : 0
+                                border.color: colors.foreground
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: root.addEventColor = modelData
+                                }
+                            }
+                        }
+                    }
+
+                    Row {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: Math.round(full.labelSize * 0.5)
+
+                        Item {
+                            width: Math.round(full.labelSize * 4.2)
+                            height: Math.round(full.labelSize * 1.7)
+
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: Math.round(full.labelSize * 0.5)
+                                color: colors.cardBackground
+                                opacity: colors.cardBackgroundOpacity
+                            }
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: i18n("Cancel")
+                                color: colors.foreground
+                                font.family: sfRegular.name
+                                font.pixelSize: Math.round(full.labelSize * 0.85)
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: full.closeAddDialog()
+                            }
+                        }
+
+                        Rectangle {
+                            width: Math.round(full.labelSize * 4.2)
+                            height: Math.round(full.labelSize * 1.7)
+                            radius: Math.round(full.labelSize * 0.5)
+                            color: colors.accent
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: i18n("Add")
+                                color: "#ffffff"
+                                font.family: sfRegular.name
+                                font.pixelSize: Math.round(full.labelSize * 0.85)
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: full.confirmAddEvent()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
