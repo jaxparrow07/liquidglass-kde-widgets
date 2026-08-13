@@ -271,10 +271,32 @@ PlasmoidItem {
     }
 
     function _syncCalendarBackends() {
+        calendarBackend.goToYearAndMonth(viewYear, viewMonth + 1);
         var d1 = new Date(viewYear, viewMonth + 1, 1);
         nextMonthBackend.goToYearAndMonth(d1.getFullYear(), d1.getMonth() + 1);
         var d2 = new Date(viewYear, viewMonth + 2, 1);
         thirdMonthBackend.goToYearAndMonth(d2.getFullYear(), d2.getMonth() + 1);
+    }
+
+    function goPrevMonth() {
+        if (viewMonth === 0) {
+            viewMonth = 11;
+            viewYear -= 1;
+        } else {
+            viewMonth -= 1;
+        }
+    }
+    function goNextMonth() {
+        if (viewMonth === 11) {
+            viewMonth = 0;
+            viewYear += 1;
+        } else {
+            viewMonth += 1;
+        }
+    }
+    function goToToday() {
+        viewYear = today.getFullYear();
+        viewMonth = today.getMonth();
     }
 
     // Pick the right DaysModel for a given date
@@ -350,6 +372,85 @@ PlasmoidItem {
 
         var now = root.today;
         var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        // When viewing a month other than the current one, list events across
+        // the displayed month plus the configured lookahead window (the same
+        // "show events for" value used by the current-month view), grouped by
+        // month in chronological order.
+        if (viewYear !== now.getFullYear() || viewMonth !== now.getMonth()) {
+            const customsAll = _parseCustomEvents();
+            const seenKeys = {};
+            const anchor = new Date(viewYear, viewMonth, 1);
+            const end = new Date(anchor.getTime() + effectiveLookahead * 86400000);
+            const buckets = [];  // { year, month, entries: [] } in chronological order
+
+            for (let d = new Date(anchor); d < end; d = new Date(d.getTime() + 86400000)) {
+                let b = buckets.length > 0 ? buckets[buckets.length - 1] : null;
+                if (!b || b.year !== d.getFullYear() || b.month !== d.getMonth()) {
+                    b = { year: d.getFullYear(), month: d.getMonth(), entries: [] };
+                    buckets.push(b);
+                }
+
+                const dm = _daysModelForDate(d);
+                const raw = dm.eventsForDate(d);
+                if (raw && raw.length > 0) {
+                    const evs = [];
+                    for (let ei = 0; ei < raw.length; ei++) evs.push(raw[ei]);
+                    evs.sort(function(a, b2) {
+                        if (a.isAllDay && !b2.isAllDay) return -1;
+                        if (!a.isAllDay && b2.isAllDay) return 1;
+                        return a.startDateTime.getTime() - b2.startDateTime.getTime();
+                    });
+                    for (let e = 0; e < evs.length; e++) {
+                        const ev = evs[e];
+                        const key = ev.title + "|" + ev.startDateTime.getTime();
+                        if (seenKeys[key]) continue;
+                        seenKeys[key] = true;
+                        b.entries.push({
+                            isHeader: false,
+                            title: ev.title,
+                            pillColor: _pillColorFor(ev),
+                            isAllDay: ev.isAllDay,
+                            timeLabel: _formatWeekDate(d),
+                            isCustom: false,
+                            eventId: "",
+                            sortTime: ev.startDateTime.getTime()
+                        });
+                    }
+                }
+
+                const key2 = _dateKey(d);
+                for (let c = 0; c < customsAll.length; c++) {
+                    if (customsAll[c].date === key2) {
+                        b.entries.push({
+                            isHeader: false,
+                            title: customsAll[c].title,
+                            pillColor: customsAll[c].color || customEventColor,
+                            isAllDay: true,
+                            timeLabel: _formatWeekDate(d),
+                            isCustom: true,
+                            eventId: String(customsAll[c].id),
+                            sortTime: d.getTime()
+                        });
+                    }
+                }
+            }
+
+            const cmp = function(a, b2) {
+                if (a.isAllDay && !b2.isAllDay) return -1;
+                if (!a.isAllDay && b2.isAllDay) return 1;
+                return a.sortTime - b2.sortTime;
+            };
+            for (let bi = 0; bi < buckets.length; bi++) {
+                const b = buckets[bi];
+                if (b.entries.length === 0) continue;
+                b.entries.sort(cmp);
+                eventsModel.append({ isHeader: true, title: monthNames[b.month] + " " + b.year, pillColor: "", timeLabel: "", isAllDay: false });
+                for (let e = 0; e < b.entries.length; e++) eventsModel.append(b.entries[e]);
+            }
+            rebuildDayDots();
+            return;
+        }
 
         // End of current week (exclusive): the first day of next week
         // Sun-first: week ends Saturday (day 6), so next week starts Sunday
@@ -665,22 +766,63 @@ PlasmoidItem {
                 Layout.fillWidth: true
                 Layout.preferredHeight: full.labelSize * 1.4
 
-                TextMetrics {
-                    id: sMetrics
-                    font.family: sfRegular.name
-                    font.pixelSize: full.labelSize
-                    text: root.weekdayShort[0]
+                Item {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: Math.round(full.labelSize * 1.4)
+                    height: Math.round(full.labelSize * 1.4)
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "\u2039"
+                        color: colors.foreground
+                        opacity: prevMouse.containsMouse ? 1.0 : 0.6
+                        font.family: sfRegular.name
+                        font.pixelSize: Math.round(full.labelSize * 1.3)
+                    }
+                    MouseArea {
+                        id: prevMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: root.goPrevMonth()
+                    }
+                }
+
+                Item {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: Math.round(full.labelSize * 1.4)
+                    height: Math.round(full.labelSize * 1.4)
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "\u203A"
+                        color: colors.foreground
+                        opacity: nextMouse.containsMouse ? 1.0 : 0.6
+                        font.family: sfRegular.name
+                        font.pixelSize: Math.round(full.labelSize * 1.3)
+                    }
+                    MouseArea {
+                        id: nextMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: root.goNextMonth()
+                    }
                 }
 
                 Text {
-                    x: parent.width / 7 / 2 - sMetrics.width / 2
+                    anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
-                    text: root.monthNames[root.viewMonth].toUpperCase()
+                    text: root.monthNames[root.viewMonth].toUpperCase() + " " + root.viewYear
                     color: colors.todayAccent
                     font.family: sfRegular.name
                     font.pixelSize: full.labelSize
                     font.weight: Font.Regular
                     font.letterSpacing: 1
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: root.goToToday()
+                    }
                 }
             }
 
