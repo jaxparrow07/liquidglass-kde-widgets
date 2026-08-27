@@ -68,7 +68,7 @@ PlasmoidItem {
             if (p && _isPlayerAllowed(p.identity) && (p.track || p.artist))
                 return p
         }
-        return cp
+        return null
     }
     readonly property bool _playerAllowed: {
         var cp = mpris2Model.currentPlayer
