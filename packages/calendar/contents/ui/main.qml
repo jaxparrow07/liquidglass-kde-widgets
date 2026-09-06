@@ -335,9 +335,34 @@ PlasmoidItem {
         Layout.minimumHeight: 160
 
         readonly property bool isWide: full.width >= full.height * 2
-        readonly property real wideGap: Math.round(full.height * 0.04)
-        // Single unified type scale — everything uses this size.
-        readonly property real labelSize: Math.max(10, Math.round(full.height * 0.058))
+
+        // Type scale. Either everything grows with the widget (the original
+        // behaviour, kept as the default) or the sizes are pinned to what the
+        // user configured.
+        //
+        // Pinning is the point of the option: the event list is a ListView
+        // filling the left panel, so once its text stops growing with the
+        // widget, making the widget taller fits *more* cards instead of the
+        // same few, larger. The paddings below have to be pinned along with
+        // the text or they eat the space the extra cards would have used.
+        readonly property bool autoFont: plasmoid.configuration.autoFontSize
+
+        // Grid, dialogs and tooltips.
+        readonly property real labelSize: autoFont
+            ? Math.max(10, Math.round(full.height * 0.058))
+            : plasmoid.configuration.gridFontSize
+        // Event card text.
+        readonly property real eventSize: autoFont
+            ? Math.max(10, Math.round(full.height * 0.052))
+            : plasmoid.configuration.eventFontSize
+        // Section headers sit a touch above the card text. The 1.12 ratio
+        // reproduces the old 0.058/0.052 relationship, so auto mode renders
+        // as it always did.
+        readonly property real eventHeaderSize: Math.round(full.eventSize * 1.12)
+
+        readonly property real wideGap: autoFont
+            ? Math.round(full.height * 0.04)
+            : Math.round(full.labelSize * 0.69)
 
         LiquidGlass {
             id: glass
@@ -370,9 +395,13 @@ PlasmoidItem {
                 rightMargin: full.wideGap
             }
 
-            readonly property real _margin: Math.round(full.height * 0.09)
-            readonly property real _cardSize: Math.max(10, Math.round(full.height * 0.052))
-            readonly property real _cardSpacing: Math.round(full.height * 0.025)
+            readonly property real _cardSize: full.eventSize
+            readonly property real _margin: full.autoFont
+                ? Math.round(full.height * 0.09)
+                : Math.round(full.eventSize * 1.73)
+            readonly property real _cardSpacing: full.autoFont
+                ? Math.round(full.height * 0.025)
+                : Math.round(full.eventSize * 0.48)
 
             // Empty state
             Text {
@@ -381,7 +410,7 @@ PlasmoidItem {
                 text: i18n("No upcoming events")
                 color: colors.foreground
                 font.family: sfRegular.name
-                font.pixelSize: full.labelSize
+                font.pixelSize: full.eventHeaderSize
                 font.weight: Font.Regular
                 opacity: 0.45
                 horizontalAlignment: Text.AlignHCenter
@@ -437,7 +466,7 @@ PlasmoidItem {
                     text: headerTitle
                     color: colors.foreground
                     font.family: sfRegular.name
-                    font.pixelSize: full.labelSize
+                    font.pixelSize: full.eventHeaderSize
                     font.weight: Font.Regular
                     opacity: 0.55
                     font.letterSpacing: 0.5
