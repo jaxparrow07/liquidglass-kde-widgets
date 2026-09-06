@@ -70,6 +70,10 @@ QtObject {
     readonly property real  cardHoverOpacity:      isLight ? 0.14 : 0.17
     readonly property real  cardPressOpacity:      isLight ? 0.20 : 0.22
 
+    // Hover tooltip — dark near-opaque surface in glass, theme surface in solid.
+    readonly property color tooltipBackground: isGlass ? "#2c2c2e" : surface
+    readonly property color tooltipForeground: isGlass ? "#ffffff" : solidForeground
+
     // Timer action colors — solid-filled in glass, tinted in solid.
     readonly property color countdownText:  isGlass ? "#ffffff" : "#FF8B00"
     readonly property color actionGreen:    "#00A832"
