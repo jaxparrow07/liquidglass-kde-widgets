@@ -107,7 +107,46 @@ Item {
         // If realtime is off, force a one-shot backdrop recapture so the
         // sampled wallpaper stays aligned after the widget moves.
         if (moved && !realtimeRefraction) wallpaperTex.scheduleUpdate()
+        if (moved) markDirty()
     }
+
+    // --- Redraw gating -------------------------------------------------
+    //
+    // The blur pyramid below is a chain of ShaderEffectSources feeding one
+    // another. Leaving every link `live` means the scene graph never reaches
+    // a resting state: each link dirties the next, so plasmashell re-blurs
+    // the wallpaper at full framerate for as long as the widget exists, even
+    // though a static wallpaper produces byte-identical output every frame.
+    //
+    // So the chain only runs in bursts. Anything that can change a pixel
+    // calls markDirty(), which lets the chain render freely for a short
+    // while and then parks it. The burst is deliberately several frames
+    // long rather than a single scheduleUpdate() per link: the links settle
+    // one stage per frame, and a burst lets the whole pyramid flush through
+    // without having to hand-order the updates.
+    property bool _dirtyBurst: false
+    function markDirty() {
+        _dirtyBurst = true
+        settleTimer.restart()
+    }
+    Timer {
+        id: settleTimer
+        interval: 250
+        onTriggered: glass._dirtyBurst = false
+    }
+    readonly property bool _chainLive: glass._blurActive
+                                       && (glass.realtimeRefraction || glass._dirtyBurst)
+
+    // Re-blur whenever the inputs to the blur actually change.
+    onWidthChanged: markDirty()
+    onHeightChanged: markDirty()
+    onBlurRadiusChanged: markDirty()
+    onSolidModeChanged: markDirty()
+    onWallpaperItemChanged: markDirty()
+    onRealtimeRefractionChanged: markDirty()
+    // _blurActive has no bindable handler name (the leading underscore makes
+    // one ambiguous), so burst on its three inputs instead.
+    onActiveChanged: markDirty()
 
     // --- Mouse tracking for specular highlight ---
     // _mouseU/_mouseV are in widget-local UV (0..1). (-1,-1) means no hover.
@@ -138,8 +177,15 @@ Item {
             glass._mouseV = -1
         }
     }
+    // A widget's position can change without any signal we can bind to (an
+    // ancestor moves, the containment relayouts), so the offset has to be
+    // polled. But it only changes while something is being dragged, and a
+    // desktop widget sits still for days at a time -- polling mapToItem at
+    // 60 Hz forever to learn that nothing moved is the expensive way to
+    // find out. Poll slowly at rest, and drop to frame rate for a second
+    // after a move is seen so a drag still tracks smoothly.
     Timer {
-        interval: 16
+        interval: glass._dirtyBurst ? 16 : 500
         repeat: true
         // Solid mode doesn't need geometry updates (no wallpaper sample),
         // but we still want the timer disabled until the widget has size.
@@ -245,7 +291,7 @@ Item {
         anchors.fill: parent
         opacity: 0
         sourceItem: glass._blurActive ? cropPass : null
-        live: glass._blurActive
+        live: glass._chainLive
         hideSource: true
         smooth: true
     }
@@ -262,7 +308,7 @@ Item {
     ShaderEffectSource {
         id: down1Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive && glass._blurIters >= 1 ? down1 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 2)),
                              Math.max(1, Math.round(glass._widgetH / 2)))
     }
@@ -278,7 +324,7 @@ Item {
     ShaderEffectSource {
         id: down2Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive && glass._blurIters >= 2 ? down2 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 4)),
                              Math.max(1, Math.round(glass._widgetH / 4)))
     }
@@ -294,7 +340,7 @@ Item {
     ShaderEffectSource {
         id: down3Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive && glass._blurIters >= 3 ? down3 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 8)),
                              Math.max(1, Math.round(glass._widgetH / 8)))
     }
@@ -310,7 +356,7 @@ Item {
     ShaderEffectSource {
         id: down4Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive && glass._blurIters >= 4 ? down4 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 16)),
                              Math.max(1, Math.round(glass._widgetH / 16)))
     }
@@ -326,7 +372,7 @@ Item {
     ShaderEffectSource {
         id: down5Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive && glass._blurIters >= 5 ? down5 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 32)),
                              Math.max(1, Math.round(glass._widgetH / 32)))
     }
@@ -342,7 +388,7 @@ Item {
     ShaderEffectSource {
         id: down6Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive && glass._blurIters >= 6 ? down6 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: Qt.size(Math.max(1, Math.round(glass._widgetW / 64)),
                              Math.max(1, Math.round(glass._widgetH / 64)))
     }
@@ -367,7 +413,7 @@ Item {
     ShaderEffectSource {
         id: up6Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive && glass._blurIters >= 6 ? up6 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: down5Tex.textureSize
     }
 
@@ -382,7 +428,7 @@ Item {
     ShaderEffectSource {
         id: up5Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive && glass._blurIters >= 5 ? up5 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: down4Tex.textureSize
     }
 
@@ -397,7 +443,7 @@ Item {
     ShaderEffectSource {
         id: up4Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive && glass._blurIters >= 4 ? up4 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: down3Tex.textureSize
     }
 
@@ -412,7 +458,7 @@ Item {
     ShaderEffectSource {
         id: up3Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive && glass._blurIters >= 3 ? up3 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: down2Tex.textureSize
     }
 
@@ -427,7 +473,7 @@ Item {
     ShaderEffectSource {
         id: up2Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive && glass._blurIters >= 2 ? up2 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: down1Tex.textureSize
     }
 
@@ -441,7 +487,7 @@ Item {
     ShaderEffectSource {
         id: up1Tex; anchors.fill: parent; opacity: 0
         sourceItem: glass._blurActive ? up1 : null
-        live: glass._blurActive; hideSource: true; smooth: true
+        live: glass._chainLive; hideSource: true; smooth: true
         textureSize: Qt.size(Math.round(glass._widgetW), Math.round(glass._widgetH))
     }
 
