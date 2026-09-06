@@ -41,7 +41,9 @@ Pipeline:
 3. Fallback `Rectangle` renders a flat tinted rounded rect when `wallpaperItem` is null (panels, plasmoidviewer). `glass.active` toggles between the two.
 
 Important nuances:
-- **`realtimeRefraction: false` by default.** `wallpaperTex.live` binds to this. The `updateGeometry()` Timer (16ms) calls `wallpaperTex.scheduleUpdate()` when the widget moves and the width/height Connections do the same on resize — so static wallpapers only re-capture on actual geometry change. Turn the config on only for animated/video wallpapers.
+- **`realtimeRefraction: false` by default.** `wallpaperTex.live` binds to this, so static wallpapers only re-capture on actual geometry change. Turn the config on only for animated/video wallpapers.
+- **The blur chain is gated, not continuously live.** The crop + Kawase pyramid is a chain of `ShaderEffectSource`s feeding one another; if every link is `live` the scene graph never reaches a resting state (each link dirties the next) and Plasma re-blurs the wallpaper at full framerate forever. Instead every link binds `live: glass._chainLive`, which is true only in realtime mode or during a short `_dirtyBurst`. Anything that can change a pixel calls `markDirty()`; `settleTimer` (250ms) ends the burst. **When you add a property that affects the blur output, add a `markDirty()` call for it** — otherwise the change renders late or not at all.
+- **`updateGeometry()` polls `mapToItem` at 500ms at rest, 16ms during a burst.** A widget's position can change with no signal to bind to (ancestor moves, containment relayout), so it has to be polled — but only a drag changes it, and a move detected by the poll calls `markDirty()`, which raises the poll to frame rate for the length of the burst.
 - **Mouse hover state** is plumbed into the shader via `mousePos` (widget UV) and `mouseFade` (0..1 with 180ms Behavior) — currently used by the corner-specular effect only.
 - **Shader uniforms** mirror QML properties 1:1 via the `ShaderEffect { property real ...; }` block. Adding a uniform means: add the QML property on `glass`, add it on `glassShader`, add it to the shader's `uniform buf { }`, rebuild shaders.
 
