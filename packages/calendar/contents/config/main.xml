@@ -51,5 +51,14 @@
         <entry name="enabledCalendarPlugins" type="StringList">
             <default>pimevents,holidaysevents</default>
         </entry>
+        <entry name="autoFontSize" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="gridFontSize" type="Int">
+            <default>16</default>
+        </entry>
+        <entry name="eventFontSize" type="Int">
+            <default>14</default>
+        </entry>
     </group>
 </kcfg>

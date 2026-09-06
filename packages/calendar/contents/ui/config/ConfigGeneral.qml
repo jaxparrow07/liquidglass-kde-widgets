@@ -6,6 +6,9 @@ import org.kde.kirigami as Kirigami
 Kirigami.FormLayout {
     property alias cfg_firstDayOfWeek: firstDayCombo.currentIndex
     property alias cfg_eventLookaheadDays: lookaheadCombo.currentIndex
+    property alias cfg_autoFontSize: autoFontCheck.checked
+    property alias cfg_gridFontSize: gridFontSpin.value
+    property alias cfg_eventFontSize: eventFontSpin.value
 
     // StringList — Plasma config passes this as a JS array.
     property var cfg_enabledCalendarPlugins: []
@@ -67,5 +70,37 @@ Kirigami.FormLayout {
                 onCheckedChanged: _applyCheckboxesToPlugins()
             }
         }
+    }
+
+    Kirigami.Separator {
+        Kirigami.FormData.isSection: true
+        Kirigami.FormData.label: i18n("Text size")
+    }
+
+    CheckBox {
+        id: autoFontCheck
+        Kirigami.FormData.label: i18n("Scaling:")
+        text: i18n("Scale text with widget size")
+    }
+
+    Label {
+        Layout.fillWidth: true
+        text: i18n("With scaling off, making the widget taller shows more events instead of larger text.")
+        wrapMode: Text.WordWrap
+        opacity: 0.7
+    }
+
+    SpinBox {
+        id: gridFontSpin
+        Kirigami.FormData.label: i18n("Calendar grid (px):")
+        from: 8; to: 48; stepSize: 1
+        enabled: !autoFontCheck.checked
+    }
+
+    SpinBox {
+        id: eventFontSpin
+        Kirigami.FormData.label: i18n("Event list (px):")
+        from: 8; to: 48; stepSize: 1
+        enabled: !autoFontCheck.checked
     }
 }
