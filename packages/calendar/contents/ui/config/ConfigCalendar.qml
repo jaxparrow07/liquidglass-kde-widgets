@@ -20,6 +20,9 @@ KCMUtils.AbstractKCM {
 
     property alias cfg_firstDayOfWeek: firstDayCombo.currentIndex
     property alias cfg_eventLookaheadDays: lookaheadCombo.currentIndex
+    property alias cfg_autoFontSize: autoFontCheck.checked
+    property alias cfg_gridFontSize: gridFontSpin.value
+    property alias cfg_eventFontSize: eventFontSpin.value
 
     // StringList — Plasma config passes this as a JS array.
     property var cfg_enabledCalendarPlugins: []
@@ -122,6 +125,38 @@ KCMUtils.AbstractKCM {
                     text: pimCheck.checked
                         ? i18n("Choose which Akonadi calendars to show in the Events tab. Holidays and Astronomical Events have their own pages in the sidebar.")
                         : i18n("Holidays and Astronomical Events have their own pages in the sidebar once enabled.")
+                }
+
+                Kirigami.Separator {
+                    Kirigami.FormData.isSection: true
+                    Kirigami.FormData.label: i18n("Text size")
+                }
+
+                QQC2.CheckBox {
+                    id: autoFontCheck
+                    Kirigami.FormData.label: i18n("Scaling:")
+                    text: i18n("Scale text with widget size")
+                }
+
+                QQC2.Label {
+                    Layout.preferredWidth: Kirigami.Units.gridUnit * 18
+                    wrapMode: Text.WordWrap
+                    opacity: 0.75
+                    text: i18n("With scaling off, making the widget taller shows more events instead of larger text.")
+                }
+
+                QQC2.SpinBox {
+                    id: gridFontSpin
+                    Kirigami.FormData.label: i18n("Calendar grid (px):")
+                    from: 8; to: 48; stepSize: 1
+                    enabled: !autoFontCheck.checked
+                }
+
+                QQC2.SpinBox {
+                    id: eventFontSpin
+                    Kirigami.FormData.label: i18n("Event list (px):")
+                    from: 8; to: 48; stepSize: 1
+                    enabled: !autoFontCheck.checked
                 }
             }
         }
