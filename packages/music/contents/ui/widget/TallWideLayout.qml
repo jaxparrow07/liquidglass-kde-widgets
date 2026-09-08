@@ -30,6 +30,7 @@ Item {
     property real lyricsActiveOpacity: 1.0
     property real lyricsInactiveOpacity: 0.40
     property real lyricsFontSizeFactor: 0.055
+    property string lyricsNotFoundMessage: ""
 
     signal togglePlaying()
     signal nextTrack()
@@ -161,6 +162,7 @@ Item {
                 blurEnabled: layout.lyricsBlur
                 activeOpacity: layout.lyricsActiveOpacity
                 inactiveOpacity: layout.lyricsInactiveOpacity
+                notFoundMessage: layout.lyricsNotFoundMessage
                 onSeekTo: function(posUs) { layout.seek(posUs) }
                 onRetryLyrics: layout.retryLyrics()
             }
