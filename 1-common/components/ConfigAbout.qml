@@ -40,7 +40,8 @@ Kirigami.ScrollablePage {
         { name: i18n("World Clock"), icon: "globe" },
         { name: i18n("Timer"),       icon: "chronometer" },
         { name: i18n("Weather"),     icon: "weather-clear" },
-        { name: i18n("Music"),       icon: "media-playback-start" }
+        { name: i18n("Music"),       icon: "media-playback-start" },
+        { name: i18n("Notes"),       icon: "org.kde.plasma.notes" }
     ]
 
     ColumnLayout {
