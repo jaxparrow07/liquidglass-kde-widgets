@@ -74,6 +74,17 @@ Stretch the widget wide to see upcoming events fetched from your actual calendar
 A countdown timer with quick presets and a notification when time's up. Works on both the desktop and
 the panel. I tried to make the animations 1:1 as much as possible despite the limiations QML has.
 
+### GitHub
+
+Two GitHub widgets: a yearly contribution heatmap, and the same heatmap together with your avatar
+and username. Both read public data only — set your username in the widget settings and nothing else
+is needed (no OAuth, no access token).
+
+- **GitHub Contributions** — the classic contribution graph for the last year, with the total.
+- **GitHub Profile** — the contribution graph plus your avatar and username. Stretch the widget to
+  rearrange the two: tall shows the account on top and the graph below, wide shows the graph on the
+  left and the account on the right.
+
 ### Panel widgets
 
 <img src="0-images/panel_widgets.png" width="100%">
@@ -139,6 +150,8 @@ Available package names:
 | `weather` | Weather |
 | `weather-panel` | Weather (panel) |
 | `timer` | Timer |
+| `github-contrib` | GitHub Contributions |
+| `github-profile` | GitHub Profile |
 
 The install script restarts Plasma Shell for you on success.
 
