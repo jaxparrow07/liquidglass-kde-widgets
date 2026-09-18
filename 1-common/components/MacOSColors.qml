@@ -125,4 +125,11 @@ QtObject {
     readonly property color weatherSeparator: isGlass ? Qt.rgba(1, 1, 1, 0.15) : Qt.rgba(1, 1, 1, 0.20)
     readonly property color weatherRangeBarBg: isGlass ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.15)
     readonly property color weatherRangeBarFill: isGlass ? Qt.rgba(1, 1, 1, 0.50) : Qt.rgba(1, 1, 1, 0.60)
+
+    // GitHub contribution heatmap ramp (index 0 = no contributions, 4 = most).
+    // Glass mode is always dark-on-dark, so it uses GitHub's dark palette; the
+    // light solid appearance switches to GitHub's light palette for contrast.
+    readonly property var contributionLevels: isLight
+        ? ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"]
+        : ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"]
 }
