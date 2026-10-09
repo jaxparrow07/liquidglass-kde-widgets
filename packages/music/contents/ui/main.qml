@@ -17,7 +17,7 @@ PlasmoidItem {
         return root.isPlaying
     }
 
-    on_ShouldShowChanged: {
+    function _updateVisibility() {
         if (_shouldShow) {
             root.visible = true
             _autoHideTimer.stop()
@@ -25,6 +25,11 @@ PlasmoidItem {
             _autoHideTimer.restart()
         }
     }
+
+    on_ShouldShowChanged: _updateVisibility()
+
+    // Initialise the auto-hide timer when the widget starts with no media playing.
+    Component.onCompleted: _updateVisibility()
 
     Timer {
         id: _autoHideTimer
