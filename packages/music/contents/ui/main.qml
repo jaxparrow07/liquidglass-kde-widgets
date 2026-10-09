@@ -520,6 +520,7 @@ PlasmoidItem {
 
         LiquidGlass {
             id: glass
+            visibilitySource: root
             anchors.fill: parent
             radius: plasmoid.configuration.cornerRadius
             roundness: plasmoid.configuration.roundnessX10 / 10

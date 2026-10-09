@@ -46,9 +46,9 @@ Item {
     property bool specEnabled: true
     property real specStrength: 0.70
 
-    // When false, the wallpaper is only re-captured on geometry changes
-    // (recommended for static wallpapers — saves GPU per frame). Turn on
-    // for animated / video wallpapers that need continuous updates.
+    // When false, the wallpaper remains statically captured except for
+    // geometry changes and Plasma wallpaper transitions. Turn on for
+    // animated / video wallpapers that need continuous updates.
     property bool realtimeRefraction: false
 
     property real fallbackOpacity: 0.55
@@ -134,6 +134,107 @@ Item {
         interval: 250
         onTriggered: glass._dirtyBurst = false
     }
+
+    // Synchronise static wallpaper captures with events that can make the
+    // cached wallpaper stale: Plasma slideshow transitions and restoration
+    // of a widget that was temporarily hidden. During a slideshow transition,
+    // temporarily enable live capture so the existing blur chain follows the
+    // animated wallpaper, then return to a static capture once the new image
+    // is fully opaque.
+    property bool _wallpaperTransition: false
+    property var _wallpaperStackView: null
+    property var _wallpaperCurrentItem: null
+    // Optional owner whose visibility lifecycle should trigger a fresh
+    // wallpaper capture when the glass becomes visible again.
+    property Item visibilitySource: null
+
+    function findWallpaperStackView() {
+        if (!wallpaperItem || !wallpaperItem.children)
+            return null
+
+        for (let i = 0; i < wallpaperItem.children.length; i++) {
+            const child = wallpaperItem.children[i]
+            if (child
+                    && child.currentItem !== undefined
+                    && child.busy !== undefined)
+                return child
+        }
+
+        return null
+    }
+
+    function updateWallpaperStackView() {
+        _wallpaperStackView = findWallpaperStackView()
+        _wallpaperCurrentItem = _wallpaperStackView
+                ? _wallpaperStackView.currentItem
+                : null
+    }
+
+    function refreshWallpaperCapture() {
+        if (!solidMode && !realtimeRefraction && active) {
+            wallpaperTex.scheduleUpdate()
+            markDirty()
+        }
+    }
+
+    Connections {
+        target: glass._wallpaperStackView
+
+        function onCurrentItemChanged() {
+            glass._wallpaperCurrentItem =
+                    glass._wallpaperStackView.currentItem
+
+            if (glass.solidMode
+                    || glass.realtimeRefraction
+                    || !glass.active)
+                return
+
+            glass._wallpaperTransition = true
+
+            // Ensure the transition begins from a fresh capture, then let
+            // live capture follow Plasma's animated wallpaper item.
+            glass.wallpaperTex.scheduleUpdate()
+            glass.markDirty()
+
+            // Some wallpaper implementations may replace the current item
+            // without animating its opacity.
+            if (glass._wallpaperCurrentItem
+                    && glass._wallpaperCurrentItem.opacity >= 1.0) {
+                glass._wallpaperTransition = false
+                glass.refreshWallpaperCapture()
+            }
+        }
+    }
+
+    Connections {
+        target: glass._wallpaperCurrentItem
+
+        function onOpacityChanged() {
+            if (!glass._wallpaperTransition)
+                return
+
+            if (glass._wallpaperCurrentItem.opacity >= 1.0) {
+                glass._wallpaperTransition = false
+                glass.refreshWallpaperCapture()
+            } else {
+                // Keep the existing blur chain live for the duration of
+                // Plasma's fade. markDirty() extends the existing burst
+                // without changing the blur pipeline itself.
+                glass.markDirty()
+            }
+        }
+    }
+
+    Connections {
+        target: glass.visibilitySource
+
+        function onVisibleChanged() {
+            if (glass.visibilitySource && glass.visibilitySource.visible)
+                glass.refreshWallpaperCapture()
+        }
+    }
+    // End of wallpaper synchronisation
+
     readonly property bool _chainLive: glass._blurActive
                                        && (glass.realtimeRefraction || glass._dirtyBurst)
 
@@ -142,8 +243,15 @@ Item {
     onHeightChanged: markDirty()
     onBlurRadiusChanged: markDirty()
     onSolidModeChanged: markDirty()
-    onWallpaperItemChanged: markDirty()
-    onRealtimeRefractionChanged: markDirty()
+    onWallpaperItemChanged: {
+        markDirty()
+        updateWallpaperStackView()
+    }
+    onRealtimeRefractionChanged: {
+        markDirty()
+        if (!realtimeRefraction)
+            refreshWallpaperCapture()
+    }
     // _blurActive has no bindable handler name (the leading underscore makes
     // one ambiguous), so burst on its three inputs instead.
     onActiveChanged: markDirty()
@@ -193,7 +301,11 @@ Item {
                  && glass.visible && glass.width > 0 && glass.height > 0
         onTriggered: glass.updateGeometry()
     }
-    Component.onCompleted: updateGeometry()
+    Component.onCompleted: {
+        updateGeometry()
+        updateWallpaperStackView()
+        refreshWallpaperCapture()
+    }
 
     // --- Wallpaper capture ---
 
@@ -202,7 +314,8 @@ Item {
         anchors.fill: parent
         opacity: 0
         sourceItem: glass.solidMode ? null : glass.wallpaperItem
-        live: !glass.solidMode && glass.realtimeRefraction
+        live: !glass.solidMode
+              && (glass.realtimeRefraction || glass._wallpaperTransition)
         hideSource: false
         recursive: false
         smooth: true
