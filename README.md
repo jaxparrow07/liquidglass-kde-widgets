@@ -15,7 +15,7 @@ macOS&nbsp;Tahoe / iOS-style liquid-glass widgets for KDE Plasma 6.<br><br>
 <a href="https://www.opendesktop.org/c/2362936/">
   <img src="https://img.shields.io/badge/KDE_Store-Download-blue?style=for-the-badge&logo=kde" alt="KDE Store Collection">
 </a>
-<br>
+<br><br>
 <a href="https://www.buymeacoffee.com/jaxparrow07">
   <img src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=%E2%98%95&slug=jaxparrow07&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff" alt="Buy me a coffee" height="50">
 </a>
@@ -24,7 +24,7 @@ macOS&nbsp;Tahoe / iOS-style liquid-glass widgets for KDE Plasma 6.<br><br>
 
 ---
 
-An extensive widget set inspired from the latest MacOS (tahoe), along with liquid glass effect. Rather than taking the control away from the user, the widget offers all the parameters to be congfigured so you can basically customize EVERYTHING. The background for the widget is a custom shader, and even the solid modes are rendered by the shader since it supports gradients as well. If you want to make the custom styling consistent across your other widgets, you can simply copy and paste the widget style onto the other widgets.
+An extensive widget set inspired from the latest MacOS (tahoe), along with liquid glass effect. Rather than taking the control away from the user, the widget offers all the parameters to be configured so you can basically customize EVERYTHING. The background for the widget is a custom shader, and even the solid modes are rendered by the shader since it supports gradients as well. If you want to make the custom styling consistent across your other widgets, you can simply copy and paste the widget style onto the other widgets.
 
 **Note: For use with video wallpapers, enable continuous sampling of background in the config (extra battery drain)** 
 
@@ -217,13 +217,39 @@ Without this, browser playback may still show controls but with no album art.
 
 ---
 
-## Copyright & Attribution
+## License
 
-The bundled **fonts and icons are sourced from Apple's design system** and are included for
-**personal, non-commercial use only**. Do not use them for commercial purposes.
+The source code in this repository is licensed under the **GNU General Public License v3.0 (GPL-3.0)**. See [`LICENSE`](LICENSE).
 
-**Disclaimer:** this project is **not affiliated with, endorsed by, or sponsored by Apple Inc.**
-All product names, logos and brands are property of their respective owners.
+You are free to use, modify, and redistribute the code under those terms, including keeping copyright and attribution notices intact, providing the source, and licensing any derivative work under GPL-3.0.
+
+### Third-party assets (not covered by the GPL)
+
+The bundled **fonts and icons are sourced from Apple's design system**. They are **not** part of this project's GPL-licensed code. They remain the property of Apple Inc. and are included here for **personal, non-commercial use only**. I do not hold the rights to relicense them, and nothing in this repository's license grants you any rights to them beyond what Apple allows.
+
+If you redistribute this project, you are responsible for making sure you have the right to redistribute these assets, or for removing them.
+
+**Disclaimer:** this project is **not affiliated with, endorsed by, or sponsored by Apple Inc.** All product names, logos, and brands are property of their respective owners.
+
+## Official Sources & Paid Copies
+
+This project is **free**. The only official download locations are:
+
+- GitHub: https://github.com/jaxparrow07/liquidglass-kde-widgets
+- GitHub Releases: https://github.com/jaxparrow07/liquidglass-kde-widgets/releases/latest
+- KDE Store: https://www.opendesktop.org/c/2362936/
+
+**Be careful with paid "installers", "packs", and scripts.** Because the code is open source, anyone is allowed to link to it, make videos about it, or write a script that downloads and installs it. Some people sell these as if they were their own product. I'm not affiliated with them, I don't receive anything from those sales, and you never need to pay for this project.
+
+Before paying for anything that claims to include Liquid Glass widgets:
+
+- Check whether it simply downloads the files from the official links above.
+- Check the install script. The official one is `install.sh` in this repo and takes about a minute to run yourself.
+- Don't run scripts from sources you don't trust without reading them first. An install script runs with your user's permissions.
+
+If you find someone **removing attribution, hiding the source, or claiming this work as their own**, please open an issue or contact me. Those cases violate the license, and I'll follow up.
+
+If you like the project, the best way to support it is the Buy Me a Coffee link at the top, or a star on the repo.
 
 ## AI Disclosure
 
