@@ -1,0 +1,1 @@
+../../../../../1-common/config/ConfigAppearanceAnalog.qml

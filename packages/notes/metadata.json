@@ -1,0 +1,24 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "thomas.eleveld007@gmail.com",
+                "Name": "Thomas Eleveld"
+            }
+        ],
+        "Category": "Miscellaneous",
+        "Description": "A macOS-styled sticky note with multiple text-decoration options.",
+        "EnabledByDefault": true,
+        "Icon": "org.kde.plasma.notes",
+        "Id": "com.jaxparrow07.macoswidgets.notes",
+        "License": "GPL-3.0",
+        "Name": "macOS Sticky Note",
+        "Version": "1.0",
+        "Website": "https://github.com/jaxparrow07/liquidglass-kde-widgets"
+    },
+    "X-Plasma-DropMimeTypes": [
+        "text/plain"
+    ],
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
