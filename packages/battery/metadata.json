@@ -1,0 +1,21 @@
+{
+  "KPackageStructure": "Plasma/Applet",
+  "KPlugin": {
+    "Authors": [
+      {
+        "Email": "wollydev24@email.com",
+        "Name": "Jack Faith"
+      }
+    ],
+    "Category": "System",
+    "Description": "A macOS-style battery status widget with a frosted-glass background showing charge level, laptop icon, and percentage.",
+    "EnabledByDefault": true,
+    "Icon": "/icon.png",
+    "Id": "com.wollydev24.macoswidgets.battery",
+    "License": "GPL-3.0",
+    "Name": "macOS Battery",
+    "Version": "1.0",
+    "Website": "https://github.com/jaxparrow07/macos-widgets"
+  },
+  "X-Plasma-API-Minimum-Version": "6.0"
+}
