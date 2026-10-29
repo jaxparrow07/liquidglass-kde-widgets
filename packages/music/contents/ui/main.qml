@@ -314,26 +314,20 @@ PlasmoidItem {
         interval: 300
         repeat: false
         onTriggered: {
-            if (root._activePlayer && root.isPlaying) {
-                root._activePlayer.Pause()
-                artResumeTimer.start()
-            }
-        }
-    }
-
-    Timer {
-        id: artResumeTimer
-        interval: 80
-        repeat: false
-        onTriggered: {
-            if (root._activePlayer) root._activePlayer.Play()
+            // Refresh the artwork without touching playback. Pausing and then
+            // calling Play() a few ms later used to force players to re-publish
+            // their artUrl, but some clients (Spotify, for one) ignore a Play()
+            // that arrives right after a Pause() and stay paused, so playback
+            // stopped on every track change.
+            root._lastSampledUrl = ""
+            _artDebounceTimer.restart()
+            _resampleTimer.restart()
         }
     }
 
     function _scheduleArtRefresh() {
         if (!plasmoid.configuration.artRefreshEnabled) return
         artRefreshTimer.stop()
-        artResumeTimer.stop()
         if (root.isPlaying) artRefreshTimer.start()
     }
 
