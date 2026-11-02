@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plasma_applet_com.jaxparrow07.macoswidgets.calendar 1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jaxparrow07/macos-widgets/issues\n"
-"POT-Creation-Date: 2026-10-11 17:48+0530\n"
+"POT-Creation-Date: 2026-11-01 19:12+0000\n"
 "PO-Revision-Date: 2026-06-14 18:01+0530\n"
 "Last-Translator: Russian translation contributors\n"
 "Language-Team: Russian\n"
@@ -16,100 +16,37 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: packages/calendar/contents/config/config.qml:11
-#: packages/calendar/contents/ui/config/ConfigAbout.qml:39
-msgid "Calendar"
-msgstr "Календарь"
-
-#: packages/calendar/contents/config/config.qml:16
-msgid "Appearance"
-msgstr "Оформление"
-
-#: packages/calendar/contents/config/config.qml:59
-msgid "More & Support"
+#: packages/calendar/contents/ui/main.qml:29
+msgid "Open Calendar"
 msgstr ""
 
-#: packages/calendar/contents/ui/config/ConfigPimEvents.qml:129
-msgid "Uncategorized Events"
-msgstr "События без категории"
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:61
-msgid "General"
+#: packages/calendar/contents/ui/main.qml:35
+msgid "New Event…"
 msgstr ""
 
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:63
-msgid "Events"
+#: packages/calendar/contents/ui/main.qml:42
+msgid "Manage Calendars…"
 msgstr ""
 
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:90
-msgid "First day of week:"
-msgstr "Первый день недели:"
+#: packages/calendar/contents/ui/main.qml:263
+msgid "All day"
+msgstr "Весь день"
 
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:91
-msgid "Sunday"
-msgstr "Воскресенье"
+#: packages/calendar/contents/ui/main.qml:349
+msgid "Events today"
+msgstr "События сегодня"
 
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:91
-msgid "Monday"
-msgstr "Понедельник"
+#: packages/calendar/contents/ui/main.qml:353
+msgid "This week"
+msgstr "На этой неделе"
 
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:96
-msgid "Show events for:"
-msgstr "Показывать события за:"
+#: packages/calendar/contents/ui/main.qml:357
+msgid "Upcoming"
+msgstr "Предстоящие"
 
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:97
-msgid "7 days"
-msgstr "7 дней"
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:97
-msgid "14 days"
-msgstr "14 дней"
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:97
-msgid "30 days"
-msgstr "30 дней"
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:97
-msgid "60 days"
-msgstr "60 дней"
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:103
-msgid "Calendar sources:"
-msgstr "Источники календаря:"
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:104
-msgid "PIM Events (Akonadi)"
-msgstr "События PIM (Akonadi)"
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:109
-msgid "Holidays"
-msgstr "Праздники"
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:114
-msgid "Astronomical Events"
-msgstr "Астрономические события"
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:123
-msgid ""
-"Choose which Akonadi calendars to show in the Events tab. Holidays and "
-"Astronomical Events have their own pages in the sidebar."
-msgstr ""
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:124
-msgid ""
-"Holidays and Astronomical Events have their own pages in the sidebar once "
-"enabled."
-msgstr ""
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:151
-msgid "Calendar events aren't available"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/ConfigCalendar.qml:152
-msgid ""
-"Install the kpim6-kdepim-addons package to show events from your calendars "
-"(Akonadi)."
-msgstr ""
+#: packages/calendar/contents/ui/main.qml:444
+msgid "No upcoming events"
+msgstr "Нет предстоящих событий"
 
 #: packages/calendar/contents/ui/config/GlassAppearancePage.qml:119
 msgid "Style applied. Press Apply to keep it."
@@ -285,6 +222,119 @@ msgstr ""
 msgid "Reset blur settings"
 msgstr ""
 
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:64
+msgid "General"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:66
+msgid "Events"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:93
+msgid "First day of week:"
+msgstr "Первый день недели:"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:94
+msgid "Sunday"
+msgstr "Воскресенье"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:94
+msgid "Monday"
+msgstr "Понедельник"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:99
+msgid "Show events for:"
+msgstr "Показывать события за:"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:100
+msgid "7 days"
+msgstr "7 дней"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:100
+msgid "14 days"
+msgstr "14 дней"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:100
+msgid "30 days"
+msgstr "30 дней"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:100
+msgid "60 days"
+msgstr "60 дней"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:106
+msgid "Calendar sources:"
+msgstr "Источники календаря:"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:107
+msgid "PIM Events (Akonadi)"
+msgstr "События PIM (Akonadi)"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:112
+msgid "Holidays"
+msgstr "Праздники"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:117
+msgid "Astronomical Events"
+msgstr "Астрономические события"
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:126
+msgid ""
+"Choose which Akonadi calendars to show in the Events tab. Holidays and "
+"Astronomical Events have their own pages in the sidebar."
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:127
+msgid ""
+"Holidays and Astronomical Events have their own pages in the sidebar once "
+"enabled."
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:132
+msgid "Text size"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:137
+msgid "Scaling:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:138
+msgid "Scale text with widget size"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:145
+msgid ""
+"With scaling off, making the widget taller shows more events instead of "
+"larger text."
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:150
+msgid "Calendar grid (px):"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:157
+msgid "Event list (px):"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:186
+msgid "Calendar events aren't available"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigCalendar.qml:187
+msgid ""
+"Install the kpim6-kdepim-addons package to show events from your calendars "
+"(Akonadi)."
+msgstr ""
+
+#: packages/calendar/contents/ui/config/ConfigPimEvents.qml:129
+msgid "Uncategorized Events"
+msgstr "События без категории"
+
+#: packages/calendar/contents/ui/config/ConfigAbout.qml:39
+#: packages/calendar/contents/config/config.qml:11
+msgid "Calendar"
+msgstr "Календарь"
+
 #: packages/calendar/contents/ui/config/ConfigAbout.qml:40
 msgid "Clock"
 msgstr ""
@@ -348,38 +398,6 @@ msgstr ""
 msgid "Reddit"
 msgstr ""
 
-#: packages/calendar/contents/ui/main.qml:29
-msgid "Open Calendar"
-msgstr ""
-
-#: packages/calendar/contents/ui/main.qml:35
-msgid "New Event…"
-msgstr ""
-
-#: packages/calendar/contents/ui/main.qml:42
-msgid "Manage Calendars…"
-msgstr ""
-
-#: packages/calendar/contents/ui/main.qml:263
-msgid "All day"
-msgstr "Весь день"
-
-#: packages/calendar/contents/ui/main.qml:349
-msgid "Events today"
-msgstr "События сегодня"
-
-#: packages/calendar/contents/ui/main.qml:353
-msgid "This week"
-msgstr "На этой неделе"
-
-#: packages/calendar/contents/ui/main.qml:357
-msgid "Upcoming"
-msgstr "Предстоящие"
-
-#: packages/calendar/contents/ui/main.qml:415
-msgid "No upcoming events"
-msgstr "Нет предстоящих событий"
-
 #: packages/calendar/contents/ui/components/WidgetActions.qml:29
 msgid "Glass Style"
 msgstr ""
@@ -412,6 +430,14 @@ msgstr ""
 
 #: packages/calendar/contents/ui/components/WidgetActions.qml:157
 msgid "Not now"
+msgstr ""
+
+#: packages/calendar/contents/config/config.qml:16
+msgid "Appearance"
+msgstr "Оформление"
+
+#: packages/calendar/contents/config/config.qml:59
+msgid "More & Support"
 msgstr ""
 
 #~ msgid "Calendar Events"
