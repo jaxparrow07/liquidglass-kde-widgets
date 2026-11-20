@@ -48,6 +48,7 @@ PlasmoidItem {
     MacOSColors {
         id: colors
         styleMode: plasmoid.configuration.styleMode
+        autoStyle: plasmoid.configuration.autoStyle
         appearance: plasmoid.configuration.appearance
     }
 

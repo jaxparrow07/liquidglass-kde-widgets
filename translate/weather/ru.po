@@ -97,6 +97,15 @@ msgstr "Стиль:"
 msgid "Solid"
 msgstr "Сплошной"
 
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml
+msgid "Switch automatically"
+msgstr ""
+
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml
+msgid ""
+"Solid when the desktop is clear, Glass when a window is open on this screen."
+msgstr ""
+
 #: packages/weather/contents/ui/config/GlassAppearancePage.qml:171
 msgid "Appearance:"
 msgstr "Оформление:"
@@ -536,13 +545,13 @@ msgstr[2] "Без осадков %1 дней"
 #~ msgstr "Обновлять каждый кадр (включите для видеообоев)"
 
 #~ msgid ""
-#~ "Locations are resolved with the Open-Meteo Geocoding API (geocoding-api."
-#~ "open-meteo.com) and forecasts are fetched from Open-Meteo (api.open-meteo."
-#~ "com). No account or API key is required. Selecting a result stores its "
-#~ "coordinates directly, so weather refreshes skip the geocoding step."
+#~ "Locations are resolved with the Open-Meteo Geocoding API (geocoding-"
+#~ "api.open-meteo.com) and forecasts are fetched from Open-Meteo (api.open-"
+#~ "meteo.com). No account or API key is required. Selecting a result stores "
+#~ "its coordinates directly, so weather refreshes skip the geocoding step."
 #~ msgstr ""
 #~ "Местоположения определяются с помощью Open-Meteo Geocoding API (geocoding-"
-#~ "api.open-meteo.com), а прогнозы загружаются из Open-Meteo (api.open-meteo."
-#~ "com). Учётная запись и ключ API не требуются. При выборе результата его "
-#~ "координаты сохраняются напрямую, поэтому при обновлении погоды "
+#~ "api.open-meteo.com), а прогнозы загружаются из Open-Meteo (api.open-"
+#~ "meteo.com). Учётная запись и ключ API не требуются. При выборе результата "
+#~ "его координаты сохраняются напрямую, поэтому при обновлении погоды "
 #~ "геокодирование не выполняется."

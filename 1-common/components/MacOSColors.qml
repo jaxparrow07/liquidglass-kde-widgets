@@ -1,5 +1,7 @@
 import QtQuick
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.plasmoid
+import org.kde.taskmanager as TaskManager
 
 QtObject {
     id: macColors
@@ -9,6 +11,9 @@ QtObject {
     //   appearance: 0 = Dark, 1 = Light, 2 = Follow system
     property int styleMode: 0
     property int appearance: 0
+    // autoStyle overrides styleMode: Solid while the desktop is clear,
+    // Glass while a window is open on this widget's screen (macOS Tahoe).
+    property bool autoStyle: false
 
     readonly property bool useSystem: appearance === 2
     readonly property bool systemIsDark: {
@@ -17,8 +22,29 @@ QtObject {
         return luminance < 0.5
     }
     readonly property bool isLight: !isGlass && (appearance === 1 || (useSystem && !systemIsDark))
-    readonly property bool isGlass: styleMode === 0
-    readonly property bool isSolid: styleMode === 1
+    readonly property bool isGlass: autoStyle ? !desktopClear : styleMode === 0
+    readonly property bool isSolid: !isGlass
+
+    // True when no visible (not minimized, not hidden) window is on this
+    // widget's screen, virtual desktop and activity. "Show Desktop" hides
+    // windows, so it also counts as a clear desktop. The model only exists
+    // while autoStyle is on, so other widgets pay nothing for it.
+    readonly property bool desktopClear: _windows.item ? _windows.item.count === 0 : true
+
+    readonly property Loader _windows: Loader {
+        active: macColors.autoStyle
+        sourceComponent: TaskManager.TasksModel {
+            filterByCurrentVirtualDesktop: true
+            filterByActivity: true
+            filterByScreen: true
+            filterHidden: true
+            filterMinimized: true
+            screenGeometry: Plasmoid.containment ? Plasmoid.containment.screenGeometry : Qt.rect(0, 0, 0, 0)
+            activity: _activityInfo.currentActivity
+            groupMode: TaskManager.TasksModel.GroupDisabled
+        }
+    }
+    readonly property TaskManager.ActivityInfo _activityInfo: TaskManager.ActivityInfo {}
 
     // Glass-mode counterpart of isLight: true when the user picked Light
     // (or the system theme is light under Follow system) while in Glass
