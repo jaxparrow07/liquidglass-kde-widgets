@@ -17,6 +17,7 @@ PlasmoidItem {
     MacOSColors {
         id: colors
         styleMode: plasmoid.configuration.styleMode
+        autoStyle: plasmoid.configuration.autoStyle
         appearance: plasmoid.configuration.appearance
     }
 
@@ -25,6 +26,8 @@ PlasmoidItem {
         Layout.preferredHeight: height > 0 ? height : 200
         Layout.minimumWidth: 120
         Layout.minimumHeight: 120
+
+        StyleFade { styleColors: colors }
 
         LiquidGlass {
             id: glass

@@ -98,6 +98,15 @@ msgstr "Stijl:"
 msgid "Solid"
 msgstr "Vlakke kleur"
 
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml
+msgid "Switch automatically"
+msgstr ""
+
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml
+msgid ""
+"Solid when the desktop is clear, Glass when a window is open on this screen."
+msgstr ""
+
 #: packages/weather/contents/ui/config/GlassAppearancePage.qml:171
 msgid "Appearance:"
 msgstr "Vormgeving:"
@@ -538,10 +547,10 @@ msgstr[1] "Er wordt de komende %1 dagen geen neerslag verwacht"
 #~ "achtergronden)"
 
 #~ msgid ""
-#~ "Locations are resolved with the Open-Meteo Geocoding API (geocoding-api."
-#~ "open-meteo.com) and forecasts are fetched from Open-Meteo (api.open-meteo."
-#~ "com). No account or API key is required. Selecting a result stores its "
-#~ "coordinates directly, so weather refreshes skip the geocoding step."
+#~ "Locations are resolved with the Open-Meteo Geocoding API (geocoding-"
+#~ "api.open-meteo.com) and forecasts are fetched from Open-Meteo (api.open-"
+#~ "meteo.com). No account or API key is required. Selecting a result stores "
+#~ "its coordinates directly, so weather refreshes skip the geocoding step."
 #~ msgstr ""
 #~ "Er wordt naar plaatsen gezocht aan de hand van de Open-Meteo Geocoding-"
 #~ "api (geocoding-api.open-meteo.com). Weerberichten worden opgehaald van "

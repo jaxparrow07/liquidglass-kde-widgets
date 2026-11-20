@@ -32,6 +32,7 @@ PlasmoidItem {
     MacOSColors {
         id: colors
         styleMode: plasmoid.configuration.styleMode
+        autoStyle: plasmoid.configuration.autoStyle
         appearance: plasmoid.configuration.appearance
     }
 
@@ -65,6 +66,8 @@ PlasmoidItem {
 
         function _discColor(isDay) { return isDay ? "#ffffff" : "#343436" }
         function _markColor(isDay) { return isDay ? "#1A1B1E" : "#ffffff" }
+
+        StyleFade { styleColors: colors }
 
         LiquidGlass {
             id: glass

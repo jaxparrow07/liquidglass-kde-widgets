@@ -35,6 +35,7 @@ KCMUtils.SimpleKCM {
     // Keys a widget doesn't define are simply never read or written by the
     // config dialog, so these are safe for every package.
     property alias cfg_styleMode: styleCombo.currentIndex
+    property alias cfg_autoStyle: autoStyleCheck.checked
     property alias cfg_appearance: appearanceCombo.currentIndex
     property alias cfg_cornerRadius: radiusField.value
     property alias cfg_roundnessX10: roundnessField.value
@@ -58,6 +59,7 @@ KCMUtils.SimpleKCM {
     property int cfg_blurAlgorithmDefault: 0
     property int cfg_blurRadiusPxDefault: 6
     property bool cfg_realtimeRefractionDefault: false
+    property bool cfg_autoStyleDefault: false
 
     // ── Variant hooks ─────────────────────────────────────────────────────
     // Widgets without these settings (e.g. the glass-text clock) hide them.
@@ -65,7 +67,7 @@ KCMUtils.SimpleKCM {
     property bool showTint: true
     // Whether the glass backdrop is in use; analog clocks also use it in
     // Solid style unless the background is fully opaque.
-    property bool glassBackdropActive: styleCombo.currentIndex === 0
+    property bool glassBackdropActive: styleCombo.currentIndex === 0 || autoStyleCheck.checked
     // Extra controls appended to the Style tab's form.
     property list<Item> styleExtras
     // Copy/paste style support for the extras.
@@ -81,6 +83,7 @@ KCMUtils.SimpleKCM {
     function _serialize() {
         const o = {
             s: styleCombo.currentIndex,
+            as: autoStyleCheck.checked,
             a: appearanceCombo.currentIndex,
             cr: radiusField.value,
             rn: roundnessField.value,
@@ -102,6 +105,7 @@ KCMUtils.SimpleKCM {
         try {
             const o = JSON.parse(text)
             if (o.s  !== undefined) styleCombo.currentIndex = o.s
+            if (o.as !== undefined) autoStyleCheck.checked = o.as
             if (o.a  !== undefined) appearanceCombo.currentIndex = o.a
             if (o.cr !== undefined) radiusField.value = o.cr
             if (o.rn !== undefined) roundnessField.value = o.rn
@@ -164,6 +168,20 @@ KCMUtils.SimpleKCM {
                 id: styleCombo
                 Kirigami.FormData.label: i18n("Style:")
                 model: [i18n("Glass"), i18n("Solid")]
+                enabled: !autoStyleCheck.checked
+            }
+
+            QQC2.CheckBox {
+                id: autoStyleCheck
+                text: i18n("Switch automatically")
+            }
+
+            QQC2.Label {
+                Layout.fillWidth: true
+                visible: autoStyleCheck.checked
+                wrapMode: Text.WordWrap
+                opacity: 0.7
+                text: i18n("Solid when the desktop is clear, Glass when a window is open on this screen.")
             }
 
             QQC2.ComboBox {
