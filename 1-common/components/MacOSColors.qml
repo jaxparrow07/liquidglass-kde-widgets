@@ -2,6 +2,7 @@ import QtQuick
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
 import org.kde.taskmanager as TaskManager
+import org.kde.kwindowsystem
 
 QtObject {
     id: macColors
@@ -35,10 +36,12 @@ QtObject {
     }
 
     // True when no visible (not minimized, not hidden) window is on this
-    // widget's screen, virtual desktop and activity. "Show Desktop" hides
-    // windows, so it also counts as a clear desktop. The model only exists
-    // while autoStyle is on, so other widgets pay nothing for it.
-    readonly property bool desktopClear: _windows.item ? _windows.item.count === 0 : true
+    // widget's screen, virtual desktop and activity, or while "Show Desktop"
+    // is on (KWin doesn't minimize the windows for it, so the model alone
+    // still counts them). The model only exists while autoStyle is on, so
+    // other widgets pay nothing for it.
+    readonly property bool desktopClear: KWindowSystem.showingDesktop
+        || (_windows.item ? _windows.item.count === 0 : true)
 
     readonly property Loader _windows: Loader {
         active: macColors.autoStyle
