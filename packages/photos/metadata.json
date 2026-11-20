@@ -1,0 +1,21 @@
+{
+  "KPackageStructure": "Plasma/Applet",
+  "KPlugin": {
+    "Authors": [
+      {
+        "Email": "72387595+RoxasYTB@users.noreply.github.com",
+        "Name": "RoxasYTB"
+      }
+    ],
+    "Category": "Graphics",
+    "Description": "A slideshow of the photos in a folder on a glass card. Click a photo to open it in Gwenview.",
+    "EnabledByDefault": true,
+    "Icon": "/icon.png",
+    "Id": "com.jaxparrow07.macoswidgets.photos",
+    "License": "GPL-3.0",
+    "Name": "macOS Photos",
+    "Version": "1.0",
+    "Website": "https://github.com/jaxparrow07/liquidglass-kde-widgets"
+  },
+  "X-Plasma-API-Minimum-Version": "6.0"
+}
