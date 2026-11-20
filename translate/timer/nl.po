@@ -53,6 +53,15 @@ msgstr "Stijl:"
 msgid "Solid"
 msgstr "Vlakke kleur"
 
+#: packages/timer/contents/ui/config/GlassAppearancePage.qml
+msgid "Switch automatically"
+msgstr ""
+
+#: packages/timer/contents/ui/config/GlassAppearancePage.qml
+msgid ""
+"Solid when the desktop is clear, Glass when a window is open on this screen."
+msgstr ""
+
 #: packages/timer/contents/ui/config/GlassAppearancePage.qml:171
 msgid "Appearance:"
 msgstr "Vormgeving:"

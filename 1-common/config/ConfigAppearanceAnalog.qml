@@ -14,14 +14,14 @@ GlassAppearancePage {
 
     property alias cfg_opaqueBackground: opaqueCheck.checked
 
-    glassBackdropActive: cfg_styleMode === 0 || !opaqueCheck.checked
+    glassBackdropActive: cfg_styleMode === 0 || cfg_autoStyle || !opaqueCheck.checked
 
     styleExtras: [
         QQC2.CheckBox {
             id: opaqueCheck
             Kirigami.FormData.label: i18n("Background:")
             text: i18n("Fully opaque background")
-            visible: page.cfg_styleMode === 1
+            visible: page.cfg_styleMode === 1 || page.cfg_autoStyle
         }
     ]
 

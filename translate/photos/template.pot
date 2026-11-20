@@ -1,0 +1,355 @@
+# macOS Photos - Translation Template
+# Translators:
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: plasma_applet_com.jaxparrow07.macoswidgets.photos 1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jaxparrow07/macos-widgets/issues\n"
+"POT-Creation-Date: 2026-11-20 17:29+0100\n"
+"PO-Revision-Date: 2025-01-01 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: packages/photos/contents/config/config.qml:6
+msgid "Photos"
+msgstr ""
+
+#: packages/photos/contents/config/config.qml:11
+msgid "Appearance"
+msgstr ""
+
+#: packages/photos/contents/config/config.qml:16
+msgid "More & Support"
+msgstr ""
+
+#: packages/photos/contents/ui/main.qml:21
+msgid "Next Photo"
+msgstr ""
+
+#: packages/photos/contents/ui/main.qml:29
+msgid "Open in Gwenview"
+msgstr ""
+
+#: packages/photos/contents/ui/main.qml:248
+msgid "Photos will appear here when they are finished processing"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigPhotos.qml:21
+msgid "Folder:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigPhotos.qml:29
+msgid "Browse…"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigPhotos.qml:35
+msgid "Leave empty to use your Pictures folder. Subfolders are not included."
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigPhotos.qml:43
+msgid "Change photo every:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigPhotos.qml:46
+msgid "%1 minute"
+msgid_plural "%1 minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: packages/photos/contents/ui/config/ConfigPhotos.qml:52
+msgid "Order:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigPhotos.qml:53
+msgid "Shuffle"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:123
+msgid "Style applied. Press Apply to keep it."
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:125
+msgid "The clipboard doesn't contain a copied style."
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:152
+msgid "Style"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:153
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:170
+msgid "Glass"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:154
+msgid "Blur & performance"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:169
+msgid "Style:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:170
+msgid "Solid"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:176
+msgid "Switch automatically"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:184
+msgid ""
+"Solid when the desktop is clear, Glass when a window is open on this screen."
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:189
+msgid "Appearance:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:190
+msgid "Dark"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:190
+msgid "Light"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:190
+msgid "Follow system"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:195
+msgid "Glass tint:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:198
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:306
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:320
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:327
+#, javascript-format
+msgctxt "percentage"
+msgid "%1%"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:203
+msgid "Shape"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:209
+msgid "Corner radius:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:212
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:299
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:367
+msgctxt "pixels"
+msgid "%1 px"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:217
+msgid "Corner smoothness:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:236
+msgid "Share"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:240
+msgid "Style preset:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:245
+msgid "Copy style"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:250
+msgid "Copied. Paste it into another Liquid Glass widget."
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:256
+msgid "Paste style"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:285
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:354
+msgid "These settings only apply to the Glass style."
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:297
+msgid "Edge thickness:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:304
+msgid "Refraction strength:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:311
+msgid "Refraction index:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:318
+msgid "Color fringing:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:325
+msgid "Edge highlight:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:332
+msgid "Reset glass settings"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:365
+msgid "Blur radius:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:367
+msgid "Off"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:372
+msgid "Blur quality:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:373
+msgid "Performance (Dual Kawase)"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:373
+msgid "Quality (Gaussian)"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:381
+msgid "Smoother blur, but uses more GPU."
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:386
+msgid "Animated wallpapers:"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:387
+msgid "Update the glass every frame"
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:395
+msgid ""
+"Runs at about 60 FPS and can noticeably increase CPU/GPU usage. Only needed "
+"for video or animated wallpapers."
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:396
+msgid ""
+"Only needed for video or animated wallpapers. Static wallpapers and "
+"slideshows update automatically."
+msgstr ""
+
+#: packages/photos/contents/ui/config/GlassAppearancePage.qml:401
+msgid "Reset blur settings"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:39
+msgid "Calendar"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:40
+msgid "Clock"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:41
+msgid "World Clock"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:42
+msgid "Timer"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:43
+msgid "Weather"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:44
+msgid "Music"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:58
+msgid "Liquid Glass Widgets"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:64
+msgid ""
+"A set of macOS-Tahoe style widgets for KDE Plasma, all sharing one liquid-"
+"glass backdrop."
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:77
+msgid "Widgets in this set"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:108
+msgid "Browse and install the full set on <a href=\"%1\">GitHub</a>."
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:173
+msgid "Also try out: Nothing Widgets"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:181
+msgid ""
+"Check out my other widget set. Nothing OS inspired widgets for KDE Plasma."
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:187
+msgid "Get Nothing Widgets"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:224
+msgid "Buy me a coffee"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:231
+msgid "Website"
+msgstr ""
+
+#: packages/photos/contents/ui/config/ConfigAbout.qml:238
+msgid "Reddit"
+msgstr ""
+
+#: packages/photos/contents/ui/components/WidgetActions.qml:29
+msgid "Glass Style"
+msgstr ""
+
+#: packages/photos/contents/ui/components/WidgetActions.qml:39
+msgid "Apply Copied Style"
+msgstr ""
+
+#: packages/photos/contents/ui/components/WidgetActions.qml:50
+#: packages/photos/contents/ui/components/WidgetActions.qml:65
+msgid "Buy Me a Coffee"
+msgstr ""
+
+#: packages/photos/contents/ui/components/WidgetActions.qml:116
+msgid "Support Liquid Glass Widgets"
+msgstr ""
+
+#: packages/photos/contents/ui/components/WidgetActions.qml:126
+msgid "Opening your browser…"
+msgstr ""
+
+#: packages/photos/contents/ui/components/WidgetActions.qml:127
+msgid ""
+"This opens buymeacoffee.com in your web browser. Thanks for considering it!"
+msgstr ""
+
+#: packages/photos/contents/ui/components/WidgetActions.qml:158
+msgid "Close"
+msgstr ""
+
+#: packages/photos/contents/ui/components/WidgetActions.qml:158
+msgid "Not now"
+msgstr ""

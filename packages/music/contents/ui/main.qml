@@ -68,6 +68,7 @@ PlasmoidItem {
     MacOSColors {
         id: colors
         styleMode: plasmoid.configuration.styleMode
+        autoStyle: plasmoid.configuration.autoStyle
         appearance: plasmoid.configuration.appearance
         foregroundDarkOverride: isSolid && root._hasSampledColor ? root._sampledIsDark : null
     }
@@ -546,6 +547,8 @@ PlasmoidItem {
           : _ar >= 1.6  ? "wide"
           : _ar <= 0.85 && full.height >= full.width * 1.55 ? "tallwide"
           :               "square"
+
+        StyleFade { styleColors: colors }
 
         LiquidGlass {
             id: glass

@@ -1,5 +1,8 @@
 import QtQuick
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.plasmoid
+import org.kde.taskmanager as TaskManager
+import org.kde.kwindowsystem
 
 QtObject {
     id: macColors
@@ -9,6 +12,9 @@ QtObject {
     //   appearance: 0 = Dark, 1 = Light, 2 = Follow system
     property int styleMode: 0
     property int appearance: 0
+    // autoStyle overrides styleMode: Solid while the desktop is clear,
+    // Glass while a window is open on this widget's screen (macOS Tahoe).
+    property bool autoStyle: false
 
     readonly property bool useSystem: appearance === 2
     readonly property bool systemIsDark: {
@@ -17,8 +23,40 @@ QtObject {
         return luminance < 0.5
     }
     readonly property bool isLight: !isGlass && (appearance === 1 || (useSystem && !systemIsDark))
-    readonly property bool isGlass: styleMode === 0
-    readonly property bool isSolid: styleMode === 1
+    // wantGlass is the requested style; isGlass is the one shown. They only
+    // differ for the moment a StyleFade (if the widget has one) needs to
+    // snapshot the old style before the switch.
+    readonly property bool wantGlass: autoStyle ? !desktopClear : styleMode === 0
+    property bool isGlass: wantGlass
+    readonly property bool isSolid: !isGlass
+    property Item fader: null
+    onWantGlassChanged: {
+        if (fader) fader.run()
+        else isGlass = wantGlass
+    }
+
+    // True when no visible (not minimized, not hidden) window is on this
+    // widget's screen, virtual desktop and activity, or while "Show Desktop"
+    // is on (KWin doesn't minimize the windows for it, so the model alone
+    // still counts them). The model only exists while autoStyle is on, so
+    // other widgets pay nothing for it.
+    readonly property bool desktopClear: KWindowSystem.showingDesktop
+        || (_windows.item ? _windows.item.count === 0 : true)
+
+    readonly property Loader _windows: Loader {
+        active: macColors.autoStyle
+        sourceComponent: TaskManager.TasksModel {
+            filterByCurrentVirtualDesktop: true
+            filterByActivity: true
+            filterByScreen: true
+            filterHidden: true
+            filterMinimized: true
+            screenGeometry: Plasmoid.containment ? Plasmoid.containment.screenGeometry : Qt.rect(0, 0, 0, 0)
+            activity: _activityInfo.currentActivity
+            groupMode: TaskManager.TasksModel.GroupDisabled
+        }
+    }
+    readonly property TaskManager.ActivityInfo _activityInfo: TaskManager.ActivityInfo {}
 
     // Glass-mode counterpart of isLight: true when the user picked Light
     // (or the system theme is light under Follow system) while in Glass
@@ -66,6 +104,20 @@ QtObject {
     // light glass tint needs dark content to stay legible); Solid follows
     // the ordinary light/dark inversion.
     readonly property color foreground: isGlass ? (glassIsLight ? "#1A1B1E" : "#ffffff") : (effectiveLight ? "#1A1B1E" : "#ffffff")
+
+    // Photos widget: full color in solid; in glass the photo goes monochrome
+    // and lets the glass show through, like macOS Tahoe's tinted widgets.
+    readonly property real photoSaturation: isGlass ? -1.0 : 0.0
+    readonly property real photoOpacity: isGlass ? 0.75 : 1.0
+    // Photos widget empty state (macOS Tahoe): black card with the colored
+    // app tile in solid; in glass the tile turns translucent white and the
+    // flower monochrome.
+    readonly property color photosSolidBackground: "#000000"
+    readonly property bool photosIconMonochrome: isGlass
+    readonly property color photosIconTileTop: isGlass ? Qt.rgba(1, 1, 1, 0.20) : "#3a3a3a"
+    readonly property color photosIconTileBottom: isGlass ? Qt.rgba(1, 1, 1, 0.10) : "#1e1e1e"
+    readonly property color photosIconTileBorder: isGlass ? Qt.rgba(1, 1, 1, 0.25) : Qt.rgba(1, 1, 1, 0.12)
+    readonly property real photosPlaceholderOpacity: isGlass ? 0.4 : 0.58
 
     // Today/highlight accent: white on dark glass, red otherwise.
     readonly property color todayAccent: isGlass ? (glassIsLight ? accentRed : "#ffffff") : accentRed

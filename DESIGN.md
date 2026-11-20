@@ -77,6 +77,10 @@ Rules:
   instead of drawn.
 - `musicSecondary`: secondary text in the music widget.
 - `weather*` tokens: weather widget gradients, separators, range bar and icon set.
+- `photoSaturation`, `photoOpacity`: photo rendering in the photos widget. Full color and
+  opaque in solid; monochrome (-1) at 0.75 opacity in glass, so the glass shows through.
+- `photos*` tokens: the photos widget empty state (black card, app tile colors, monochrome
+  flower in glass, placeholder text opacity).
 
 ### Card tokens
 - `cardBackground`: white on dark modes, black on light modes (light solid or light glass).
