@@ -548,6 +548,8 @@ PlasmoidItem {
           : _ar <= 0.85 && full.height >= full.width * 1.55 ? "tallwide"
           :               "square"
 
+        StyleFade { styleColors: colors }
+
         LiquidGlass {
             id: glass
             visibilitySource: root

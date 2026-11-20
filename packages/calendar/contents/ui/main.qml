@@ -398,6 +398,8 @@ PlasmoidItem {
             ? Math.round(full.height * 0.04)
             : Math.round(full.labelSize * 0.69)
 
+        StyleFade { styleColors: colors }
+
         LiquidGlass {
             id: glass
             anchors.fill: parent

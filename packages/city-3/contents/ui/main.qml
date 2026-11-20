@@ -55,6 +55,8 @@ PlasmoidItem {
         Layout.minimumWidth: 160
         Layout.minimumHeight: 160
 
+        StyleFade { styleColors: colors }
+
         LiquidGlass {
             id: glass
             anchors.fill: parent

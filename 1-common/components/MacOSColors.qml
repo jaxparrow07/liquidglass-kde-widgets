@@ -22,8 +22,17 @@ QtObject {
         return luminance < 0.5
     }
     readonly property bool isLight: !isGlass && (appearance === 1 || (useSystem && !systemIsDark))
-    readonly property bool isGlass: autoStyle ? !desktopClear : styleMode === 0
+    // wantGlass is the requested style; isGlass is the one shown. They only
+    // differ for the moment a StyleFade (if the widget has one) needs to
+    // snapshot the old style before the switch.
+    readonly property bool wantGlass: autoStyle ? !desktopClear : styleMode === 0
+    property bool isGlass: wantGlass
     readonly property bool isSolid: !isGlass
+    property Item fader: null
+    onWantGlassChanged: {
+        if (fader) fader.run()
+        else isGlass = wantGlass
+    }
 
     // True when no visible (not minimized, not hidden) window is on this
     // widget's screen, virtual desktop and activity. "Show Desktop" hides

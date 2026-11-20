@@ -67,6 +67,8 @@ PlasmoidItem {
         function _discColor(isDay) { return isDay ? "#ffffff" : "#343436" }
         function _markColor(isDay) { return isDay ? "#1A1B1E" : "#ffffff" }
 
+        StyleFade { styleColors: colors }
+
         LiquidGlass {
             id: glass
             anchors.fill: parent
