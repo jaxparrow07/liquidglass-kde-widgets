@@ -4,6 +4,7 @@
 // GlassAppearancePage._serialize() (and the variants' serializeExtras).
 const KEYS = {
     s: "styleMode",
+    as: "autoStyle",
     a: "appearance",
     cr: "cornerRadius",
     rn: "roundnessX10",

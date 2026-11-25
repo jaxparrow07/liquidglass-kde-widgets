@@ -48,6 +48,7 @@ PlasmoidItem {
     MacOSColors {
         id: colors
         styleMode: plasmoid.configuration.styleMode
+        autoStyle: plasmoid.configuration.autoStyle
         appearance: plasmoid.configuration.appearance
     }
 
@@ -396,6 +397,8 @@ PlasmoidItem {
         readonly property real wideGap: autoFont
             ? Math.round(full.height * 0.04)
             : Math.round(full.labelSize * 0.69)
+
+        StyleFade { styleColors: colors }
 
         LiquidGlass {
             id: glass

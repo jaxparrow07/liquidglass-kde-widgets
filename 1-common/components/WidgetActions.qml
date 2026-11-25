@@ -30,7 +30,8 @@ Item {
         icon.name: "preferences-desktop-theme-global"
         checkable: true
         checked: plasmoid.configuration.styleMode === 0
-        visible: actions.hasStyle
+        // Hidden while the style follows the windows on screen.
+        visible: actions.hasStyle && !plasmoid.configuration.autoStyle
         onTriggered: checked => plasmoid.configuration.styleMode = checked ? 0 : 1
     }
 

@@ -35,6 +35,7 @@ PlasmoidItem {
     MacOSColors {
         id: colors
         styleMode: plasmoid.configuration.styleMode
+        autoStyle: plasmoid.configuration.autoStyle
         appearance: plasmoid.configuration.appearance
     }
 
@@ -272,6 +273,8 @@ PlasmoidItem {
         readonly property real wideGap: Math.round(full.height * 0.04)
         readonly property real _minSide: Math.min(width, height)
         readonly property real _btnSize: _minSide * 0.22
+
+        StyleFade { styleColors: colors }
 
         LiquidGlass {
             id: glass
