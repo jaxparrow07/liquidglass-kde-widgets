@@ -105,6 +105,20 @@ QtObject {
     // the ordinary light/dark inversion.
     readonly property color foreground: isGlass ? (glassIsLight ? "#1A1B1E" : "#ffffff") : (effectiveLight ? "#1A1B1E" : "#ffffff")
 
+    // Photos widget: full color in solid; in glass the photo goes monochrome
+    // and lets the glass show through, like macOS Tahoe's tinted widgets.
+    readonly property real photoSaturation: isGlass ? -1.0 : 0.0
+    readonly property real photoOpacity: isGlass ? 0.75 : 1.0
+    // Photos widget empty state (macOS Tahoe): black card with the colored
+    // app tile in solid; in glass the tile turns translucent white and the
+    // flower monochrome.
+    readonly property color photosSolidBackground: "#000000"
+    readonly property bool photosIconMonochrome: isGlass
+    readonly property color photosIconTileTop: isGlass ? Qt.rgba(1, 1, 1, 0.20) : "#3a3a3a"
+    readonly property color photosIconTileBottom: isGlass ? Qt.rgba(1, 1, 1, 0.10) : "#1e1e1e"
+    readonly property color photosIconTileBorder: isGlass ? Qt.rgba(1, 1, 1, 0.25) : Qt.rgba(1, 1, 1, 0.12)
+    readonly property real photosPlaceholderOpacity: isGlass ? 0.4 : 0.58
+
     // Today/highlight accent: white on dark glass, red otherwise.
     readonly property color todayAccent: isGlass ? (glassIsLight ? accentRed : "#ffffff") : accentRed
 
