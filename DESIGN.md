@@ -134,6 +134,8 @@ Rules:
 - Motion should feel like macOS: short and eased, never bouncy or linear.
 - Common durations: **150–180 ms** for hover and press, **280 ms** for layout and content
   transitions, around **500 ms** for larger state changes.
+- The Glass / Solid switch (`StyleFade`) is a linear **150 ms** cross-fade by default. Users can
+  change it or turn it off under Appearance → Style → Switch automatically → Advanced (`styleFadeMs`, 0 = off).
 - Easing: `Easing.OutQuart` / `OutCubic` for things entering or settling, `InOutQuad` for
   back-and-forth transitions.
 - Animate opacity, scale and position, not colors baked into the glass shader. Don't run

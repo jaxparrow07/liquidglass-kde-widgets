@@ -20,6 +20,7 @@ GlassAppearancePage {
 
     showShape: false
     showTint: false
+    showFade: false
 
     styleExtras: [
         QQC2.ComboBox {

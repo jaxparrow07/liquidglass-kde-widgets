@@ -4,9 +4,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: plasma_applet_com.jaxparrow07.macoswidgets.weather 1.1\n"
+"Project-Id-Version: plasma_applet_com.jaxparrow07.macoswidgets.weather 1.3\n"
 "Report-Msgid-Bugs-To: https://github.com/jaxparrow07/macos-widgets/issues\n"
-"POT-Creation-Date: 2026-10-11 17:48+0530\n"
+"POT-Creation-Date: 2026-11-26 12:12+0530\n"
 "PO-Revision-Date: 2025-01-01 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -66,186 +66,199 @@ msgid ""
 "are deleted after 90 days. See its <a href=\"%3\">Terms &amp; Privacy</a>."
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:119
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:128
 msgid "Style applied. Press Apply to keep it."
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:121
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:130
 msgid "The clipboard doesn't contain a copied style."
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:148
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:157
 msgid "Style"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:149
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:166
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:158
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:175
 msgid "Glass"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:150
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:159
 msgid "Blur & performance"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:165
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:174
 msgid "Style:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:166
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:175
 msgid "Solid"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:181
 msgid "Switch automatically"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml
-msgid ""
-"Solid when the desktop is clear, Glass when a window is open on this screen."
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:189
+msgid "Solid when the desktop is focused, Glass when a window is focused."
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:171
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:199
+msgid "Advanced"
+msgstr ""
+
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:204
+msgid "Automatic switch fade:"
+msgstr ""
+
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:207
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:390
+msgid "Off"
+msgstr ""
+
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:207
+msgctxt "milliseconds"
+msgid "%1 ms"
+msgstr ""
+
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:212
 msgid "Appearance:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:172
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:213
 msgid "Dark"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:172
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:213
 msgid "Light"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:172
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:213
 msgid "Follow system"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:177
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:218
 msgid "Glass tint:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:180
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:288
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:302
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:309
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:221
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:329
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:343
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:350
 #, javascript-format
 msgctxt "percentage"
 msgid "%1%"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:185
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:226
 msgid "Shape"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:191
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:232
 msgid "Corner radius:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:194
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:281
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:349
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:235
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:322
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:390
 msgctxt "pixels"
 msgid "%1 px"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:199
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:240
 msgid "Corner smoothness:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:218
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:259
 msgid "Share"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:222
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:263
 msgid "Style preset:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:227
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:268
 msgid "Copy style"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:232
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:273
 msgid "Copied. Paste it into another Liquid Glass widget."
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:238
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:279
 msgid "Paste style"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:267
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:336
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:308
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:377
 msgid "These settings only apply to the Glass style."
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:279
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:320
 msgid "Edge thickness:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:286
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:327
 msgid "Refraction strength:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:293
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:334
 msgid "Refraction index:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:300
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:341
 msgid "Color fringing:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:307
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:348
 msgid "Edge highlight:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:314
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:355
 msgid "Reset glass settings"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:347
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:388
 msgid "Blur radius:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:349
-msgid "Off"
-msgstr ""
-
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:354
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:395
 msgid "Blur quality:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:355
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:396
 msgid "Performance (Dual Kawase)"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:355
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:396
 msgid "Quality (Gaussian)"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:363
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:404
 msgid "Smoother blur, but uses more GPU."
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:368
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:409
 msgid "Animated wallpapers:"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:369
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:410
 msgid "Update the glass every frame"
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:377
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:418
 msgid ""
 "Runs at about 60 FPS and can noticeably increase CPU/GPU usage. Only needed "
 "for video or animated wallpapers."
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:378
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:419
 msgid ""
 "Only needed for video or animated wallpapers. Static wallpapers and "
 "slideshows update automatically."
 msgstr ""
 
-#: packages/weather/contents/ui/config/GlassAppearancePage.qml:383
+#: packages/weather/contents/ui/config/GlassAppearancePage.qml:424
 msgid "Reset blur settings"
 msgstr ""
 
@@ -316,11 +329,11 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-#: packages/weather/contents/ui/main.qml:183
+#: packages/weather/contents/ui/main.qml:186
 msgid "Precipitation"
 msgstr ""
 
-#: packages/weather/contents/ui/main.qml:202
+#: packages/weather/contents/ui/main.qml:205
 msgid "Wind"
 msgstr ""
 
@@ -328,33 +341,33 @@ msgstr ""
 msgid "Glass Style"
 msgstr ""
 
-#: packages/weather/contents/ui/components/WidgetActions.qml:38
+#: packages/weather/contents/ui/components/WidgetActions.qml:39
 msgid "Apply Copied Style"
 msgstr ""
 
-#: packages/weather/contents/ui/components/WidgetActions.qml:49
-#: packages/weather/contents/ui/components/WidgetActions.qml:64
+#: packages/weather/contents/ui/components/WidgetActions.qml:50
+#: packages/weather/contents/ui/components/WidgetActions.qml:65
 msgid "Buy Me a Coffee"
 msgstr ""
 
-#: packages/weather/contents/ui/components/WidgetActions.qml:115
+#: packages/weather/contents/ui/components/WidgetActions.qml:116
 msgid "Support Liquid Glass Widgets"
 msgstr ""
 
-#: packages/weather/contents/ui/components/WidgetActions.qml:125
+#: packages/weather/contents/ui/components/WidgetActions.qml:126
 msgid "Opening your browser…"
 msgstr ""
 
-#: packages/weather/contents/ui/components/WidgetActions.qml:126
+#: packages/weather/contents/ui/components/WidgetActions.qml:127
 msgid ""
 "This opens buymeacoffee.com in your web browser. Thanks for considering it!"
 msgstr ""
 
-#: packages/weather/contents/ui/components/WidgetActions.qml:157
+#: packages/weather/contents/ui/components/WidgetActions.qml:158
 msgid "Close"
 msgstr ""
 
-#: packages/weather/contents/ui/components/WidgetActions.qml:157
+#: packages/weather/contents/ui/components/WidgetActions.qml:158
 msgid "Not now"
 msgstr ""
 

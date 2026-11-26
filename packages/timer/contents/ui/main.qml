@@ -274,7 +274,7 @@ PlasmoidItem {
         readonly property real _minSide: Math.min(width, height)
         readonly property real _btnSize: _minSide * 0.22
 
-        StyleFade { styleColors: colors }
+        StyleFade { styleColors: colors; duration: plasmoid.configuration.styleFadeMs }
 
         LiquidGlass {
             id: glass

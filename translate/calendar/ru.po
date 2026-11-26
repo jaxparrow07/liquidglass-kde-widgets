@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plasma_applet_com.jaxparrow07.macoswidgets.calendar 1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jaxparrow07/macos-widgets/issues\n"
-"POT-Creation-Date: 2026-11-01 19:12+0000\n"
+"POT-Creation-Date: 2026-11-26 12:12+0530\n"
 "PO-Revision-Date: 2026-06-14 18:01+0530\n"
 "Last-Translator: Russian translation contributors\n"
 "Language-Team: Russian\n"
@@ -16,220 +16,22 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: packages/calendar/contents/ui/main.qml:29
-msgid "Open Calendar"
+#: packages/calendar/contents/config/config.qml:11
+#: packages/calendar/contents/ui/config/ConfigAbout.qml:39
+msgid "Calendar"
+msgstr "Календарь"
+
+#: packages/calendar/contents/config/config.qml:16
+msgid "Appearance"
+msgstr "Оформление"
+
+#: packages/calendar/contents/config/config.qml:59
+msgid "More & Support"
 msgstr ""
 
-#: packages/calendar/contents/ui/main.qml:35
-msgid "New Event…"
-msgstr ""
-
-#: packages/calendar/contents/ui/main.qml:42
-msgid "Manage Calendars…"
-msgstr ""
-
-#: packages/calendar/contents/ui/main.qml:263
-msgid "All day"
-msgstr "Весь день"
-
-#: packages/calendar/contents/ui/main.qml:349
-msgid "Events today"
-msgstr "События сегодня"
-
-#: packages/calendar/contents/ui/main.qml:353
-msgid "This week"
-msgstr "На этой неделе"
-
-#: packages/calendar/contents/ui/main.qml:357
-msgid "Upcoming"
-msgstr "Предстоящие"
-
-#: packages/calendar/contents/ui/main.qml:444
-msgid "No upcoming events"
-msgstr "Нет предстоящих событий"
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:119
-msgid "Style applied. Press Apply to keep it."
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:121
-msgid "The clipboard doesn't contain a copied style."
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:148
-msgid "Style"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:149
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:166
-msgid "Glass"
-msgstr "Стекло"
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:150
-msgid "Blur & performance"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:165
-msgid "Style:"
-msgstr "Стиль:"
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:166
-msgid "Solid"
-msgstr "Сплошной"
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml
-msgid "Switch automatically"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml
-msgid ""
-"Solid when the desktop is clear, Glass when a window is open on this screen."
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:171
-msgid "Appearance:"
-msgstr "Оформление:"
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:172
-msgid "Dark"
-msgstr "Тёмное"
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:172
-msgid "Light"
-msgstr "Светлое"
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:172
-msgid "Follow system"
-msgstr "Как в системе"
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:177
-msgid "Glass tint:"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:180
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:288
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:302
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:309
-#, javascript-format
-msgctxt "percentage"
-msgid "%1%"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:185
-msgid "Shape"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:191
-msgid "Corner radius:"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:194
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:281
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:349
-msgctxt "pixels"
-msgid "%1 px"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:199
-msgid "Corner smoothness:"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:218
-msgid "Share"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:222
-msgid "Style preset:"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:227
-msgid "Copy style"
-msgstr "Копировать стиль"
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:232
-msgid "Copied. Paste it into another Liquid Glass widget."
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:238
-msgid "Paste style"
-msgstr "Вставить стиль"
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:267
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:336
-msgid "These settings only apply to the Glass style."
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:279
-msgid "Edge thickness:"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:286
-msgid "Refraction strength:"
-msgstr "Сила преломления:"
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:293
-msgid "Refraction index:"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:300
-msgid "Color fringing:"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:307
-msgid "Edge highlight:"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:314
-msgid "Reset glass settings"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:347
-msgid "Blur radius:"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:349
-msgid "Off"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:354
-msgid "Blur quality:"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:355
-msgid "Performance (Dual Kawase)"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:355
-msgid "Quality (Gaussian)"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:363
-msgid "Smoother blur, but uses more GPU."
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:368
-msgid "Animated wallpapers:"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:369
-msgid "Update the glass every frame"
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:377
-msgid ""
-"Runs at about 60 FPS and can noticeably increase CPU/GPU usage. Only needed "
-"for video or animated wallpapers."
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:378
-msgid ""
-"Only needed for video or animated wallpapers. Static wallpapers and "
-"slideshows update automatically."
-msgstr ""
-
-#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:383
-msgid "Reset blur settings"
-msgstr ""
+#: packages/calendar/contents/ui/config/ConfigPimEvents.qml:129
+msgid "Uncategorized Events"
+msgstr "События без категории"
 
 #: packages/calendar/contents/ui/config/ConfigCalendar.qml:64
 msgid "General"
@@ -335,14 +137,201 @@ msgid ""
 "(Akonadi)."
 msgstr ""
 
-#: packages/calendar/contents/ui/config/ConfigPimEvents.qml:129
-msgid "Uncategorized Events"
-msgstr "События без категории"
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:128
+msgid "Style applied. Press Apply to keep it."
+msgstr ""
 
-#: packages/calendar/contents/ui/config/ConfigAbout.qml:39
-#: packages/calendar/contents/config/config.qml:11
-msgid "Calendar"
-msgstr "Календарь"
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:130
+msgid "The clipboard doesn't contain a copied style."
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:157
+msgid "Style"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:158
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:175
+msgid "Glass"
+msgstr "Стекло"
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:159
+msgid "Blur & performance"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:174
+msgid "Style:"
+msgstr "Стиль:"
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:175
+msgid "Solid"
+msgstr "Сплошной"
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:181
+msgid "Switch automatically"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:189
+msgid "Solid when the desktop is focused, Glass when a window is focused."
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:199
+msgid "Advanced"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:204
+msgid "Automatic switch fade:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:207
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:390
+msgid "Off"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:207
+msgctxt "milliseconds"
+msgid "%1 ms"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:212
+msgid "Appearance:"
+msgstr "Оформление:"
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:213
+msgid "Dark"
+msgstr "Тёмное"
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:213
+msgid "Light"
+msgstr "Светлое"
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:213
+msgid "Follow system"
+msgstr "Как в системе"
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:218
+msgid "Glass tint:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:221
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:329
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:343
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:350
+#, javascript-format
+msgctxt "percentage"
+msgid "%1%"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:226
+msgid "Shape"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:232
+msgid "Corner radius:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:235
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:322
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:390
+msgctxt "pixels"
+msgid "%1 px"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:240
+msgid "Corner smoothness:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:259
+msgid "Share"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:263
+msgid "Style preset:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:268
+msgid "Copy style"
+msgstr "Копировать стиль"
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:273
+msgid "Copied. Paste it into another Liquid Glass widget."
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:279
+msgid "Paste style"
+msgstr "Вставить стиль"
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:308
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:377
+msgid "These settings only apply to the Glass style."
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:320
+msgid "Edge thickness:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:327
+msgid "Refraction strength:"
+msgstr "Сила преломления:"
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:334
+msgid "Refraction index:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:341
+msgid "Color fringing:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:348
+msgid "Edge highlight:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:355
+msgid "Reset glass settings"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:388
+msgid "Blur radius:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:395
+msgid "Blur quality:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:396
+msgid "Performance (Dual Kawase)"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:396
+msgid "Quality (Gaussian)"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:404
+msgid "Smoother blur, but uses more GPU."
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:409
+msgid "Animated wallpapers:"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:410
+msgid "Update the glass every frame"
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:418
+msgid ""
+"Runs at about 60 FPS and can noticeably increase CPU/GPU usage. Only needed "
+"for video or animated wallpapers."
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:419
+msgid ""
+"Only needed for video or animated wallpapers. Static wallpapers and "
+"slideshows update automatically."
+msgstr ""
+
+#: packages/calendar/contents/ui/config/GlassAppearancePage.qml:424
+msgid "Reset blur settings"
+msgstr ""
 
 #: packages/calendar/contents/ui/config/ConfigAbout.qml:40
 msgid "Clock"
@@ -407,46 +396,70 @@ msgstr ""
 msgid "Reddit"
 msgstr ""
 
+#: packages/calendar/contents/ui/main.qml:29
+msgid "Open Calendar"
+msgstr ""
+
+#: packages/calendar/contents/ui/main.qml:35
+msgid "New Event…"
+msgstr ""
+
+#: packages/calendar/contents/ui/main.qml:42
+msgid "Manage Calendars…"
+msgstr ""
+
+#: packages/calendar/contents/ui/main.qml:264
+msgid "All day"
+msgstr "Весь день"
+
+#: packages/calendar/contents/ui/main.qml:350
+msgid "Events today"
+msgstr "События сегодня"
+
+#: packages/calendar/contents/ui/main.qml:354
+msgid "This week"
+msgstr "На этой неделе"
+
+#: packages/calendar/contents/ui/main.qml:358
+msgid "Upcoming"
+msgstr "Предстоящие"
+
+#: packages/calendar/contents/ui/main.qml:447
+msgid "No upcoming events"
+msgstr "Нет предстоящих событий"
+
 #: packages/calendar/contents/ui/components/WidgetActions.qml:29
 msgid "Glass Style"
 msgstr ""
 
-#: packages/calendar/contents/ui/components/WidgetActions.qml:38
+#: packages/calendar/contents/ui/components/WidgetActions.qml:39
 msgid "Apply Copied Style"
 msgstr ""
 
-#: packages/calendar/contents/ui/components/WidgetActions.qml:49
-#: packages/calendar/contents/ui/components/WidgetActions.qml:64
+#: packages/calendar/contents/ui/components/WidgetActions.qml:50
+#: packages/calendar/contents/ui/components/WidgetActions.qml:65
 msgid "Buy Me a Coffee"
 msgstr ""
 
-#: packages/calendar/contents/ui/components/WidgetActions.qml:115
+#: packages/calendar/contents/ui/components/WidgetActions.qml:116
 msgid "Support Liquid Glass Widgets"
 msgstr ""
 
-#: packages/calendar/contents/ui/components/WidgetActions.qml:125
+#: packages/calendar/contents/ui/components/WidgetActions.qml:126
 msgid "Opening your browser…"
 msgstr ""
 
-#: packages/calendar/contents/ui/components/WidgetActions.qml:126
+#: packages/calendar/contents/ui/components/WidgetActions.qml:127
 msgid ""
 "This opens buymeacoffee.com in your web browser. Thanks for considering it!"
 msgstr ""
 
-#: packages/calendar/contents/ui/components/WidgetActions.qml:157
+#: packages/calendar/contents/ui/components/WidgetActions.qml:158
 msgid "Close"
 msgstr ""
 
-#: packages/calendar/contents/ui/components/WidgetActions.qml:157
+#: packages/calendar/contents/ui/components/WidgetActions.qml:158
 msgid "Not now"
-msgstr ""
-
-#: packages/calendar/contents/config/config.qml:16
-msgid "Appearance"
-msgstr "Оформление"
-
-#: packages/calendar/contents/config/config.qml:59
-msgid "More & Support"
 msgstr ""
 
 #~ msgid "Calendar Events"

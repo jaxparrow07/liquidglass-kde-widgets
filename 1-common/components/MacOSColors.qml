@@ -1,6 +1,7 @@
 import QtQuick
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
+import org.kde.plasma.core as PlasmaCore
 import org.kde.taskmanager as TaskManager
 import org.kde.kwindowsystem
 
@@ -12,9 +13,13 @@ QtObject {
     //   appearance: 0 = Dark, 1 = Light, 2 = Follow system
     property int styleMode: 0
     property int appearance: 0
-    // autoStyle overrides styleMode: Solid while the desktop is clear,
-    // Glass while a window is open on this widget's screen (macOS Tahoe).
+    // autoStyle overrides styleMode: Solid while the desktop has
+    // focus, Glass while a window does (macOS Tahoe).
     property bool autoStyle: false
+    // Not in panels: there is no desktop behind the widget to follow.
+    readonly property bool _auto: autoStyle
+        && Plasmoid.formFactor !== PlasmaCore.Types.Horizontal
+        && Plasmoid.formFactor !== PlasmaCore.Types.Vertical
 
     readonly property bool useSystem: appearance === 2
     readonly property bool systemIsDark: {
@@ -25,9 +30,11 @@ QtObject {
     readonly property bool isLight: !isGlass && (appearance === 1 || (useSystem && !systemIsDark))
     // wantGlass is the requested style; isGlass is the one shown. They only
     // differ for the moment a StyleFade (if the widget has one) needs to
-    // snapshot the old style before the switch.
-    readonly property bool wantGlass: autoStyle ? !desktopClear : styleMode === 0
-    property bool isGlass: wantGlass
+    // snapshot the old style before the switch. isGlass must not be bound to
+    // wantGlass: the binding would switch the style before the snapshot.
+    readonly property bool wantGlass: _auto ? !desktopFocused : styleMode === 0
+    property bool isGlass: false
+    Component.onCompleted: isGlass = wantGlass
     readonly property bool isSolid: !isGlass
     property Item fader: null
     onWantGlassChanged: {
@@ -35,24 +42,44 @@ QtObject {
         else isGlass = wantGlass
     }
 
-    // True when no visible (not minimized, not hidden) window is on this
-    // widget's screen, virtual desktop and activity, or while "Show Desktop"
-    // is on (KWin doesn't minimize the windows for it, so the model alone
-    // still counts them). The model only exists while autoStyle is on, so
-    // other widgets pay nothing for it.
-    readonly property bool desktopClear: KWindowSystem.showingDesktop
-        || (_windows.item ? _windows.item.count === 0 : true)
+    // Whether the desktop, rather than a window, has focus. Latched: panel
+    // popups, the launcher and context menus take focus from both, so they
+    // leave it as it was instead of flipping the style.
+    property bool desktopFocused: true
 
+    // The desktop window behind the widget. The wallpaper item is used to
+    // reach it, since a QtObject has no window of its own.
+    readonly property bool _desktopActive: {
+        if (!_auto || !Plasmoid.containment) return false
+        const w = Plasmoid.containment.wallpaperGraphicsObject
+        return w instanceof Item && w.Window.active
+    }
+    // Nothing to focus but the desktop: no visible window on any screen, or
+    // "Show Desktop" is on (KWin doesn't minimize the windows for it).
+    readonly property bool _desktopClear: KWindowSystem.showingDesktop
+        || !_windows.item || _windows.item.count === 0
+    readonly property bool _windowActive: _windows.item !== null && _windows.item.activeTask.valid
+
+    on_DesktopActiveChanged: _updateFocus()
+    on_DesktopClearChanged: _updateFocus()
+    on_WindowActiveChanged: _updateFocus()
+
+    function _updateFocus() {
+        if (_desktopActive || _desktopClear) desktopFocused = true
+        else if (_windowActive) desktopFocused = false
+    }
+
+    // Not filtered by screen: focus is global. The model only exists while
+    // autoStyle is on, so other widgets pay nothing for it.
     readonly property Loader _windows: Loader {
-        active: macColors.autoStyle
+        active: macColors._auto
         sourceComponent: TaskManager.TasksModel {
             filterByCurrentVirtualDesktop: true
             filterByActivity: true
-            filterByScreen: true
             filterHidden: true
             filterMinimized: true
-            screenGeometry: Plasmoid.containment ? Plasmoid.containment.screenGeometry : Qt.rect(0, 0, 0, 0)
             activity: _activityInfo.currentActivity
+            sortMode: TaskManager.TasksModel.SortDisabled
             groupMode: TaskManager.TasksModel.GroupDisabled
         }
     }

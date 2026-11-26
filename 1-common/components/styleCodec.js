@@ -17,6 +17,7 @@ const KEYS = {
     ba: "blurAlgorithm",
     br: "blurRadiusPx",
     rr: "realtimeRefraction",
+    fd: "styleFadeMs",
     ob: "opaqueBackground",
     gf: "glyphFont",
     tt: "textTintPct",

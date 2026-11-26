@@ -64,7 +64,7 @@ PlasmoidItem {
         Layout.minimumWidth: 160
         Layout.minimumHeight: 160
 
-        StyleFade { styleColors: colors }
+        StyleFade { styleColors: colors; duration: plasmoid.configuration.styleFadeMs }
 
         LiquidGlass {
             id: glass
