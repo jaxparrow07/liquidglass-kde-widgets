@@ -10,7 +10,10 @@
             <default>1</default>
         </entry>
         <entry name="autoStyle" type="Bool">
-            <default>false</default>
+            <default>true</default>
+        </entry>
+        <entry name="styleFadeMs" type="Int">
+            <default>150</default>
         </entry>
         <entry name="appearance" type="Int">
             <default>0</default>

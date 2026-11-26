@@ -36,6 +36,7 @@ KCMUtils.SimpleKCM {
     // config dialog, so these are safe for every package.
     property alias cfg_styleMode: styleCombo.currentIndex
     property alias cfg_autoStyle: autoStyleCheck.checked
+    property alias cfg_styleFadeMs: fadeField.value
     property alias cfg_appearance: appearanceCombo.currentIndex
     property alias cfg_cornerRadius: radiusField.value
     property alias cfg_roundnessX10: roundnessField.value
@@ -59,12 +60,14 @@ KCMUtils.SimpleKCM {
     property int cfg_blurAlgorithmDefault: 0
     property int cfg_blurRadiusPxDefault: 6
     property bool cfg_realtimeRefractionDefault: false
-    property bool cfg_autoStyleDefault: false
+    property bool cfg_autoStyleDefault: true
 
     // ── Variant hooks ─────────────────────────────────────────────────────
     // Widgets without these settings (e.g. the glass-text clock) hide them.
     property bool showShape: true
     property bool showTint: true
+    // False for widgets that switch style without a StyleFade.
+    property bool showFade: true
     // Whether the glass backdrop is in use; analog clocks also use it in
     // Solid style unless the background is fully opaque.
     property bool glassBackdropActive: styleCombo.currentIndex === 0 || autoStyleCheck.checked
@@ -95,7 +98,8 @@ KCMUtils.SimpleKCM {
             ss: specField.value,
             ba: blurAlgorithmCombo.currentIndex,
             br: blurRadiusField.value,
-            rr: realtimeCheck.checked
+            rr: realtimeCheck.checked,
+            fd: fadeField.value
         }
         serializeExtras(o)
         return JSON.stringify(o)
@@ -119,6 +123,7 @@ KCMUtils.SimpleKCM {
             else if (o.blurAlgorithm !== undefined) blurAlgorithmCombo.currentIndex = o.blurAlgorithm
             if (o.br !== undefined) blurRadiusField.value = o.br
             if (o.rr !== undefined) realtimeCheck.checked = o.rr
+            if (o.fd !== undefined) fadeField.value = o.fd
             deserializeExtras(o)
             _showStatus(i18n("Style applied. Press Apply to keep it."))
         } catch (e) {
@@ -181,7 +186,25 @@ KCMUtils.SimpleKCM {
                 visible: autoStyleCheck.checked
                 wrapMode: Text.WordWrap
                 opacity: 0.7
-                text: i18n("Solid when the desktop is clear, Glass when a window is open on this screen.")
+                text: i18n("Solid when the desktop is focused, Glass when a window is focused.")
+            }
+
+            // Collapsed every time the dialog opens.
+            QQC2.Button {
+                id: advancedButton
+                visible: root.showFade && autoStyleCheck.checked
+                flat: true
+                checkable: true
+                icon.name: checked ? "arrow-down" : "arrow-right"
+                text: i18n("Advanced")
+            }
+
+            SliderField {
+                id: fadeField
+                Kirigami.FormData.label: i18n("Automatic switch fade:")
+                visible: advancedButton.visible && advancedButton.checked
+                from: 0; to: 600; stepSize: 50
+                format: (v) => v === 0 ? i18n("Off") : i18nc("milliseconds", "%1 ms", v)
             }
 
             QQC2.ComboBox {

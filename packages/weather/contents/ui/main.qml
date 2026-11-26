@@ -57,7 +57,7 @@ PlasmoidItem {
         readonly property real labelSize: Math.max(10, Math.round(Math.min(full.height, 350) * 0.065))
         readonly property real bigLabelSize: Math.max(10, Math.round(Math.min(Math.min(full.height, full.width / 2), 350) * 0.065))
 
-        StyleFade { styleColors: colors }
+        StyleFade { styleColors: colors; duration: plasmoid.configuration.styleFadeMs }
 
         LiquidGlass {
             id: glass

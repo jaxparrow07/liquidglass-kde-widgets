@@ -2,14 +2,15 @@ import QtQuick
 
 // Cross-fades a widget between Glass and Solid. Place it next to the
 // LiquidGlass item, as a child of the item to fade:
-//   StyleFade { styleColors: colors }
+//   StyleFade { styleColors: colors; duration: plasmoid.configuration.styleFadeMs }
 // When the style changes, it snapshots the parent first, lets MacOSColors
-// switch, then fades the snapshot out over the new style.
+// switch, then fades the snapshot out over the new style. A duration of 0
+// turns the fade off.
 Item {
     id: fade
 
     property QtObject styleColors: null
-    property int duration: 400
+    property int duration: 200
 
     anchors.fill: parent
     z: 1000
@@ -31,7 +32,7 @@ Item {
         from: 1
         to: 0
         duration: fade.duration
-        easing.type: Easing.InOutQuad
+        easing.type: Easing.Linear
         onFinished: snapshot.source = ""
     }
 
@@ -54,7 +55,7 @@ Item {
     function run() {
         if (_grabbing) return   // the pending grab applies the latest wantGlass
         const target = fade.parent
-        if (!target || target.width <= 0 || target.height <= 0 || !target.visible) {
+        if (duration <= 0 || !target || target.width <= 0 || target.height <= 0 || !target.visible) {
             _apply()
             return
         }
@@ -64,6 +65,8 @@ Item {
             if (!fade._grabbing) return   // timed out, already switched
             grabTimeout.stop()
             fade._grabbing = false
+            // Focus flipped back during the grab: nothing to fade.
+            if (fade.styleColors.wantGlass === fade.styleColors.isGlass) return
             snapshot.source = result.url
             fadeOut.stop()
             snapshot.opacity = 1

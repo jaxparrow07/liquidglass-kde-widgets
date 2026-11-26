@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plasma_applet_com.jaxparrow07.macoswidgets.city-3 1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jaxparrow07/macos-widgets/issues\n"
-"POT-Creation-Date: 2026-10-11 17:48+0530\n"
+"POT-Creation-Date: 2026-11-26 12:12+0530\n"
 "PO-Revision-Date: 2026-06-14 18:01+0530\n"
 "Last-Translator: Russian translation contributors\n"
 "Language-Team: Russian\n"
@@ -48,186 +48,199 @@ msgstr "Подпись"
 msgid "Add city"
 msgstr "Добавить город"
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:119
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:128
 msgid "Style applied. Press Apply to keep it."
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:121
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:130
 msgid "The clipboard doesn't contain a copied style."
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:148
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:157
 msgid "Style"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:149
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:166
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:158
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:175
 msgid "Glass"
 msgstr "Стекло"
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:150
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:159
 msgid "Blur & performance"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:165
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:174
 msgid "Style:"
 msgstr "Стиль:"
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:166
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:175
 msgid "Solid"
 msgstr "Сплошной"
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:181
 msgid "Switch automatically"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml
-msgid ""
-"Solid when the desktop is clear, Glass when a window is open on this screen."
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:189
+msgid "Solid when the desktop is focused, Glass when a window is focused."
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:171
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:199
+msgid "Advanced"
+msgstr ""
+
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:204
+msgid "Automatic switch fade:"
+msgstr ""
+
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:207
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:390
+msgid "Off"
+msgstr ""
+
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:207
+msgctxt "milliseconds"
+msgid "%1 ms"
+msgstr ""
+
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:212
 msgid "Appearance:"
 msgstr "Оформление:"
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:172
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:213
 msgid "Dark"
 msgstr "Тёмное"
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:172
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:213
 msgid "Light"
 msgstr "Светлое"
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:172
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:213
 msgid "Follow system"
 msgstr "Как в системе"
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:177
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:218
 msgid "Glass tint:"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:180
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:288
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:302
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:309
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:221
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:329
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:343
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:350
 #, javascript-format
 msgctxt "percentage"
 msgid "%1%"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:185
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:226
 msgid "Shape"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:191
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:232
 msgid "Corner radius:"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:194
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:281
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:349
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:235
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:322
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:390
 msgctxt "pixels"
 msgid "%1 px"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:199
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:240
 msgid "Corner smoothness:"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:218
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:259
 msgid "Share"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:222
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:263
 msgid "Style preset:"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:227
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:268
 msgid "Copy style"
 msgstr "Копировать стиль"
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:232
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:273
 msgid "Copied. Paste it into another Liquid Glass widget."
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:238
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:279
 msgid "Paste style"
 msgstr "Вставить стиль"
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:267
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:336
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:308
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:377
 msgid "These settings only apply to the Glass style."
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:279
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:320
 msgid "Edge thickness:"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:286
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:327
 msgid "Refraction strength:"
 msgstr "Сила преломления:"
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:293
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:334
 msgid "Refraction index:"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:300
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:341
 msgid "Color fringing:"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:307
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:348
 msgid "Edge highlight:"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:314
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:355
 msgid "Reset glass settings"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:347
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:388
 msgid "Blur radius:"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:349
-msgid "Off"
-msgstr ""
-
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:354
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:395
 msgid "Blur quality:"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:355
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:396
 msgid "Performance (Dual Kawase)"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:355
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:396
 msgid "Quality (Gaussian)"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:363
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:404
 msgid "Smoother blur, but uses more GPU."
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:368
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:409
 msgid "Animated wallpapers:"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:369
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:410
 msgid "Update the glass every frame"
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:377
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:418
 msgid ""
 "Runs at about 60 FPS and can noticeably increase CPU/GPU usage. Only needed "
 "for video or animated wallpapers."
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:378
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:419
 msgid ""
 "Only needed for video or animated wallpapers. Static wallpapers and "
 "slideshows update automatically."
 msgstr ""
 
-#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:383
+#: packages/city-3/contents/ui/config/GlassAppearancePage.qml:424
 msgid "Reset blur settings"
 msgstr ""
 
@@ -306,33 +319,33 @@ msgstr ""
 msgid "Glass Style"
 msgstr ""
 
-#: packages/city-3/contents/ui/components/WidgetActions.qml:38
+#: packages/city-3/contents/ui/components/WidgetActions.qml:39
 msgid "Apply Copied Style"
 msgstr ""
 
-#: packages/city-3/contents/ui/components/WidgetActions.qml:49
-#: packages/city-3/contents/ui/components/WidgetActions.qml:64
+#: packages/city-3/contents/ui/components/WidgetActions.qml:50
+#: packages/city-3/contents/ui/components/WidgetActions.qml:65
 msgid "Buy Me a Coffee"
 msgstr ""
 
-#: packages/city-3/contents/ui/components/WidgetActions.qml:115
+#: packages/city-3/contents/ui/components/WidgetActions.qml:116
 msgid "Support Liquid Glass Widgets"
 msgstr ""
 
-#: packages/city-3/contents/ui/components/WidgetActions.qml:125
+#: packages/city-3/contents/ui/components/WidgetActions.qml:126
 msgid "Opening your browser…"
 msgstr ""
 
-#: packages/city-3/contents/ui/components/WidgetActions.qml:126
+#: packages/city-3/contents/ui/components/WidgetActions.qml:127
 msgid ""
 "This opens buymeacoffee.com in your web browser. Thanks for considering it!"
 msgstr ""
 
-#: packages/city-3/contents/ui/components/WidgetActions.qml:157
+#: packages/city-3/contents/ui/components/WidgetActions.qml:158
 msgid "Close"
 msgstr ""
 
-#: packages/city-3/contents/ui/components/WidgetActions.qml:157
+#: packages/city-3/contents/ui/components/WidgetActions.qml:158
 msgid "Not now"
 msgstr ""
 

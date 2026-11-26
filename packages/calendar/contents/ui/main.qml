@@ -398,7 +398,7 @@ PlasmoidItem {
             ? Math.round(full.height * 0.04)
             : Math.round(full.labelSize * 0.69)
 
-        StyleFade { styleColors: colors }
+        StyleFade { styleColors: colors; duration: plasmoid.configuration.styleFadeMs }
 
         LiquidGlass {
             id: glass
